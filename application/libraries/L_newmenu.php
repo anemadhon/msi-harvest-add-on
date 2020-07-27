@@ -178,18 +178,18 @@ class L_newmenu {
                                 ),
                         ),
 
-                    // 10209 =>	array
-                    //     (
-                    //         'text'		=> 	'Stock Opname ',
-                    //         'mnclass'	=> 	'mn_trans',
-                    //         'link'		=> 	site_url('transaksi1/stock'),
-                    //         'show'		=>	TRUE,
-                    //         'parent'	=>	102,
-                    //         'perms'		=>	array
-                    //             (
-                    //                 'inv_stockopname',
-                    //             ),
-                    //     ),
+                    10209 =>	array
+                        (
+                            'text'		=> 	'Stock Opname ',
+                            'mnclass'	=> 	'mn_trans',
+                            'link'		=> 	site_url('transaksi1/stock'),
+                            'show'		=>	TRUE,
+                            'parent'	=>	102,
+                            'perms'		=>	array
+                                (
+                                    'inv_stockopname',
+                                ),
+                        ),
 
             103 =>	array
                     (
