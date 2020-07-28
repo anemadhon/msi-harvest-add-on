@@ -186,7 +186,7 @@
 								<div class="card-body">
 									<div class="row">
 										<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
-										<div class="col-md-12 mb-2" id="btnAddListItem">
+										<div class="col-md-12 mb-2 hide" id="btnAddListItem">
 											<div class="text-left">
 												<input type="button" class="btn btn-primary" value="Add" id="addTable" onclick="onAddrow()"> 
 												<input type="button" value="Delete" class="btn btn-danger" id="deleteRecord"> 
@@ -292,7 +292,6 @@
 				table[4].innerHTML = `<input type="text" id="editqty" class="form-control" value="${qty}" ${rel == "N" ? "readonly": ""}>`;
 				table[5].innerHTML = uOm;
 				table[6].innerHTML = onHand;
-				//table[6].innerHTML = minStock;
 			});
 			
 		});
@@ -309,8 +308,8 @@
 			
 			$.post("<?php echo site_url('transaksi1/wo/wo_header_uom');?>",{material_no: woNumber},(data)=>{
 				const value = JSON.parse(data);
-				if(value.data[0]['U_Locked'] == 'Y'){
-					$("#btnAddListItem").addClass('hide');
+				if(value.data[0]['U_Locked'] == 'N'){
+					$("#btnAddListItem").removeClass('hide');
 				}
 				$('.txtQtyDefault').html(`Suggest Qty : ${value.data[0]['Qauntity'].slice(0,-2)}`);
 				$("#woQtyDefault").val(value.data[0]['Qauntity'].slice(0,-2));
@@ -381,8 +380,8 @@
 			let elementSelect = document.getElementsByClassName(`dt_${count}`);
 			
 			getTable.row.add({
-				"0":`<input type="checkbox" class="check_delete" id="chk_${count}" value="${count}">`,
-				"1":count,
+				"no":`<input type="checkbox" class="check_delete" id="chk_${count}" value="${count}">`,
+				"no":count,
 				"material_no":"",
 				"descolumn":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
 								<option value="">Select Item</option>
