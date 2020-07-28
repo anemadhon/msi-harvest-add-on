@@ -202,6 +202,9 @@
 
 				$.post("<?php echo site_url('transaksi1/wo/wo_header_uom');?>",{material_no: kode_paket},(data)=>{
 					const value = JSON.parse(data);
+					if(value.data[0]['U_Locked'] == 'N'){
+						$("#btnAddListItem").removeClass('hide');
+					}
 					$('#woQtyDefault').val(value.data[0]['Qauntity']);
 					
 					$('#table-manajemen').DataTable({
