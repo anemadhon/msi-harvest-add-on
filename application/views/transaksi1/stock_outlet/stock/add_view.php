@@ -302,6 +302,9 @@
 					complete: function() {
 						$('#load').hide();
 						$('.after-upload').show();
+					},
+					error: function(xhr, status) {
+						alert(`Terjadi Eror Saat Upload (${xhr.status} : ${xhr.statusText}). Silahkan Coba Lagi`)
 					}
 				});	
 			});
