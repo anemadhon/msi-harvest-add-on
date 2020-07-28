@@ -285,10 +285,10 @@
 					const minStock = $("option:selected", this).attr("minstock");
 					const uOm = $("option:selected", this).attr("uOm");
 					table = document.getElementById("table-manajemen").rows[no].cells;
-					table[1].innerHTML = matrial_no;
-					table[3].innerHTML = `<input type="text" id="editqty" class="form-control" value="${qty}" ${rel == "N" ? "readonly": ""}>`;
-					table[4].innerHTML = uOm;
-					table[5].innerHTML = onHand;
+					table[2].innerHTML = matrial_no;
+					table[4].innerHTML = `<input type="text" id="editqty" class="form-control" value="${qty}" ${rel == "N" ? "readonly": ""}>`;
+					table[5].innerHTML = uOm;
+					table[6].innerHTML = onHand;
 				});
             });
 
@@ -368,17 +368,17 @@
 				table.find('tr').each(function(i, el){
 					let td = $(this).find('td');
 					
-					if(parseInt(td.eq(3).find('input').val(),10) > parseFloat(td.eq(5).text())){
-						dataValidasi.push(td.eq(1).text());
+					if(parseInt(td.eq(4).find('input').val(),10) > parseFloat(td.eq(6).text())){
+						dataValidasi.push(td.eq(2).text());
 						validasiQty = false;
 					}
-					matrialNo.push(td.eq(1).text()); 
-					matrialDesc.push(td.eq(2).find('select option:selected').text().trim());
-					qty.push(td.eq(3).find('input').val());
-					uom.push(td.eq(4).text());	
-					onHand.push(td.eq(5).text());	
-					minStock.push(td.eq(6).text());	
-					outStandTot.push(td.eq(7).text());
+					matrialNo.push(td.eq(2).text()); 
+					matrialDesc.push(td.eq(3).find('select option:selected').text().trim());
+					qty.push(td.eq(4).find('input').val());
+					uom.push(td.eq(5).text());	
+					onHand.push(td.eq(6).text());	
+					minStock.push('');	
+					outStandTot.push('');
 				});
 				if(!validasiQty){
 					alert('Material Number '+dataValidasi.join()+' Quatity Tidak boleh Lebih Besar dari OnHand');

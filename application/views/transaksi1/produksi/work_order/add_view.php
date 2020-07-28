@@ -471,8 +471,8 @@
 				qty.push(td.eq(4).find('input').val());
 				uom.push(td.eq(5).text());	
 				onHand.push(td.eq(6).text());	
-				minStock.push(td.eq(7).text());	
-				outStandTot.push(td.eq(8).text());
+				minStock.push('');	
+				outStandTot.push('');
 			});
 			if(!validasi){
 				alert('Quatity Tidak boleh Kosong, Harap isi Quantity');
