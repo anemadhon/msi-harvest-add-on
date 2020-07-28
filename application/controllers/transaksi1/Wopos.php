@@ -202,7 +202,7 @@ class Wopos extends CI_Controller{
 				$getucaneditqty='';
 				
 				if($object['data']['status'] == 1){
-					if($getlocked[0]['U_Locked'] != 'N' || $ucaneditqty[0]['CanEditQty'] != 'N'){
+					if($getlocked[0]['U_Locked'] == 'N' && $ucaneditqty[0]['CanEditQty'] == 'Y'){
 						$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.number_format($data['qty'],4,'.','').'">';
 					}else {
 						$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.number_format($data['qty'],4,'.','').'" readonly>';
@@ -349,7 +349,7 @@ class Wopos extends CI_Controller{
 
 				$getucaneditqty='';
 				
-				if($getlocked[0]['U_Locked'] != 'N' || $ucaneditqty[0]['CanEditQty'] != 'N'){
+				if($getlocked[0]['U_Locked'] == 'N' && $ucaneditqty[0]['CanEditQty'] == 'Y'){
 					$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.$data['quantity'] * (float)$qty_header.'">';
 				}else {
 					$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.$data['quantity'] * (float)$qty_header.'" readonly>';
