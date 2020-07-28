@@ -3,7 +3,8 @@
 	<head>
 		<?php  $this->load->view("_template/head.php")?>
 		<style>
-			.after-submit {
+			.after-submit,
+			.hide {
 				display: none;
 			}
 			#load,
@@ -159,12 +160,19 @@
 							<div class="card-header">
 								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
 							</div>
+							<div class="col-md-12 mb-2 hide" id="btnAddListItem">
+								<div class="text-left">
+									<input type="button" class="btn btn-primary" value="Add" id="addTable" onclick="onAddrow()"> 
+									<input type="button" value="Delete" class="btn btn-danger" id="deleteRecord"> 
+								</div>
+							</div>
 							<div class="card-body">
 								<div class="col-md-12" style="overflow:auto">
 								<table id="table-manajemen" class="table table-striped " style="width:100%">
 									<thead>
 										<tr>
-											<th style="text-align: left">No</th>
+											<th><input type="checkbox" name="checkall" id="checkall"></th>
+											<th>No</th>
 											<th>Material No</th>
 											<th>Material Desc</th>
 											<th>Quantity</th>
@@ -212,6 +220,10 @@
 							"type":"POST"
 						},
 						"columns": [
+							{"data":"no", "className":"dt-center", render:function(data, type, row, meta){
+								rr=`<input type="checkbox"  value="${data}" class="check_delete" id="dt_${row['no']}" onclick="checkcheckbox();">`;
+								return rr;
+							}},
 							{"data":"no", "className":"dt-center"},
 							{"data":"material_no", "className":"dt-center"},
 							{"data":"descolumn"},
@@ -221,6 +233,43 @@
 						]
 					});
 				});
+
+				// untuk check all
+				$("#checkall").click(function(){
+					if($(this).is(':checked')){
+						$(".check_delete").prop('checked', true);
+					}else{
+						$(".check_delete").prop('checked', false);
+					}
+				});
+
+				$("#deleteRecord").click(function(){
+					let deleteidArr=[];
+					let getTable = $("#table-manajemen").DataTable();
+					$("input:checkbox[class=check_delete]:checked").each(function(){
+						deleteidArr.push($(this).val());
+					})
+
+					// mengecek ckeckbox tercheck atau tidak
+					if(deleteidArr.length > 0){
+						var confirmDelete = confirm("Do you really want to Delete records?");
+						if(confirmDelete == true){
+							$("input:checked").each(function(){
+								getTable.row($(this).closest("tr")).remove().draw();
+							});
+						}
+					}
+					
+				});
+
+				checkcheckbox = () => {
+					let totalChecked = 0;
+					$(".check_delete").each(function(){
+						if($(this).is(":checked")){
+							totalChecked += 1;
+						}
+					});
+				}
 
 				tbody = $("#table-manajemen tbody");
 				tbody.on('change','#descmat', function(){
@@ -237,9 +286,65 @@
 					table[3].innerHTML = `<input type="text" id="editqty" class="form-control" value="${qty}" ${rel == "N" ? "readonly": ""}>`;
 					table[4].innerHTML = uOm;
 					table[5].innerHTML = onHand;
-					//table[6].innerHTML = minStock;
 				});
             });
+
+			function onAddrow(){
+				let getTable = $("#table-manajemen").DataTable();
+				count = getTable.rows().count() + 1;
+				let elementSelect = document.getElementsByClassName(`dt_${count}`);
+				
+				getTable.row.add({
+					"no":`<input type="checkbox" class="check_delete" id="chk_${count}" value="${count}">`,
+					"no":count,
+					"material_no":"",
+					"descolumn":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
+									<option value="">Select Item</option>
+									${showMatrialDetailData(elementSelect)}
+								</select>`,
+					"qty":`<input type="text" class="form-control qty" id="editqty_${count}" value="" style="width:100%" autocomplete="off">`,
+					"uom":"",
+					"OnHand":"",
+					"MinStock":"",
+					"OpenQty":""
+					}).draw();
+					count++;
+
+				tbody = $("#table-manajemen tbody");
+				tbody.on('change','.testSelect', function(){
+					tr = $(this).closest('tr');
+					no = tr[0].rowIndex;
+					id = $('.dt_'+no+' option:selected').attr('rel');
+					setValueTable(id,no);
+				});
+			}
+
+			function setValueTable(id,no){
+				table = document.getElementById("table-manajemen").rows[no].cells;
+				$.post(
+					"<?php echo site_url('transaksi1/wo/getdataDetailMaterialSelect')?>",{ MATNR:id },(res)=>{
+						matSelect = JSON.parse(res);
+						matSelect.map((val)=>{
+							table[2].innerHTML = val.MATNR;
+							table[5].innerHTML = val.UNIT;
+							table[6].innerHTML = val.OnHand.toFixed(4);
+						})
+					}
+				)
+			}
+
+			function showMatrialDetailData(select){
+				$.ajax({
+					url: "<?php echo site_url('transaksi1/wo/addItemRow');?>",
+					type: "POST",
+					success:function(res) {
+						optData = JSON.parse(res);
+						optData.forEach((val)=>{						
+							$("<option />", {value:val.MAKTX, text:val.MAKTX, rel:val.MATNR}).appendTo(select);
+						})
+					}
+				});			
+			}
 
 			function addDatadb(id_approve = ''){
 						
