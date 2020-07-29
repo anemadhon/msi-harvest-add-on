@@ -215,7 +215,8 @@
 							"data":{ 
 								id: id_wo_header, 
 								kodepaket:kode_paket,
-								qtypaket:qty_paket
+								qtypaket:qty_paket,
+								qtyDefault:value.data[0]['Quantity']
 							},
 							"type":"POST"
 						},

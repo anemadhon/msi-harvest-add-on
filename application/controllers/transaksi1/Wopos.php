@@ -29,7 +29,6 @@ class Wopos extends CI_Controller{
         }
         $object['opname_header']['ids'] = $ids;
 		$this->load->view('transaksi1/produksi/work_order_pos/list_view',$object);
-		
     }
 	
 	public function showListData(){
@@ -181,7 +180,8 @@ class Wopos extends CI_Controller{
 	public function showDetailEdit(){
         $id_wo_header = $this->input->post('id');
         $kode_paket = $this->input->post('kodepaket');
-        $qty_paket = $this->input->post('qtypaket');
+		$qty_paket = $this->input->post('qtypaket');
+		$qtyDefault = $this->input->post('qtyDefault');
 		$rs = $this->wovendor->wo_details_select($id_wo_header,$kode_paket,$qty_paket);
 		$object['data'] = $this->wovendor->wo_header_select($id_wo_header);
 		$disabled = $object['data']['status'] == 2 ? 'disabled' : '';
@@ -225,7 +225,7 @@ class Wopos extends CI_Controller{
 										if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
 											$select .= '<option value="'.$_querySAP2['U_SubsCode'].'" 
 											rel="'.$ucaneditqty[0]['CanEditQty'].'" onHand="'.number_format($onhandAlt,4,'.','').'" minStock = "'.$minstockAlt.'" uOm="'.$_querySAP2['U_SubsUOM'].'"
-											matqty="'.number_format(($_querySAP2['U_SubsQty'] * (float)$qty_paket),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>';
+											matqty="'.number_format(($_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_paket),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>';
 										}
 									}
 								}
