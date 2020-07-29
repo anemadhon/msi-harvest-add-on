@@ -121,7 +121,7 @@ class Pofromvendor extends CI_Controller {
                 $nestedData['item'] = $value['item'];
                 $nestedData['material_no'] = $value['material_no'];
                 $nestedData['material_desc'] = $value['material_desc'];
-                $nestedData['outstanding_qty'] = number_format($value['outstanding_qty'],4,'.','');//- $value['gr_quantity']
+                $nestedData['outstanding_qty'] = number_format($value['outstanding_qty'],4,'.','');
                 $nestedData['gr_quantity'] = number_format($value['gr_quantity'],4,'.',''); 
                 $nestedData['uom'] = $value['uom'];
                 $nestedData['qc'] = $value['qc'];

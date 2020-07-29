@@ -238,10 +238,7 @@
 					{"data":"docdate", "className":"dt-center"},
 					{"data":"SystemDate", "className":"dt-center"},
 					{"data":"quantity", "className":"dt-right"},
-					// {"data":"cost", "className":"dt-right"},
-					//{"data":"transvalue", "className":"dt-right"}, 
-					{"data":"CummulativeQty", "className":"dt-right"}, 
-					//{"data":"CummulativeValue", "className":"dt-right"}, 
+					{"data":"CummulativeQty", "className":"dt-right"}
 				],
 			});
 		}

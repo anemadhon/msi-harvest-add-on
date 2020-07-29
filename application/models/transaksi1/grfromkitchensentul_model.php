@@ -111,7 +111,6 @@ class Grfromkitchensentul_model extends CI_Model {
     } 
     
     $query = $SAP_MSI->get();
-    // echo $SAP_MSI->last_query();
     
     $k=1;
     foreach ($query->result_array() as $row)
@@ -297,7 +296,6 @@ class Grfromkitchensentul_model extends CI_Model {
 
     function grpodlv_header_update($data) {
       $update = array(
-        //'grpodlv_no' => $data['grpodlv_no'],
         'status' => $data['status'],
         'remark' => $data['remark'],
         'id_user_approved' => $data['id_user_approved']

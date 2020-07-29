@@ -138,9 +138,7 @@
                         {"data":"code", "className":"dt-center"},
                         {"data":"Description", "className":"dt-center"},
                         {"data":"OnHand", "className":"dt-center"},
-						{"data":"Uom", "className":"dt-center"},
-                        //{"data":"ItemCost", "className":"dt-center"},
-                        //{"data":"Amount", "className":"dt-center"}
+						{"data":"Uom", "className":"dt-center"}
                     ]
                 });
             }

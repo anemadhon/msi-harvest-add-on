@@ -193,10 +193,8 @@ class Grfromkitchensentul extends CI_Controller {
         
         try{
 
-            //$grpodlv_no ='';
             $dataUpdate = array (
                 'id_grpodlv_header'	=>$IDheader,
-                //'grpodlv_no'	=>	$grpodlv_no,
                 'status'	=>	$id_approve ? 2 : 1,
                 'id_user_approved'	=>	$admin_id,
                 'remark' => $remark
@@ -445,8 +443,6 @@ class Grfromkitchensentul extends CI_Controller {
     public function showDataGrSend(){
         $SrNumber = $this->input->post('SrNumber');
         $rs = $this->dokitchen->showDetailDataGrSend($SrNumber);
-        // print_r($SrNumber);
-        // die();
         $dt = array();
         $i = 1;
         if ($rs) {

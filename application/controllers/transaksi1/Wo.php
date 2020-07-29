@@ -225,7 +225,7 @@ class Wo extends CI_Controller{
 										if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
 											$select .= '<option value="'.$_querySAP2['U_SubsCode'].'" 
 											rel="'.$ucaneditqty[0]['CanEditQty'].'" onHand="'.number_format($onhandAlt,4,'.','').'" minStock = "'.$minstockAlt.'" uOm="'.$_querySAP2['U_SubsUOM'].'"
-											matqty="'.number_format(($_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_paket),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>'; //* (float)$qty_paket
+											matqty="'.number_format(($_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_paket),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>'; 
 										}
 									}
 								}
@@ -366,7 +366,7 @@ class Wo extends CI_Controller{
 				$querySAP2 = $this->wovendor->wo_detail_itemcodebom($kode_paket,$data['material_no']);
 				
 				$select = '<select class="form-control form-control-select2" data-live-search="true" name="descmat" id="descmat">
-								<option value="'.$data['material_no'].'" rel="'.$ucaneditqty[0]['CanEditQty'] .'" onHand="'.number_format($onhand,4,'.','').'" minStock = "'.$minstock.'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matdesc="'.$data['material_desc'].'">'.$data['material_desc'].'</option>'; //$data['quantity'] * (float)$qty_header
+								<option value="'.$data['material_no'].'" rel="'.$ucaneditqty[0]['CanEditQty'] .'" onHand="'.number_format($onhand,4,'.','').'" minStock = "'.$minstock.'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matdesc="'.$data['material_desc'].'">'.$data['material_desc'].'</option>'; 
 								if($querySAP2){
 									foreach($querySAP2 as $_querySAP2){
 										$getonhandAlt = $this->wovendor->wo_detail_onhand($_querySAP2['U_SubsCode']);
@@ -379,7 +379,7 @@ class Wo extends CI_Controller{
 										if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
 											$select .= '<option value="'.$_querySAP2['U_SubsCode'].'" 
 											rel="'.$ucaneditqty[0]['CanEditQty'].'" onHand="'.number_format($onhandAlt,4,'.','').'" minStock = "'.$minstockAlt.'" uOm="'.$_querySAP2['U_SubsUOM'].'"
-											matqty="'.number_format(($_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>'; //$_querySAP2['U_SubsQty'] * (float)$qty_header
+											matqty="'.number_format(($_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>';
 										}
 									}
 								}
