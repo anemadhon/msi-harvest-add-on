@@ -224,8 +224,8 @@ class Wo extends CI_Controller{
 										}
 										if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
 											$select .= '<option value="'.$_querySAP2['U_SubsCode'].'" 
-											rel="'.$ucaneditqty[0]['CanEditQty'].'" onHand="'.number_format($onhandAlt,4,'.','').'" minStock = "'.$minstockAlt.'" uOm="'.$_querySAP2['U_SubsUOM'].'"
-											matqty="'.number_format(($_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_paket),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>'; 
+											rel="'.$ucaneditqty[0]['CanEditQty'].'" onHand="'.number_format((float)$onhandAlt,4,'.','').'" minStock = "'.$minstockAlt.'" uOm="'.$_querySAP2['U_SubsUOM'].'"
+											matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_paket),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>'; 
 										}
 									}
 								}
@@ -378,8 +378,8 @@ class Wo extends CI_Controller{
 										}
 										if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
 											$select .= '<option value="'.$_querySAP2['U_SubsCode'].'" 
-											rel="'.$ucaneditqty[0]['CanEditQty'].'" onHand="'.number_format($onhandAlt,4,'.','').'" minStock = "'.$minstockAlt.'" uOm="'.$_querySAP2['U_SubsUOM'].'"
-											matqty="'.number_format(($_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>';
+											rel="'.$ucaneditqty[0]['CanEditQty'].'" onHand="'.number_format((float)$onhandAlt,4,'.','').'" minStock = "'.$minstockAlt.'" uOm="'.$_querySAP2['U_SubsUOM'].'"
+											matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>';
 										}
 									}
 								}
