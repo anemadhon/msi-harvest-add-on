@@ -245,7 +245,9 @@
                         {"data":"opname_no", "className":"dt-center"},
                         {"data":"created_date"},
                         {"data":"created_by"},
-                        {"data":"status"},
+                        {"data":"status", "className":"dt-center", render:function(data, type, row, meta){
+                            return (row['am_status'] == 'Rejected' || row['rm_status'] == 'Rejected') ? data = 'Not Approved' : data;;
+                        }},
                         {"data":"am_status"},
                         {"data":"rm_status"},
                         {"data":"last_modified"},
