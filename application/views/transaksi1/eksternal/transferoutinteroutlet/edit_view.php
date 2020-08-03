@@ -242,7 +242,10 @@
 								rr=row['status']==2 ? '' : `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" >`;
 								return rr;
 						}},
-						{"data":"no", "className":"dt-center"},
+						{"data":"no","className":"dt-center" ,render:function(data, type, row, meta){
+							rr = `<input type="hidden" value="${row['posnr']}">`;
+							return rr+data;
+						}},
 						{"data":"material_no", "className":"dt-center"},
 						{"data":"material_desc"},
 						{"data":"in_whs_qty", "className":"dt-center whsQty"},
@@ -383,6 +386,7 @@
 				const approve = id_approve;
 				const remark= $('#remark').val();
 				const tbodyTable = $("#table-manajemen > tbody");
+				let item=[];
 				let matrial_no=[];
 				let detail_qty=[];
 				let matrialDesc =[];
@@ -398,6 +402,7 @@
 							validasi = false;
 					}
 
+					item.push(td.eq(1).find('input').val());
 					matrial_no.push(td.eq(2).text().trim());
 					matrialDesc.push(td.eq(3).text());
 					whsQty.push(td.eq(4).text());
@@ -417,7 +422,7 @@
 
 				setTimeout(() => {
 					$.post("<?php echo site_url('transaksi1/Transferoutinteroutlet/addDataUpdate')?>", {
-						idGistonew_out_header: id_gistonew_out_header, poNo: srEntry, poNo1: srEntry1, aapr:approve, Remark:remark, detMatrialNo: matrial_no, detMatrialDesc: matrialDesc, detOutQty:out_qty, detQty: qty, detUom: uom, detUomReg:uom_reg, detWhsQty: whsQty
+						idGistonew_out_header: id_gistonew_out_header, poNo: srEntry, poNo1: srEntry1, aapr:approve, Remark:remark, detMatrialNo: matrial_no, detMatrialDesc: matrialDesc, detOutQty:out_qty, detQty: qty, detUom: uom, detUomReg:uom_reg, detWhsQty: whsQty, detposnr: item
 					}, function(){
 						$('#load').hide();
 					})
