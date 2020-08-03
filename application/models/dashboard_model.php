@@ -111,7 +111,7 @@ class Dashboard_Model extends CI_Model{
         $kd_plant = $this->session->userdata['ADMIN']['plant'];
 
         $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-        $SQL = "SELECT COUNT(DISTINCT po_no) Total FROM t_gistonew_out_header 
+        $SQL = "SELECT COUNT(DISTINCT gistonew_out_no) Total FROM t_gistonew_out_header 
         INNER JOIN t_gistonew_out_detail ON t_gistonew_out_detail.id_gistonew_out_header = t_gistonew_out_header.id_gistonew_out_header 
         INNER JOIN m_outlet ON m_outlet.outlet = t_gistonew_out_header.plant 
         INNER JOIN ".$SAP_MSI->database.".dbo.OITM a ON a.ItemCode COLLATE DATABASE_DEFAULT = t_gistonew_out_detail.material_no COLLATE DATABASE_DEFAULT
