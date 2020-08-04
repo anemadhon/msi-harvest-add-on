@@ -383,7 +383,6 @@
 				const remark= document.getElementById('remark').value;
 				const approve = id_approve;
 				const tbodyTable = $('#tblWhole > tbody');
-				let item = [];
 				let matrialNo =[];
 				let matrialDesc =[];
 				let whsQty = [];
@@ -400,8 +399,7 @@
 						dataValidasi.push(td.eq(2).text());
 						validasi = false;
 					}
-
-					item.push(td.eq(1).find('input').val());	
+	
 					matrialNo.push(td.eq(2).text()); 
 					matrialDesc.push(td.eq(3).text());
 					whsQty.push(td.eq(4).text());
@@ -422,7 +420,7 @@
 
 				setTimeout(() => {
 					$.post("<?php echo site_url('transaksi1/Transferoutinteroutlet/addData')?>", {
-						reqRes: requestRespon, reqRes1: requestRespon1, matGrp: matrialGroup, stts: status, Rto:rto, pstDate: postingDate, Remark:remark, detMatrialNo: matrialNo, appr: approve, detMatrialDesc: matrialDesc, detWhsQty: whsQty, detOutStdQty: outStdQty, detQty: qty, detUomReg: uomReg, detUom: uom, detposnr: item
+						reqRes: requestRespon, reqRes1: requestRespon1, matGrp: matrialGroup, stts: status, Rto:rto, pstDate: postingDate, Remark:remark, detMatrialNo: matrialNo, appr: approve, detMatrialDesc: matrialDesc, detWhsQty: whsQty, detOutStdQty: outStdQty, detQty: qty, detUomReg: uomReg, detUom: uom
 					}, function(){
 						$('#load').hide();
 					})

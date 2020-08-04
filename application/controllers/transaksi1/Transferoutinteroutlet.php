@@ -240,7 +240,7 @@ class Transferoutinteroutlet extends CI_Controller {
                 $gistonew_out_detail['gr_quantity'] = $this->input->post('detQty')[$i];
 				$gistonew_out_detail['uom'] = $this->input->post('detUom')[$i];
                 $gistonew_out_detail['uom_req'] = $this->input->post('detUomReg')[$i];
-                $gistonew_out_detail['posnr'] = $this->input->post('detposnr')[$i];
+                $gistonew_out_detail['posnr'] = $i;
 
                 $line = $gistonew_out_detail['posnr'];
 
@@ -329,7 +329,7 @@ class Transferoutinteroutlet extends CI_Controller {
                     $gistonew_out_details['gr_quantity'] = $this->input->post('detQty')[$i];
                     $gistonew_out_details['uom'] = $this->input->post('detUom')[$i];
                     $gistonew_out_details['uom_req'] = $this->input->post('detUomReg')[$i];
-                    $gistonew_out_details['posnr'] = $this->input->post('detposnr')[$i];
+                    $gistonew_out_details['posnr'] = $i;
 
                     $line = $gistonew_out_detail['posnr'];
                     $rem = $this->tout_model->U_grqty_web($base,$line);

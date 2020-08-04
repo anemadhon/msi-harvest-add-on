@@ -386,7 +386,6 @@
 				const approve = id_approve;
 				const remark= $('#remark').val();
 				const tbodyTable = $("#table-manajemen > tbody");
-				let item=[];
 				let matrial_no=[];
 				let detail_qty=[];
 				let matrialDesc =[];
@@ -402,7 +401,6 @@
 							validasi = false;
 					}
 
-					item.push(td.eq(1).find('input').val());
 					matrial_no.push(td.eq(2).text().trim());
 					matrialDesc.push(td.eq(3).text());
 					whsQty.push(td.eq(4).text());
@@ -422,7 +420,7 @@
 
 				setTimeout(() => {
 					$.post("<?php echo site_url('transaksi1/Transferoutinteroutlet/addDataUpdate')?>", {
-						idGistonew_out_header: id_gistonew_out_header, poNo: srEntry, poNo1: srEntry1, aapr:approve, Remark:remark, detMatrialNo: matrial_no, detMatrialDesc: matrialDesc, detOutQty:out_qty, detQty: qty, detUom: uom, detUomReg:uom_reg, detWhsQty: whsQty, detposnr: item
+						idGistonew_out_header: id_gistonew_out_header, poNo: srEntry, poNo1: srEntry1, aapr:approve, Remark:remark, detMatrialNo: matrial_no, detMatrialDesc: matrialDesc, detOutQty:out_qty, detQty: qty, detUom: uom, detUomReg:uom_reg, detWhsQty: whsQty
 					}, function(){
 						$('#load').hide();
 					})
