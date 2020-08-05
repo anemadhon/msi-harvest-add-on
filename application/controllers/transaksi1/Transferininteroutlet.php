@@ -104,7 +104,7 @@ class Transferininteroutlet extends CI_Controller {
 		if($data['do_nos'] !== FALSE) {
 			$object['do_no'][0] = '';
 			foreach ($data['do_nos'] as $do_no) {
-				$object['do_no'][$do_no['EBELN']] = $do_no['EBELN1'].' - '.$do_no['SPLANT_NAME'];
+				$object['do_no'][$do_no['EBELN'].'_'.$do_no['MBLNR']] = $do_no['EBELN1'].' ('.$do_no['MBLNR1'].' ) - '.$do_no['SPLANT_NAME'];
 			}
         }
         $object['plant'] = $this->session->userdata['ADMIN']['plant'].' - '.$this->session->userdata['ADMIN']['plant_name'];

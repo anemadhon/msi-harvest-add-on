@@ -102,7 +102,7 @@
 											</div>
 											
 											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Store Room Request (SR) Number</label>
+												<label class="col-lg-3 col-form-label">Store Room Request (SR) Number (TF Out Number)</label>
 												<div class="col-lg-9">
 													<select class="form-control form-control-select2" data-live-search="true"
 													name="srEntry" id="srEntry" onchange="getDataHeader(this.value)">
@@ -370,8 +370,8 @@
 				const requestResponLong= document.getElementById('srEntry');
 				const rrText = requestResponLong.options[requestResponLong.selectedIndex].text;
 				const rrArr = rrText.split(' - ');
-				const requestRespon1 = rrArr[0];
-				const requestRespon= document.getElementById('srEntry').value;
+				const requestRespon1 = rrArr[0].split(' ');
+				const requestRespon= document.getElementById('srEntry').value.split('_');
 				const tranferOutNumb = document.getElementById('toNumb').value;
 				const tranferOutNumb1 = document.getElementById('toNumb1').value;
 				const outlet = document.getElementById('outlet').value;
@@ -416,7 +416,7 @@
 
 				setTimeout(() => {
 					$.post("<?php echo site_url('transaksi1/transferininteroutlet/addData')?>", {
-						reqRes: requestRespon, reqRes1: requestRespon1, toNumb: tranferOutNumb, toNumb1: tranferOutNumb1, storageLoc: storageLocation, plant:outlet, matGrp: matrialGroup, stts: status, Rto:rto, delivDate:DelivDate, pstDate: postingDate, detMatrialNo: matrialNo, appr: approve, detMatrialDesc: matrialDesc, detsrQty: srQty, detOutStdQty: outStdQty, detQty: qty, detUom: uom, detposnr: item
+						reqRes: requestRespon[0], reqRes1: requestRespon1[0], toNumb: tranferOutNumb, toNumb1: tranferOutNumb1, storageLoc: storageLocation, plant:outlet, matGrp: matrialGroup, stts: status, Rto:rto, delivDate:DelivDate, pstDate: postingDate, detMatrialNo: matrialNo, appr: approve, detMatrialDesc: matrialDesc, detsrQty: srQty, detOutStdQty: outStdQty, detQty: qty, detUom: uom, detposnr: item
 					}, function(){
 						$('#load').hide();
 					})
