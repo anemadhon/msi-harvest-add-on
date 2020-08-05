@@ -360,13 +360,13 @@
 			}
 
 			function addDatadb(id_approve=''){
-				if($('.qty').val() ==''){
+				if($('.qty').val().trim() ==''){
 					alert('Quatity harus di isi');
 					
 					return false;
 				}
 
-				if($('#postingDate').val() ==''){
+				if($('#postingDate').val().trim() ==''){
 					alert('Tanggal Posting harus di isi');
 					return false;
 				}
@@ -395,7 +395,7 @@
 				tbodyTable.find('tr').each(function(i, el){
 					let td = $(this).find('td');
 
-					if(parseInt(td.eq(6).find('input').val(),10) > parseFloat(td.eq(5).text()) || parseInt(td.eq(6).find('input').val(),10) > parseFloat(td.eq(4).text())){
+					if(parseInt(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(5).text()) || parseInt(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
 						dataValidasi.push(td.eq(2).text());
 						validasi = false;
 					}

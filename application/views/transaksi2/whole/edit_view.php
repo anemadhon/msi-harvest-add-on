@@ -372,7 +372,7 @@
 		function addDatadb(id_approve=''){
 			let vol = parseFloat($('#volume').val());
 			let potong = parseFloat($('#potong').text());
-			if($('.qty').val() ==''){
+			if($('.qty').val().trim() ==''){
 				alert('Quantity harus di isi');
 				return false;
 			}

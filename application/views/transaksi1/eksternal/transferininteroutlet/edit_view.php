@@ -384,7 +384,7 @@
 			}
 
 			function addDatadb(id_approve=''){
-				if($('.gr_qty').val() ==''){
+				if($('.gr_qty').val().trim() ==''){
 					alert('Gr Quatity harus di isi');
 					return false;
 				}
@@ -403,7 +403,7 @@
 				let validasi = true;
 				tbodyTable.find('tr').each(function(i,el){
 					let td = $(this).find('td');
-					if(parseInt(td.eq(6).find('input').val(),10) > parseFloat(td.eq(5).text())){
+					if(parseInt(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(5).text())){
 							validasi = false;
 					}
 					matrial_no.push(td.eq(2).text().trim());

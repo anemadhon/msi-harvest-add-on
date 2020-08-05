@@ -375,7 +375,7 @@
 		}
 
 		function addDatadb(id_approve=''){
-			if($('#remark').val() ==''){
+			if($('#remark').val().trim() ==''){
 				alert('Remark harus di isi');
 				return false;
 			}
@@ -397,14 +397,14 @@
 			let dataValidasi = [];
 			tbodyTable.find('tr').each(function(i, el){
 				let td = $(this).find('td');
-				if(td.eq(5).find('input').val() == ''){
+				if(td.eq(5).find('input').val().trim() == ''){
 					validasi = false;
 				}
-				if(parseInt(td.eq(5).find('input').val(),10) > parseFloat(td.eq(4).text())){
+				if(parseInt(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
 					dataValidasi.push(td.eq(2).text());
 					validasiQty = false;
 				}	
-				if(td.eq(7).find('select').val() == ''){
+				if(td.eq(7).find('select').val().trim() == ''){
 					validasiReasson = false;
 				}
 				matrialNo.push(td.eq(2).text()); 

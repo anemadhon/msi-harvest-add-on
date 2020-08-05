@@ -315,7 +315,7 @@
 		});
 
 		function addDatadb(id_approve=''){
-			if($('#postDate').val() ==''){
+			if($('#postDate').val().trim() ==''){
 				alert('Tanggal Posting harus di isi');
 				return false;
 			}

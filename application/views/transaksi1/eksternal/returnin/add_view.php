@@ -327,12 +327,12 @@
 			}
 
 			function addDatadb(id_approve = ''){
-				if($('.gr_qty').val() ==''){
+				if($('.gr_qty').val().trim() ==''){
 					alert('Gr Quatity harus di isi');
 					return false;
 				}
 
-				if($('#postingDate').val() ==''){
+				if($('#postingDate').val().trim() ==''){
 					alert('Tanggal Posting harus di isi');
 					return false;
 				}

@@ -410,14 +410,14 @@
 
 			tbodyTable.find('tr').each(function(i, el){
 				let td = $(this).find('td');	
-				if(td.eq(7).find('input').val() == ''){
+				if(td.eq(7).find('input').val().trim() == ''){
 					validasiReasson = false;
 				}
-				if (parseFloat(td.eq(4).text()) < parseFloat(td.eq(5).find('input').val())) {
+				if (parseFloat(td.eq(4).text()) < parseFloat(td.eq(5).find('input').val().trim())) {
 					dataItem.push(td.eq(2).text());
 					validasi = false;
 				}
-				if (td.eq(5).find('input').val()=='') {
+				if (td.eq(5).find('input').val().trim() =='') {
 					dataItem.push(td.eq(2).text());
 					validasiQty = false;
 				}

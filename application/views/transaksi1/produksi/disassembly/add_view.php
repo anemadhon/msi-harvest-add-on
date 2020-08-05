@@ -418,7 +418,7 @@
 		}
 
 		function addDatadb(id_approve = ''){
-			if($('#postDate').val() ==''){
+			if($('#postDate').val().trim() ==''){
 				alert('Posting date harus di isi');
 				return false;
 			}
@@ -443,7 +443,7 @@
 			let validasi = true;
 			table.find('tr').each(function(i, el){
 				let td = $(this).find('td');
-				if(td.eq(4).find('input').val() == ''){
+				if(td.eq(4).find('input').val().trim() == ''){
 						validasi = false;
 					}
 				matrialNo.push(td.eq(1).text()); 

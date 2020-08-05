@@ -404,16 +404,16 @@
 		function addDatadb(id_approve=''){
 			let vol = parseFloat($('#volume').val());
 			let potong = parseFloat($('#potong').text());
-			if($('#qty').val() == ''){
+			if($('#qty').val().trim() == ''){
 				alert('Quantity Header Harus Diisi')
 				return false
 			}
-			if($('.qty').val() ==''){
+			if($('.qty').val().trim() ==''){
 				alert('Quantity harus di isi');
 				return false;
 			}
 
-			if($('#postDate').val() ==''){
+			if($('#postDate').val().trim() ==''){
 				alert('Tanggal Posting harus di isi');
 				return false;
 			}

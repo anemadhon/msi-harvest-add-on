@@ -412,7 +412,7 @@
 			let validasi = true;
 			tbodyTable.find('tr').each(function(i, el){
 				let td = $(this).find('td');
-				if(td.eq(4).find('input').val() == ''){
+				if(td.eq(4).find('input').val().trim() == ''){
 					validasi = false;
 				}	
 				matrialNo.push(td.eq(2).text()); 

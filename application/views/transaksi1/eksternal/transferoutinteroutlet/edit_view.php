@@ -375,7 +375,7 @@
 			}
 
 			function addDatadb(id_approve=''){
-				if($('.qty').val() ==''){
+				if($('.qty').val().trim() ==''){
 					alert('Quatity harus di isi');
 					return false;
 				}
@@ -397,7 +397,7 @@
 				let validasi = true;
 				tbodyTable.find('tr').each(function(i,el){
 					let td = $(this).find('td');
-					if(parseInt(td.eq(6).find('input').val(),10) > parseFloat(td.eq(5).text())){
+					if(parseInt(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(5).text())){
 							validasi = false;
 					}
 

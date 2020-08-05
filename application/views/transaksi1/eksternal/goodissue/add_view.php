@@ -375,15 +375,15 @@
 		}
 
 		function addData(id_approve=''){
-			if($('#postDate').val() ==''){
+			if($('#postDate').val().trim() ==''){
 				alert('Tanggal Posting harus di isi');
 				return false;
 			}
-			if($('#txtIssue').val() ==''){
+			if($('#txtIssue').val().trim() ==''){
 				alert('Issue Note harus di isi');
 				return false;
 			}
-			if($('.cv').val() ==''){
+			if($('.cv').val().trim() ==''){
 				alert('Quatity harus di isi');
 				return false;
 			}
@@ -408,14 +408,14 @@
 
 			tbodyTable.find('tr').each(function(i, el){
 				let td = $(this).find('td');	
-				if(td.eq(7).find('input').val() == ''){
+				if(td.eq(7).find('input').val().trim() == ''){
 					validasiReasson = false;
 				}
 				matrialNo.push(td.eq(2).find('select').val()); 
 				matrialDesc.push(td.eq(3).text());
 				stock.push(td.eq(4).text());
 				qty.push(td.eq(5).find('input').val());
-				if (parseFloat(td.eq(4).text()) < parseFloat(td.eq(5).find('input').val())) {
+				if (parseFloat(td.eq(4).text()) < parseFloat(td.eq(5).find('input').val().trim())) {
 					dataItem.push(td.eq(2).find('select').val());
 					validasi = false;
 				}

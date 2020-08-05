@@ -332,12 +332,12 @@
 			}
 
 			function addDatadb(id_approve = ''){
-				if($('#grOutstanding').val() ==''){
+				if($('#grOutstanding').val().trim() ==''){
 					alert('Gr Quatity harus di isi');
 					return false;
 				}
 
-				if($('#postingDate').val() ==''){
+				if($('#postingDate').val().trim() ==''){
 					alert('Posting Date harus di isi');
 					return false;
 				}
@@ -383,10 +383,10 @@
 				let validasiQty = true;
 				table.find('tr').each(function(i, el){
 					let td = $(this).find('td');
-					if(td.eq(6).find('input').val() == ''){
+					if(td.eq(6).find('input').val().trim() == ''){
 						validasiRemark = false;
 					}
-					if(parseInt(td.eq(4).find('input').val(),10) > parseFloat(td.eq(3).text())){
+					if(parseInt(td.eq(4).find('input').val().trim(),10) > parseFloat(td.eq(3).text())){
 							validasiQty = false;
 						}
 					grQty.push(td.eq(4).find('input').val());

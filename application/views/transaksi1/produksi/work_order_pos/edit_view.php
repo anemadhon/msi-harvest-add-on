@@ -366,7 +366,7 @@
 				table.find('tr').each(function(i, el){
 					let td = $(this).find('td');
 					
-					if(parseInt(td.eq(4).find('input').val(),10) > parseFloat(td.eq(6).text())){
+					if(parseInt(td.eq(4).find('input').val().trim(),10) > parseFloat(td.eq(6).text())){
 						dataValidasi.push(td.eq(2).text());
 						validasiQty = false;
 					}

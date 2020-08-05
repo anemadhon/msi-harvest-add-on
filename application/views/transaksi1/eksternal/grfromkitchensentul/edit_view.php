@@ -422,7 +422,7 @@
 					
 					let td = $(this).find('td');
 
-					if(parseFloat(td.eq(5).find('input').val()) > parseFloat(td.eq(4).text())){
+					if(parseFloat(td.eq(5).find('input').val().trim()) > parseFloat(td.eq(4).text())){
 						validasi = false;
 					}
 					

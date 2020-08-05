@@ -395,22 +395,22 @@
 		}
 
 		function addDatadb(id_approve=''){
-			if($('.qty').val() ==''){
+			if($('.qty').val().trim() ==''){
 				alert('Quantity harus di isi');
 				return false;
 			}
 
-			if($('#createdDate').val() ==''){
+			if($('#createdDate').val().trim() ==''){
 				alert('Tanggal Posting harus di isi');
 				return false;
 			}
 
-			if($('#deliveDate').val() ==''){
+			if($('#deliveDate').val().trim() ==''){
 				alert('Tanggal Delivery harus di isi');
 				return false;
 			}
 
-			if($('#remark').val() ==''){
+			if($('#remark').val().trim() ==''){
 				alert('Remark harus di isi');
 				return false;
 			}
@@ -430,7 +430,7 @@
 			let validateQty = true;
 			tbodyTable.find('tr').each(function(i, el){
 					let td = $(this).find('td');
-					if(td.eq(4).find('input').val() == '' || td.eq(4).find('input').val() == null){
+					if(td.eq(4).find('input').val().trim() == '' || td.eq(4).find('input').val().trim() == null){
 						validateQty = false
 					}
 					matrialNo.push(td.eq(2).find('select').val()); 
