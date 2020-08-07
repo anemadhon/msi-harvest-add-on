@@ -384,15 +384,28 @@
 			}
 
 			function addDatadb(id_approve=''){
-				if($('.gr_qty').val().trim() ==''){
-					alert('Gr Quatity harus di isi');
-					return false;
-				}
 				const id_grsto_header = $('#id_grsto_header').val();
 				const srEntry = $('#srEntry').val();
 				const srEntry1 = $('#srEntry1').val();
 				const approve = id_approve;
 				const postingDate= document.getElementById('postingDate').value;
+				const DelivDate = document.getElementById('deliveryDate').value;
+
+				splitDate = postingDate.split('-');
+				dayPostingDate = splitDate[0];
+				monthPostingDate = splitDate[1];
+				yearPostingDate = splitDate[2];
+				posDate= `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+
+				splitdelvDate = DelivDate.split('-');
+				dayDeliveryDate = splitdelvDate[0];
+				monthDeliveryDate = splitdelvDate[1];
+				yearDeliveryDate = splitdelvDate[2];
+				delDate= `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+
+				datePosting = new Date(posDate);
+				deliverDate = new Date(delDate);
+
 				const tbodyTable = $("#table-manajemen > tbody");
 				let matrial_no=[];
 				let matrialDesc =[];
@@ -400,11 +413,32 @@
 				let tfQty =[];
 				let grQty =[];
 				let uom =[];
-				let validasi = true;
+				let dataValidasiQty = [];
+				let dataValidasiLessQty = [];
+				let dataValidasiEmptyQty = [];
+				let errorMesseges = [];
+				let validasiQty = true;
+				let validasiLessQty = true;
+				let validasiEmptyQty = true;
 				tbodyTable.find('tr').each(function(i,el){
 					let td = $(this).find('td');
-					if(parseInt(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(5).text())){
-							validasi = false;
+					if(td.eq(6).find('input').val().trim() == ''){
+						dataValidasiEmptyQty.push(td.eq(2).text());
+						validasiEmptyQty = false;
+					}
+					if(parseFloat(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(5).text())){
+						dataValidasiQty.push(td.eq(2).text());
+						validasiQty = false;
+						td.eq(6).removeClass();
+						td.eq(6).addClass('bg-danger');
+					} else if (parseFloat(td.eq(6).find('input').val().trim(),10) < parseFloat(td.eq(5).text())){
+						dataValidasiLessQty.push(td.eq(2).text());
+						validasiLessQty = false;
+						td.eq(6).removeClass();
+						td.eq(6).addClass('bg-warning');
+					} else if (parseFloat(td.eq(6).find('input').val().trim(),10) === parseFloat(td.eq(5).text())){
+						td.eq(6).removeClass();
+						td.eq(6).addClass('bg-success');
 					}
 					matrial_no.push(td.eq(2).text().trim());
 					matrialDesc.push(td.eq(3).text());
@@ -413,10 +447,34 @@
 					grQty.push(td.eq(6).find('input').val());
 					uom.push(td.eq(7).text());
 				})
-				if(!validasi){
-					alert('Quatity Tidak boleh lebih besar dari Quantity Gudang');
+				
+				// validasi
+				if(!validasiEmptyQty){
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+				}
+				if(datePosting > deliverDate){
+					errorMesseges.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
+				}
+				if(!validasiQty){
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiQty.join()} Tidak boleh lebih besar dari Tf Quantity. \n`);
+				}
+				if (errorMesseges.length > 0) {
+					alert(errorMesseges.join(''));
+					if(!validasiLessQty){
+						let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Tf Quantity, anda yakin ingin melanjutkan ?`);
+						if (!confirmNext) {
+							return false;
+						}
+					}
 					return false;
 				}
+				if(!validasiLessQty){
+					let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Tf Quantity, anda yakin ingin melanjutkan ?`);
+					if (!confirmNext) {
+						return false;
+					}
+				}
+				// validasi
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');

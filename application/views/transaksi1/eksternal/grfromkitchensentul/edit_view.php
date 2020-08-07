@@ -416,14 +416,35 @@
 				table = $('#tblWhole > tbody');
 
 				let grDetail=[];
-				let validasi = true;
+				let dataValidasiQty = [];
+				let dataValidasiLessQty = [];
+				let dataValidasiEmptyQty = [];
+				let errorMesseges = [];
+				let validasiQty = true;
+				let validasiLessQty = true;
+				let validasiEmptyQty = true;
 				let remark = $('#remark').val();
 				table.find('tr').each(function(i, el){
 					
 					let td = $(this).find('td');
 
-					if(parseFloat(td.eq(5).find('input').val().trim()) > parseFloat(td.eq(4).text())){
-						validasi = false;
+					if(td.eq(5).find('input').val().trim() == ''){
+						dataValidasiEmptyQty.push(td.eq(1).text());
+						validasiEmptyQty = false;
+					}
+					if(parseFloat(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
+						dataValidasiQty.push(td.eq(1).text());
+						validasiQty = false;
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-danger');
+					} else if (parseFloat(td.eq(5).find('input').val().trim(),10) < parseFloat(td.eq(4).text())){
+						dataValidasiLessQty.push(td.eq(1).text());
+						validasiLessQty = false;
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-warning');
+					} else if (parseFloat(td.eq(5).find('input').val().trim(),10) === parseFloat(td.eq(4).text())){
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-success');
 					}
 					
 					const det = {
@@ -433,10 +454,33 @@
 					grDetail.push(det);
 				})
 
-				if(!validasi){
-					alert('Quatity Tidak boleh lebih besar dari TF Quantity');
+				// validasi
+				if(remark.trim() ==''){
+					errorMesseges.push('Remark harus di isi. \n');
+				}
+				if(!validasiEmptyQty){
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+				}
+				if(!validasiQty){
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiQty.join()} Tidak boleh lebih besar dari Tf Quantity. \n`);
+				}
+				if (errorMesseges.length > 0) {
+					alert(errorMesseges.join(''));
+					if(!validasiLessQty){
+						let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Tf Quantity, anda yakin ingin melanjutkan ?`);
+						if (!confirmNext) {
+							return false;
+						}
+					}
 					return false;
 				}
+				if(!validasiLessQty){
+					let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Tf Quantity, anda yakin ingin melanjutkan ?`);
+					if (!confirmNext) {
+						return false;
+					}
+				}
+				// validasi
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');

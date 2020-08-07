@@ -315,13 +315,6 @@
 			});
 
 			function btnSave(id_approve=''){
-				if ($('#postingDate').val().trim()=='') {
-					alert('Posting Date Harus di Isi');
-					return false;
-				}
-				document.getElementById("btnSubmitOnclick").disabled = true;
-				document.getElementById("btnSubmitOnclick2").disabled = true;
-				
 				const donoLong= document.getElementById('slipNumberEntry');
 				const Text = donoLong.options[donoLong.selectedIndex].text;
 				const Arr = Text.split(' - ');
@@ -340,18 +333,53 @@
 					to_plant: document.getElementById('to_plant').value
 				}
 
+				splitDate = grHeader.posting_date.split('-');
+				dayPostingDate = splitDate[0];
+				monthPostingDate = splitDate[1];
+				yearPostingDate = splitDate[2];
+				posDate= `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+
+				splitdelvDate = grHeader.delivery_date.split('-');
+				dayDeliveryDate = splitdelvDate[2];
+				monthDeliveryDate = splitdelvDate[1];
+				yearDeliveryDate = splitdelvDate[0];
+				delDate= `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+
+				postingDate = new Date(posDate);
+				deliverDate = new Date(delDate);
+
 				table = $('#tblWhole > tbody');
 
-				let grDetail=[];
 				let urut = 1;
 				let item = 0;
-				let validasi = true;
+				let grDetail=[];
+				let dataValidasiQty = [];
+				let dataValidasiLessQty = [];
+				let dataValidasiEmptyQty = [];
+				let errorMesseges = [];
+				let validasiQty = true;
+				let validasiLessQty = true;
+				let validasiEmptyQty = true;
 				table.find('tr').each(function(i, el){
 					
 					let td = $(this).find('td');
-
-					if(parseFloat(td.eq(5).find('input').val().trim()) > parseFloat(td.eq(4).text())){
-						validasi = false;
+					if(td.eq(5).find('input').val().trim() == ''){
+						dataValidasiEmptyQty.push(td.eq(1).text());
+						validasiEmptyQty = false;
+					}
+					if(parseFloat(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
+						dataValidasiQty.push(td.eq(1).text());
+						validasiQty = false;
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-danger');
+					} else if (parseFloat(td.eq(5).find('input').val().trim(),10) < parseFloat(td.eq(4).text())){
+						dataValidasiLessQty.push(td.eq(1).text());
+						validasiLessQty = false;
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-warning');
+					} else if (parseFloat(td.eq(5).find('input').val().trim(),10) === parseFloat(td.eq(4).text())){
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-success');
 					}
 					
 					const det = {
@@ -368,11 +396,41 @@
 					urut++;
 					item++;
 					
-				})	
-				if(!validasi){
-					alert('Quatity Tidak boleh lebih besar dari TF Quantity');
+				})
+				
+				// validasi
+				if(grHeader.posting_date.trim() ==''){
+					errorMesseges.push('Posting Date harus di isi. \n');
+				}
+				if(grHeader.remark.trim() ==''){
+					errorMesseges.push('Remark harus di isi. \n');
+				}
+				if(!validasiEmptyQty){
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+				}
+				if(postingDate > deliverDate){
+					errorMesseges.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
+				}
+				if(!validasiQty){
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiQty.join()} Tidak boleh lebih besar dari Tf Quantity. \n`);
+				}
+				if (errorMesseges.length > 0) {
+					alert(errorMesseges.join(''));
+					if(!validasiLessQty){
+						let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Tf Quantity, anda yakin ingin melanjutkan ?`);
+						if (!confirmNext) {
+							return false;
+						}
+					}
 					return false;
 				}
+				if(!validasiLessQty){
+					let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Tf Quantity, anda yakin ingin melanjutkan ?`);
+					if (!confirmNext) {
+						return false;
+					}
+				}
+				// validasi
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');

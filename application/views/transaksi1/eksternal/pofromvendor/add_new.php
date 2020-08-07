@@ -332,16 +332,6 @@
 			}
 
 			function addDatadb(id_approve = ''){
-				if($('#grOutstanding').val().trim() ==''){
-					alert('Gr Quatity harus di isi');
-					return false;
-				}
-
-				if($('#postingDate').val().trim() ==''){
-					alert('Posting Date harus di isi');
-					return false;
-				}
-
 				poEntry 	= $('#poOrderEntry').val();
 				poNumber 	= $('#poOrderNumber').val();
 				kdVendor 	= $('#vendorCode').val();
@@ -370,36 +360,84 @@
 
 				postingDate = new Date(posDate);
 				deliverDate = new Date(delDate);
-				if(postingDate > deliverDate){
-					alert('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery');
-					return false;
-				}
 				
 				table = $('#table-manajemen > tbody');
 
 				let grQty=[];
 				let remark=[];
+				let dataValidasiQty = [];
+				let dataValidasiLessQty = [];
+				let dataValidasiEmptyQty = [];
+				let dataValidasiRemark = [];
+				let errorMesseges = [];
 				let validasiRemark = true;
 				let validasiQty = true;
+				let validasiLessQty = true;
+				let validasiEmptyQty = true;
+				let confirmNext;
 				table.find('tr').each(function(i, el){
 					let td = $(this).find('td');
+					if(td.eq(4).find('input').val().trim() == ''){
+						dataValidasiEmptyQty.push(td.eq(1).text());
+						validasiEmptyQty = false;
+					}
 					if(td.eq(6).find('input').val().trim() == ''){
+						dataValidasiRemark.push(td.eq(1).text());
 						validasiRemark = false;
 					}
-					if(parseInt(td.eq(4).find('input').val().trim(),10) > parseFloat(td.eq(3).text())){
-							validasiQty = false;
-						}
+					if(parseFloat(td.eq(4).find('input').val().trim(),10) > parseFloat(td.eq(3).text())){
+						dataValidasiQty.push(td.eq(1).text());
+						validasiQty = false;
+						td.eq(4).removeClass();
+						td.eq(4).addClass('bg-danger');
+					} else if (parseFloat(td.eq(4).find('input').val().trim(),10) < parseFloat(td.eq(3).text())){
+						dataValidasiLessQty.push(td.eq(1).text());
+						validasiLessQty = false;
+						td.eq(4).removeClass();
+						td.eq(4).addClass('bg-warning');
+					} else if (parseFloat(td.eq(4).find('input').val().trim(),10) === parseFloat(td.eq(3).text())){
+						td.eq(4).removeClass();
+						td.eq(4).addClass('bg-success');
+					}
 					grQty.push(td.eq(4).find('input').val());
 					remark.push(td.eq(6).find('input').val());	
 				})
+				// validasi
+				if(pstDate.trim() ==''){
+					errorMesseges.push('Posting Date harus di isi. \n');
+				}
+				if(remarkHead.trim() ==''){
+					errorMesseges.push('Remark harus di isi. \n');
+				}
+				if(!validasiEmptyQty){
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+				}
 				if(!validasiRemark){
-					alert('Remark Tidak boleh Kosong, Harap di isi');
-					return false;
+					errorMesseges.push(`Remark untuk Material No. : ${dataValidasiRemark.join()} Tidak boleh Kosong, Harap di isi. \n`);
+				}
+				if(postingDate > deliverDate){
+					errorMesseges.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
 				}
 				if(!validasiQty){
-					alert('Gr Quantity Tidak boleh lebih besar dari Outstanding quantity');
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiQty.join()} Tidak boleh lebih besar dari Outstanding Quantity. \n`);
+				}
+				if (errorMesseges.length > 0) {
+					alert(errorMesseges.join(''));
+					if(!validasiLessQty){
+						let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Outstanding Quantity, anda yakin ingin melanjutkan ?`);
+						if (!confirmNext) {
+							return false;
+						}
+					}
 					return false;
 				}
+				if(!validasiLessQty){
+					let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Outstanding Quantity, anda yakin ingin melanjutkan ?`);
+					if (!confirmNext) {
+						return false;
+					}
+				}
+				// validasi
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');

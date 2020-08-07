@@ -357,16 +357,6 @@
 			}
 
 			function addDatadb(id_approve=''){
-				if($('.gr_qty').val().trim() ==''){
-					alert('Gr Quatity harus di isi');
-					return false;
-				}
-
-				if($('#postingDate').val().trim() ==''){
-					alert('Tanggal Posting harus di isi');
-					return false;
-				}
-
 				const requestResponLong= document.getElementById('srEntry');
 				const rrText = requestResponLong.options[requestResponLong.selectedIndex].text;
 				const rrArr = rrText.split(' - ');
@@ -382,6 +372,22 @@
 				const DelivDate = document.getElementById('delivDate').value;
 				const postingDate= document.getElementById('postingDate').value;
 				const approve = id_approve;
+
+				splitDate = postingDate.split('-');
+				dayPostingDate = splitDate[0];
+				monthPostingDate = splitDate[1];
+				yearPostingDate = splitDate[2];
+				posDate= `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+
+				splitdelvDate = DelivDate.split('-');
+				dayDeliveryDate = splitdelvDate[0];
+				monthDeliveryDate = splitdelvDate[1];
+				yearDeliveryDate = splitdelvDate[2];
+				delDate= `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+
+				datePosting = new Date(posDate);
+				deliverDate = new Date(delDate);
+
 				const tbodyTable = $('#tblWhole > tbody');
 				let item = [];
 				let matrialNo =[];
@@ -390,26 +396,71 @@
 				let outStdQty = [];
 				let qty =[];
 				let uom =[];
-				let validasi = true;
+				let dataValidasiQty = [];
+				let dataValidasiLessQty = [];
+				let dataValidasiEmptyQty = [];
+				let errorMesseges = [];
+				let validasiQty = true;
+				let validasiLessQty = true;
+				let validasiEmptyQty = true;
 				tbodyTable.find('tr').each(function(i, el){
-						let td = $(this).find('td');
-						if(parseInt(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
-							validasi = false;
-						}
-						
-						item.push(td.eq(0).find('input').val());
-						matrialNo.push(td.eq(1).text()); 
-						matrialDesc.push(td.eq(2).text());
-						srQty.push(parseFloat(td.eq(3).text()));
-						outStdQty.push(parseFloat(td.eq(4).text()));
-						qty.push(parseInt(td.eq(5).find('input').val(),10));
-						uom.push(td.eq(6).text());
-					})
+					let td = $(this).find('td');
+					
+					if(td.eq(5).find('input').val().trim() == ''){
+						dataValidasiEmptyQty.push(td.eq(1).text());
+						validasiEmptyQty = false;
+					}
+					if(parseFloat(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
+						dataValidasiQty.push(td.eq(1).text());
+						validasiQty = false;
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-danger');
+					} else if (parseFloat(td.eq(5).find('input').val().trim(),10) < parseFloat(td.eq(4).text())){
+						dataValidasiLessQty.push(td.eq(1).text());
+						validasiLessQty = false;
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-warning');
+					} else if (parseFloat(td.eq(5).find('input').val().trim(),10) === parseFloat(td.eq(4).text())){
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-success');
+					}
+					
+					item.push(td.eq(0).find('input').val());
+					matrialNo.push(td.eq(1).text()); 
+					matrialDesc.push(td.eq(2).text());
+					srQty.push(parseFloat(td.eq(3).text()));
+					outStdQty.push(parseFloat(td.eq(4).text()));
+					qty.push(parseInt(td.eq(5).find('input').val(),10));
+					uom.push(td.eq(6).text());
+				})
 
-				if(!validasi){
-					alert('Quatity Tidak boleh lebih besar dari Quantity Gudang');
+				// validasi
+				if(!validasiEmptyQty){
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+				}
+				if(datePosting > deliverDate){
+					errorMesseges.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
+				}
+				if(!validasiQty){
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiQty.join()} Tidak boleh lebih besar dari Tf Quantity. \n`);
+				}
+				if (errorMesseges.length > 0) {
+					alert(errorMesseges.join(''));
+					if(!validasiLessQty){
+						let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Tf Quantity, anda yakin ingin melanjutkan ?`);
+						if (!confirmNext) {
+							return false;
+						}
+					}
 					return false;
 				}
+				if(!validasiLessQty){
+					let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Tf Quantity, anda yakin ingin melanjutkan ?`);
+					if (!confirmNext) {
+						return false;
+					}
+				}
+				// validasi
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');
