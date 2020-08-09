@@ -2,23 +2,6 @@
 
 class Returnin_model extends CI_Model {
 
-    function freeze(){
-      $kd_plant = $this->session->userdata['ADMIN']['plant'];
-      $this->db->select('freeze, am_approved, rm_approved');
-      $this->db->from('t_opname_header');
-      $this->db->where('plant',$kd_plant);
-      $this->db->order_by('id_opname_header','desc');
-      $this->db->limit(1);
-      
-      $query = $this->db->get();
-
-      if(($query)&&($query->num_rows() > 0)){
-        return $query->row_array();
-      }else{
-        return FALSE;
-      }
-    }
-
     public function getDataReturnIn_Header($fromDate='', $toDate='', $status=''){
         $kd_plant = $this->session->userdata['ADMIN']['plant'];
         $this->db->select('*, (select DISTINCT ok_cancel from t_retin_detail where id_retin_header = t_retin_header.id_retin_header) ok_cancel, (SELECT admin_realname FROM d_admin WHERE admin_id = t_retin_header.id_user_input) AS user_input, (SELECT admin_realname FROM d_admin WHERE admin_id = t_retin_header.id_user_approved) AS user_approved');

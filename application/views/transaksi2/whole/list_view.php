@@ -47,20 +47,14 @@
                         </div>                        
                     </div> 
                     <?php
-                    if ($opname_header['freeze']){
-                        $freeze = $opname_header['freeze']['freeze'];
-                        $am = $opname_header['freeze']['am_approved'];
-                        $rm = $opname_header['freeze']['rm_approved'];
-                    } else {
-                        $freeze = 'N';
-                        $am = 0;
-                        $rm = 0;
-                    }
+                    $isFreeze = $this->auth->is_freeze()['is_freeze'];
+                    $isReject = $this->auth->is_freeze()['is_reject'];
+                    $isMgr = $this->auth->is_freeze()['is_mgr'];
                     ?>
                     <div class="card">
                         <div class="card-header">
                             <legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List of Cake Cutting</legend>
-                            <?php if ($freeze=='N' && !$opname_header['ids']):?>
+                            <?php if (($isFreeze == 0 && $isMgr == 0) || $isReject == 1):?>
                             <a href="<?php echo site_url('transaksi2/whole/add') ?>" class="btn btn-primary"> Add New</a>
                             <input type="button" value="Delete" class="btn btn-danger" id="deleteRecord">  
                             <?php endif; ?>
@@ -182,10 +176,8 @@
 
                 const status = $('#status').val();
 
-                let freeze = '<?php echo $freeze; ?>';
-                let am = '<?php echo $am; ?>';
-                let rm = '<?php echo $rm; ?>';
-                let ids = '<?php echo $opname_header['ids']; ?>';
+                let freeze = '<?php echo $isFreeze; ?>';
+                let reject = '<?php echo $isReject; ?>'; 
 
                 dataTable = $('#tableWhole').DataTable({
                     "ordering":true,  "paging": true, "searching":true,
@@ -201,7 +193,7 @@
                             return rr;
                         }},
                         {"data":"id_twtsnew_header", "className":"dt-center", render:function(data, type, row, meta){
-                            rr = freeze=='N' || ids || am==1 || rm==1 ? `<a href='<?php echo site_url('transaksi2/whole/edit/')?>${data}'><i class='icon-file-plus2' title="Edit"></i></a>` : '';
+                            rr = freeze == 0 || reject == 1 ? `<a href='<?php echo site_url('transaksi2/whole/edit/')?>${data}'><i class='icon-file-plus2' title="Edit"></i></a>` : '';
                             return rr;
                         }},
                         {"data":"id_twtsnew_header", "className":"dt-center"},

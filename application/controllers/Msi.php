@@ -14,22 +14,9 @@ class Msi extends CI_Controller {
         
 		// load model
 		$this->load->model('dashboard_model', 'dash_model');
-		$this->load->model('transaksi1/stock_model', 'st_model');
 	}
 
 	public function dashboard(){
-		
-		$object['opname_header']['freeze'] = $this->st_model->freeze();
-        $arr_ids = explode(", ",$this->session->userdata['ADMIN']['admin_perm_grup_ids']);
-        $ids = '';
-        foreach($arr_ids as $val){
-            if($val == 14){
-                $ids = $val;
-            }elseif($val == 10064){
-                $ids = $val;
-            }
-        }
-        $object['opname_header']['ids'] = $ids;
 		
 		$object['tglterkini'] = date("j M Y",strtotime($this->dash_model->posting_date_select_max()));
 

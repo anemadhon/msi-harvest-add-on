@@ -9,11 +9,9 @@
 		}
 	}
 
-	if ($opname_header['freeze']){
-		$freeze = $opname_header['freeze']['freeze'];
-	} else {
-		$freeze = 'N';
-	}
+	$isFreeze = $this->auth->is_freeze()['is_freeze'];
+	$isReject = $this->auth->is_freeze()['is_reject'];
+	$isMgr = $this->auth->is_freeze()['is_mgr'];
 ?>
 <html lang="en">
 	<head>
@@ -59,7 +57,7 @@
 											<?php for($i=101; $i<=104; $i++):?>
 											<tr>
 												<td>
-												<?php if ($freeze=='N' && !$opname_header['ids']):?>
+												<?php if (($isFreeze == 0 && $isMgr == 0) || $isReject == 1):?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url($link[$i])?>" class="font-size-sm mr-1"><?=$nama[$i]?> </a> 
 												<?php else: ?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><span><?=$nama[$i]?> </span> 
@@ -73,7 +71,7 @@
 											<?php endfor;?>
 											<tr>
 												<td>
-												<?php if ($freeze=='N' && !$opname_header['ids']):?>
+												<?php if (($isFreeze == 0 && $isMgr == 0) || $isReject == 1):?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url($link[105])?>" class="font-size-sm mr-1"><?=$nama[105]?> </a> 
 												<?php else: ?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><span><?=$nama[105]?> </span>

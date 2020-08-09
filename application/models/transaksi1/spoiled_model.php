@@ -2,23 +2,6 @@
 
 class Spoiled_model extends CI_Model {
 
-    function freeze(){
-        $kd_plant = $this->session->userdata['ADMIN']['plant'];
-        $this->db->select('freeze, am_approved, rm_approved');
-        $this->db->from('t_opname_header');
-        $this->db->where('plant',$kd_plant);
-        $this->db->order_by('id_opname_header','desc');
-        $this->db->limit(1);
-        
-        $query = $this->db->get();
-    
-        if(($query)&&($query->num_rows() > 0)){
-          return $query->row_array();
-        }else{
-          return FALSE;
-        }
-    }
-  
     function t_waste_header($fromDate, $toDate, $status){
         $kd_plant = $this->session->userdata['ADMIN']['plant'];
         $this->db->select('t_waste_header.*,(select admin_realname from d_admin where admin_id = t_waste_header.id_user_input) as user_input, (select admin_realname from d_admin where admin_id = t_waste_header.id_user_approved) as user_approved ');

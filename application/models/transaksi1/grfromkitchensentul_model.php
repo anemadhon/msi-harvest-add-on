@@ -7,23 +7,6 @@ class Grfromkitchensentul_model extends CI_Model {
     $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
   }
 
-  function freeze(){
-    $kd_plant = $this->session->userdata['ADMIN']['plant'];
-    $this->db->select('freeze, am_approved, rm_approved');
-    $this->db->from('t_opname_header');
-    $this->db->where('plant',$kd_plant);
-    $this->db->order_by('id_opname_header','desc');
-    $this->db->limit(1);
-    
-    $query = $this->db->get();
-
-    if(($query)&&($query->num_rows() > 0)){
-      return $query->row_array();
-    }else{
-      return FALSE;
-    }
-  }
-
   public function getDataPoKitchen_Header($fromDate,$toDate,$status){
     $kd_plant = $this->session->userdata['ADMIN']['plant'];
       $this->db->from('t_grpodlv_header');

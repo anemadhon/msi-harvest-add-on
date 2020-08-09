@@ -13,22 +13,10 @@ class Spoiled extends CI_Controller{
 
         // load model
         $this->load->model('transaksi1/spoiled_model', 'spol_model');
-        $this->load->model('transaksi1/stock_model', 'st_model');
     }
 
     public function index(){
-        $object['opname_header']['freeze'] = $this->st_model->freeze();
-        $arr_ids = explode(", ",$this->session->userdata['ADMIN']['admin_perm_grup_ids']);
-        $ids = '';
-        foreach($arr_ids as $val){
-            if($val == 14){
-                $ids = $val;
-            }elseif($val == 10064){
-                $ids = $val;
-            }
-        }
-        $object['opname_header']['ids'] = $ids;
-        $this->load->view('transaksi1/stock_outlet/spoiled/list_view', $object);
+        $this->load->view('transaksi1/stock_outlet/spoiled/list_view');
     }
 
     public function showAllData(){
