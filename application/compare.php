@@ -1,160 +1,166 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
+    $this->DB_SAP = $this->load->database('SAP_MSI', TRUE);
+    foreach($data->result() as $row)
 
-class Dashboard_Model extends CI_Model{
+    $plant=$row->plant;
+    $doc=$row->do_no;
+    $remark = $row->remark;
 
-    function __construct(){
-        parent::__construct(); 
+    $this->DB_SAP->select('WhsName,City');
+    $this->DB_SAP->from('OWHS');
+    $this->DB_SAP->where('WhsCode',$plant);
+
+    $query = $this->DB_SAP->get();
+    $result = $query->result_array();
+
+    if (empty($result)) {
+        $reck='NAMA PLANT (DEFAULT)';
+        $reck_loc='LOKASI PLANT (DEFAULT)';
+    } else {
+        $reck=$result[0]['WhsName'];
+        $reck_loc=$result[0]['City'];
     }
+?>
 
-    function freeze(){
-        $kd_plant = $this->session->userdata['ADMIN']['plant'];
-        $this->db->select('status, freeze, am_approved, rm_approved');
-        $this->db->from('t_opname_header');
-        $this->db->where('plant',$kd_plant);
-        $this->db->order_by('id_opname_header','desc');
-        $this->db->limit(1);
-        
-        $query = $this->db->get();
-    
-        if(($query)&&($query->num_rows() > 0)){
-          return $query->row_array();
-        }else{
-          return FALSE;
-        }
+<style type="text/css">
+
+.style5 {font-size: 10px}
+.style7 {
+	font-size: 28px;
+	font-weight: bold;
+}
+.style8 {
+  font-size: 9px;
+  margin-left:100px;
+}
+.style10 {font-size: 24px}
+.style12 {font-size: 18px}
+.head {font-size:13px}
+.m {margin:10px 10px 0 20px}
+.space {margin:10px 10px 15px 20px}
+
+</style>
+
+<table width="300"  align="center">
+  <tr>
+    <td width="350">
+      <img src="<?php echo base_url('/files/');?>assets/images/logo.jpeg" alt="logo-harvest" width="270">
+    </td>
+    <td colspan="2" align="center"><span class="style7">GR From CK SENTUL</span></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td colspan="2" align="center">&nbsp;</td>
+  </tr>
+  <tr>
+    <td><strong>PT. Mount Scopus Indonesia</strong></td>
+    <td>Transfer Slip No.</td>
+    <td>:&nbsp;<?php echo '';?></td>
+  </tr>
+  <tr>
+    <td>Plaza Simatupang Lt. 8 - 9</td>
+    <td>Request No.</td>
+    <td>:&nbsp;<?php echo $row->do_no1;?></td>
+  </tr>
+  <tr>
+    <td>Jl. T.B. Simatupang Kav 1S-1</td>
+    <td>Good Receipt No.</td>
+    <td>:&nbsp;<?php echo $row->grpodlv_no1;?></td>
+  </tr>
+  <tr>
+    <td>Jakarta Selatan, 12310, Indonesia</td>
+    <td>Date</td>
+    <td>:&nbsp;<?php echo $row->posting_date;?></td>
+  </tr>
+  <tr>
+    <td>Ph. +62 21 726 06680 / Fax. +62 21 727 971 59</td>
+    <td>Delivery Date</td>
+    <td>:&nbsp;<?php echo $row->lastmodified;?></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>Delivery</td>
+    <td>:&nbsp;<strong><?php echo $reck;?></strong></td>
+  </tr>
+</table>
+
+<p>&nbsp;</p>
+<table style="border-collapse:collapse;" width="450" border="1" align="center">
+    <tr class="head">
+        <td width="20" align="center"><strong>No.</strong></td>
+        <td width="70" align="center"><strong>Item Code</strong></td>
+        <td width="50" align="center"><strong>Description</strong></td>
+        <td width="30" align="center"><strong>UOM</strong></td>
+        <td width="70" align="center"><strong>SR QTY</strong></td>
+        <td width="60" align="center"><strong>TF QTY</strong></td>
+        <td width="60" align="center"><strong>GR QTY</strong></td>
+        <td width="60" align="center"><strong>Variance</strong></td>
+    </tr>
+    <?php 
+        $no=1;
+        $loop = count($data->result_array());
+        foreach($data->result() as $row1) {
+            $tf_qty=$row1->Tf_Qty;
+            $sr_qty=$row1->Sr_Qty; 
+            $gr_qty=$row1->gr_quantity;
+    ?>
+    <tr>
+        <td align="center" height="25"><?php echo $no++;?></td>
+        <td align="center"><?php echo $row1->material_no;?></td>
+        <td>
+        <div style="width:300px;">   
+        <?php 
+        $desc=$row1->material_desc ? $row1->material_desc : '';
+        echo $desc; 
+        ?>
+        </div>
+        </td>
+        <td align="center"><?php echo $row1->uom;?></td>
+        <td align="right"><?php echo number_format($sr_qty,2,'.','');?></td>
+        <td align="right"><?php echo number_format($tf_qty,2,'.','');?></td>
+        <td align="right"><?php echo number_format($gr_qty,2,'.','');?></td>
+        <td align="right"><?php echo number_format(0,2,'.','');?></td>
+    </tr>
+    <?php 
     }
-
-    function getCountPOVendor(){
-        $kd_plant = $this->session->userdata['ADMIN']['plant'];
-        $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-        
-        $SAP_MSI->select('COUNT(DISTINCT POR1.DocEntry) as Total');
-        $SAP_MSI->from('POR1');
-        $SAP_MSI->join('OPOR','POR1.DocEntry = OPOR.DocEntry');
-        $SAP_MSI->join('OITM','POR1.ItemCode = OITM.ItemCode');
-        $SAP_MSI->join('NNM1','OPOR.Series = NNM1.Series');
-        $SAP_MSI->where('WhsCode',$kd_plant);
-        $SAP_MSI->where('OPOR.DocStatus' ,'O');
-        $SAP_MSI->where('OpenQty >', 0);
-
-        $query = $SAP_MSI->get();
-        $tot = $query->result_array();
-
-        if(($query)&&($query->num_rows() > 0)) {
-            return $tot[0];
-        } else {
-            return FALSE;
-        }
-    }
-
-    function getCountGRfromKitchen(){
-        $kd_plant = $this->session->userdata['ADMIN']['plant'];
-        $SAP_MSI = $this->load->database('SAP_MSI', TRUE); 
-        $sub_query = $SAP_MSI->select('WhsCode')
-            ->from('OWHS')
-            ->where('U_CENTRALKITCHEN','Y')
-            ->get()
-            ->result_array();
-        $filler=[];
-        foreach($sub_query as $key=>$val){
-            array_push($filler, $val['WhsCode']);
-        }
-        $statusPick = ['P','Y'];
-        $SAP_MSI->select("COUNT(DISTINCT OWTQ.DocEntry) Total");
-        $SAP_MSI->from('OWTQ');
-        $SAP_MSI->join('WTQ1','OWTQ.DocEntry = WTQ1.DocEntry','inner');
-        $SAP_MSI->join('OITM','OITM.ItemCode = WTQ1.ItemCode','inner');
-        $SAP_MSI->join('OWHS','OWTQ.ToWhsCode = OWHS.WhsCode','inner');
-        $SAP_MSI->join('NNM1','OWTQ.Series=NNM1.Series','inner');
-        $SAP_MSI->join('OITB','OITM.ItmsGrpCod = OITB.ItmsGrpCod','inner');
-
-        $SAP_MSI->where('OWTQ.ToWhsCode', $kd_plant);
-        $SAP_MSI->where('WTQ1.Quantity = WTQ1.OpenCreQty');
-        $SAP_MSI->where("OWTQ.DocEntry not in (SELECT TOP 1 DocEntry FROM WTQ1 A WHERE A.DocEntry = OWTQ.DocEntry AND LineStatus = 'C')");
-        $SAP_MSI->where_in('Filler', $filler);
-        $SAP_MSI->where_in('WTQ1.PickStatus',$statusPick);
-
-        $query = $SAP_MSI->get();
-        $tot = $query->result_array();
-
-        if(($query)&&($query->num_rows() > 0)) {
-            return $tot[0];
-        } else {
-            return FALSE;
-        }
-    }
-
-    function getCountTransferOut(){
-        $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-        $kd_plant = $this->session->userdata['ADMIN']['plant'];
-        
-        $SAP_MSI->select('COUNT(DISTINCT t0.DocEntry)Total');
-        $SAP_MSI->from('ODRF t0');
-        $SAP_MSI->join('DRF1 t1','t0.DocEntry = t1.DocEntry','inner');
-        $SAP_MSI->join('OITM T2','t2.ItemCode = T1.ItemCode','inner');
-        $SAP_MSI->join('OITB T4','T2.ItmsGrpCod = t4.ItmsGrpCod','inner');
-        $SAP_MSI->where_in('Filler', $kd_plant);
-        $SAP_MSI->where('t0.ObjType','1250000001');
-        $SAP_MSI->where('t0.DocStatus','O');
-
-        $query = $SAP_MSI->get();
-       
-        $tot = $query->result_array();
-
-        if(($query)&&($query->num_rows() > 0)) {
-            return $tot[0];
-        } else {
-            return FALSE;
-        }
-    }
-
-    function getCountTransferIn(){
-        $kd_plant = $this->session->userdata['ADMIN']['plant'];
-
-        $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-        $SQL = "SELECT COUNT(DISTINCT gistonew_out_no) Total FROM t_gistonew_out_header 
-        INNER JOIN t_gistonew_out_detail ON t_gistonew_out_detail.id_gistonew_out_header = t_gistonew_out_header.id_gistonew_out_header 
-        INNER JOIN m_outlet ON m_outlet.outlet = t_gistonew_out_header.plant 
-        INNER JOIN ".$SAP_MSI->database.".dbo.OITM a ON a.ItemCode COLLATE DATABASE_DEFAULT = t_gistonew_out_detail.material_no COLLATE DATABASE_DEFAULT
-        INNER JOIN ".$SAP_MSI->database.".dbo.OWTQ t0 ON CONVERT(VARCHAR, t0.DocEntry) = CONVERT(VARCHAR, t_gistonew_out_header.gistonew_out_no) 
-        INNER JOIN ".$SAP_MSI->database.".dbo.WTQ1 t1 ON t0.DocEntry = t1.DocEntry AND t1.LineNum = t_gistonew_out_detail.posnr
-        WHERE receiving_plant = '".$kd_plant."' AND [status] =2 AND po_no != '' AND gistonew_out_no != '' AND DocStatus != 'C' AND receipt = 0 AND [close] = 0 AND plant != '05WHST' ";
-
-        $query = $this->db->query($SQL);
-        $tot = $query->result_array();
-
-        if(($query)&&($query->num_rows() > 0)) {
-            return $tot[0];
-        } else {
-            return FALSE;
-        }
-    }
-
-    function posting_date_select_max() {
-	    $id_outlet = $this->session->userdata['ADMIN']['plant'];
-		$this->db->select_max('posting_date');
-		$this->db->from('t_posinc_header');
-		$this->db->where('plant', $id_outlet);
-		$this->db->where('status', 2);
-
-		$query = $this->db->get();
-		if ($query) {
-			$posting_date = $query->row_array();
-		}
-		if(!empty($posting_date['posting_date'])) {
-		    $oneday = 60 * 60 * 24;
-            $posting_date = date("Y-m-d H:i:s", strtotime($posting_date['posting_date'])+ $oneday);
-            return $posting_date;
-		}	else {
-        	return date("Y-m-d H:i:s");
-		}
-	}
-
-    function getCountIntLog(){
-        $kd_plant = $this->session->userdata['ADMIN']['plant'];
-		$sql = "SELECT * FROM error_log WHERE modul NOT LIKE 'Module:%' AND Whs = '".$kd_plant."'";
-		$query = $this->db->query($sql);
-		$num = $query->num_rows();
-
-        return $num;
-    }
-}   
+    $h = (17-$loop)*30;
+    ?>
+    <tr>
+      <td height="<?php echo $h; ?>"></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+</table>
+<p class="m">Comments :</p>
+<p class="space"><?php echo $remark;?></p>
+<table width="600" border="1"   style="border-collapse:collapse;" align="center">
+  <tr>
+    <td width="120" align="center" scope="col">Checked By :</td>
+    <td width="120" align="center" scope="col">Shipped By (Driver):</td>
+    <td width="120" align="center" scope="col">Verified By (Security):</td>
+    <td width="120" align="center" scope="col">Verified By (QC):</td>
+    <td width="120" align="center" scope="col">Approved By (Manager):</td>
+    <td width="120" align="center" scope="col">Posted By (Admin):</td>
+  </tr>
+  <tr>
+    <td height="100" align="left" valign="bottom">(Name)</td>
+    <td align="left" valign="bottom">(Name)</td>
+    <td align="left" valign="bottom">(Name)</td>
+    <td align="left" valign="bottom">(Name)</td>
+    <td align="left" valign="bottom">(Name)</td>
+    <td align="left" valign="bottom">(Name)</td>
+  </tr>
+  <tr>
+    <td align="left" valign="bottom">(Date)</td>
+    <td align="left" valign="bottom">(Date)</td>
+    <td align="left" valign="bottom">(Date)</td>
+    <td align="left" valign="bottom">(Date)</td>
+    <td align="left" valign="bottom">(Date)</td>
+    <td align="left" valign="bottom">(Date)</td>
+  </tr>
+</table>

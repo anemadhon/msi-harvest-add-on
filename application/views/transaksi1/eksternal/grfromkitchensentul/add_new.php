@@ -534,7 +534,7 @@
 					autoclose: true
 				};
 				$('#postingDate').datepicker(optSimple);
-				$('#delivDate').datepicker(optSimple);
+				$('#DeliveryDate').datepicker(optSimple);
 
 				$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 					var target = $(e.target).attr('href');
