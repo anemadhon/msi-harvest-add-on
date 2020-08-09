@@ -394,10 +394,6 @@
 		}
 
 		function addDatadb(id_approve=''){
-			if($('#postDate').val().trim() ==''){
-				alert('Tanggal Posting harus di isi');
-				return false;
-			}
 			const status= document.getElementById('status').value;
 			const requestReason= document.getElementById('rr').value;
 			const MatrialGroup= document.getElementById('materialGroup').value;
@@ -410,10 +406,13 @@
 			let qty =[];
 			let uom =[]; 
 			let onHand = [];
+			let dataValidasi = [];
+			let errorMessages = [];
 			let validasi = true;
 			tbodyTable.find('tr').each(function(i, el){
 				let td = $(this).find('td');
 				if(td.eq(4).find('input').val().trim() == ''){
+					dataValidasi.push(td.eq(2).find('select').val())
 					validasi = false;
 				}	
 				matrialNo.push(td.eq(2).find('select').val()); 
@@ -422,9 +421,18 @@
 				uom.push(td.eq(7).text());
 				onHand.push(td.eq(9).text());
 			})
+			if(postDate.trim() ==''){
+				errorMessages.push('Tanggal Posting harus di isi. \n')
+			}
+			if(remark.trim() ==''){
+				errorMessages.push('Remark harus di isi. \n')
+			}
 			if(!validasi){
-				alert('Quatity Tidak boleh Kosong, Harap isi Quantity');
-				return false;
+				errorMessages.push('Quatity Tidak boleh Kosong, Harap isi Quantity. \n')
+			}
+			if (errorMessages.length > 0) {
+				alert(errorMessages.join(''))
+				return false
 			}
 
 			$('#load').show();

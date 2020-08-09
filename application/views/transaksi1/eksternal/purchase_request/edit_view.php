@@ -148,7 +148,7 @@
                                             <div class="form-group row">
                                                 <label class="col-lg-3 col-form-label">Delivery Date</label>
                                                 <div class="col-lg-9 input-group date">
-                                                    <input type="text" class="form-control" id="deliveDate" value="<?= date("d-m-Y", strtotime($pr_header['delivery_date']))?>" <?php if($pr_header['status']=='2'):?>readonly=""<?php endif; ?>>
+                                                    <input type="text" class="form-control" id="deliveDate" value="<?= date("d-m-Y", strtotime($pr_header['delivery_date']))?>" readonly>
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text" id="basic-addon1">
                                                             <i class="icon-calendar"></i>
@@ -409,10 +409,13 @@
 			let vendor = [];
 			let uom =[]; 
 			let onHand = [];
+			let dataValidasi = [];
+			let errorMessages = [];
 			let validasi = true;
 			tbodyTable.find('tr').each(function(i, el){
 				let td = $(this).find('td');
 				if(td.eq(4).find('input').val().trim() == ''){
+					dataValidasi.push(td.eq(2).text())
 					validasi = false;
 				}	
 				matrialNo.push(td.eq(2).text()); 
@@ -423,9 +426,18 @@
 				uom.push(td.eq(7).text());
 				onHand.push(td.eq(9).text());
 			})
+			if(deliveDate.trim() ==''){
+				errorMessages.push('Tanggal Delivery harus di isi. \n')
+			}
+			if(remark.trim() ==''){
+				errorMessages.push('Remark harus di isi. \n')
+			}
 			if(!validasi){
-				alert('Quatity Tidak boleh Kosong, Harap isi Quantity');
-				return false;
+				errorMessages.push('Quatity Tidak boleh Kosong, Harap isi Quantity. \n')
+			}
+			if (errorMessages.length > 0) {
+				alert(errorMessages.join(''))
+				return false
 			}
 
 			$('#load').show();
