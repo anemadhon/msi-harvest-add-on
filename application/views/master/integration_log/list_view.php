@@ -32,15 +32,8 @@
                     </div>                    
 				</div>
                 <?php
-                if ($opname_header['freeze']){
-                    $freeze = $opname_header['freeze']['freeze'];
-                    $am = $opname_header['freeze']['am_approved'];
-                    $rm = $opname_header['freeze']['rm_approved'];
-                } else {
-                    $freeze = 'N';
-                    $am = 0;
-                    $rm = 0;
-                }
+                $isFreeze = $this->auth->is_freeze()['is_freeze'];
+                $isReject = $this->auth->is_freeze()['is_reject'];
                 ?>
 				<?php  $this->load->view("_template/footer.php")?>
 			</div>
@@ -48,10 +41,8 @@
         <?php  $this->load->view("_template/js.php")?>
         <script>
             $(document).ready(function(){
-                let freeze = '<?php echo $freeze; ?>';
-                let am = '<?php echo $am; ?>';
-                let rm = '<?php echo $rm; ?>';
-                let ids = '<?php echo $opname_header['ids']; ?>';
+                let freeze = '<?php echo $isFreeze; ?>';
+                let mgr = '<?php echo $isMgr; ?>';
                 let urlToEditPage = '';
 
                 var table = $('#table-manajemen').DataTable({
@@ -68,7 +59,7 @@
                         {"data":"time_error"},
                         {"data":"id_trans"},
                         {"data":"id_error","className":"dt-center", render:function(data, type, row, meta){
-                                rr = freeze=='N' || ids || am==1 || rm==1 ? `<a href='${goToEditPage(row['modul'], row['id_trans'])}'><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;` : '';
+                                rr = freeze == 0 || reject == 1 ? `<a href='${goToEditPage(row['modul'], row['id_trans'])}'><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;` : '';
                                 return rr;
                             }
                         }
