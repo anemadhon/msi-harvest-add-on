@@ -6,6 +6,23 @@ class Dashboard_Model extends CI_Model{
         parent::__construct(); 
     }
 
+    function freeze(){
+        $kd_plant = $this->session->userdata['ADMIN']['plant'];
+        $this->db->select('status, freeze, am_approved, rm_approved');
+        $this->db->from('t_opname_header');
+        $this->db->where('plant',$kd_plant);
+        $this->db->order_by('id_opname_header','desc');
+        $this->db->limit(1);
+        
+        $query = $this->db->get();
+    
+        if(($query)&&($query->num_rows() > 0)){
+          return $query->row_array();
+        }else{
+          return FALSE;
+        }
+    }
+
     function getCountPOVendor(){
         $kd_plant = $this->session->userdata['ADMIN']['plant'];
         $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
@@ -98,7 +115,7 @@ class Dashboard_Model extends CI_Model{
         INNER JOIN t_gistonew_out_detail ON t_gistonew_out_detail.id_gistonew_out_header = t_gistonew_out_header.id_gistonew_out_header 
         INNER JOIN m_outlet ON m_outlet.outlet = t_gistonew_out_header.plant 
         INNER JOIN ".$SAP_MSI->database.".dbo.OITM a ON a.ItemCode COLLATE DATABASE_DEFAULT = t_gistonew_out_detail.material_no COLLATE DATABASE_DEFAULT
-        INNER JOIN ".$SAP_MSI->database.".dbo.OWTQ t0 ON CONVERT(VARCHAR, t0.DocEntry) = CONVERT(VARCHAR, t_gistonew_out_header.gistonew_out_no)
+        INNER JOIN ".$SAP_MSI->database.".dbo.OWTQ t0 ON CONVERT(VARCHAR, t0.DocEntry) = CONVERT(VARCHAR, t_gistonew_out_header.gistonew_out_no) 
         INNER JOIN ".$SAP_MSI->database.".dbo.WTQ1 t1 ON t0.DocEntry = t1.DocEntry AND t1.LineNum = t_gistonew_out_detail.posnr
         WHERE receiving_plant = '".$kd_plant."' AND [status] =2 AND po_no != '' AND gistonew_out_no != '' AND DocStatus != 'C' AND receipt = 0 AND [close] = 0 AND plant != '05WHST' ";
 
