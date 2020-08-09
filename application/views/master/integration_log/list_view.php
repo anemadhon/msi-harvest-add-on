@@ -42,7 +42,7 @@
         <script>
             $(document).ready(function(){
                 let freeze = '<?php echo $isFreeze; ?>';
-                let mgr = '<?php echo $isMgr; ?>';
+                let reject = '<?php echo $isReject; ?>';
                 let urlToEditPage = '';
 
                 var table = $('#table-manajemen').DataTable({
