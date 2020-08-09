@@ -1,4 +1,4 @@
- <?php
+<?php
   $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
   foreach($data as $row) 
    $po=$row['grsto_no'];

@@ -165,17 +165,15 @@
 												</div>
 											</div>
 											
-											<div class="form-group row">
+											<div class="form-group row" >
 												<label class="col-lg-3 col-form-label">Posting Date</label>
 												<div class="col-lg-9 input-group date">
-													<input type="text" class="form-control"  value="<?=date("d-m-Y", strtotime($grsto_header['posting_date']))?>" id="postingDate" <?= $grsto_header['status'] == 2 ? "readonly" :''?>>
-													<?php if($grsto_header['status'] !='2'): ?>
-														<div class="input-group-prepend">
-															<span class="input-group-text" id="basic-addon1">
-																<i class="icon-calendar"></i>
-															</span>
-														</div> 
-													<?php endif;?>
+													<input type="text" class="form-control" id="postingDate" value="<?= date("d-m-Y", strtotime($grsto_header['posting_date']))?>" readonly>
+													<div class="input-group-prepend">
+														<span class="input-group-text" id="basic-addon1">
+															<i class="icon-calendar"></i>
+														</span>
+													</div>
 												</div>
 											</div>
 
@@ -235,7 +233,7 @@
 				const date = new Date();
 				const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 				var optSimple = {
-					format: 'yyyy-mm-dd',
+					format: 'dd-mm-yyyy',
 					todayHighlight: true,
 					orientation: 'bottom right',
 					autoclose: true

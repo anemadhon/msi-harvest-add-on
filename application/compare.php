@@ -1,25 +1,8 @@
 <?php
-    $this->DB_SAP = $this->load->database('SAP_MSI', TRUE);
-    foreach($data->result() as $row)
-
-    $plant=$row->plant;
-    $doc=$row->do_no;
-    $remark = $row->remark;
-
-    $this->DB_SAP->select('WhsName,City');
-    $this->DB_SAP->from('OWHS');
-    $this->DB_SAP->where('WhsCode',$plant);
-
-    $query = $this->DB_SAP->get();
-    $result = $query->result_array();
-
-    if (empty($result)) {
-        $reck='NAMA PLANT (DEFAULT)';
-        $reck_loc='LOKASI PLANT (DEFAULT)';
-    } else {
-        $reck=$result[0]['WhsName'];
-        $reck_loc=$result[0]['City'];
-    }
+  $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+  foreach($data as $row) 
+   $po=$row['grsto_no'];
+   $po1=$row['grsto_no1'];
 ?>
 
 <style type="text/css">
@@ -40,13 +23,16 @@
 .space {margin:10px 10px 15px 20px}
 
 </style>
-
 <table width="300"  align="center">
   <tr>
     <td width="350">
       <img src="<?php echo base_url('/files/');?>assets/images/logo.jpeg" alt="logo-harvest" width="270">
     </td>
-    <td colspan="2" align="center"><span class="style7">GR From CK SENTUL</span></td>
+    <td colspan="2" align="center"><span class="style7">TRANSFER IN</span></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td colspan="2" align="center">&nbsp;</td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -54,113 +40,179 @@
   </tr>
   <tr>
     <td><strong>PT. Mount Scopus Indonesia</strong></td>
-    <td>Transfer Slip No.</td>
-    <td>:&nbsp;<?php echo '';?></td>
+    <td>No.</td>
+    <td>:&nbsp;<?php echo $row['grsto_no1'];?></td>
   </tr>
   <tr>
     <td>Plaza Simatupang Lt. 8 - 9</td>
-    <td>Request No.</td>
-    <td>:&nbsp;<?php echo $row->do_no1;?></td>
+    <td>Date</td>
+    <td>:&nbsp;<?php echo date("d-m-Y",strtotime($row['delivery_date']));
+	?></td>
   </tr>
   <tr>
     <td>Jl. T.B. Simatupang Kav 1S-1</td>
-    <td>Good Receipt No.</td>
-    <td>:&nbsp;<?php echo $row->grpodlv_no1;?></td>
+    <td>From</td>
+    <td>:&nbsp;<strong><?php echo $row["PLANT_REC"].' - '.$row["PLANT_REC_NAME"];?></strong></td>
   </tr>
   <tr>
     <td>Jakarta Selatan, 12310, Indonesia</td>
-    <td>Date</td>
-    <td>:&nbsp;<?php echo $row->posting_date;?></td>
+    <td>To</td>
+    <td>:&nbsp;<strong><?php echo $row["plant"].' - '.$row["NAME1"];?></strong></td>
   </tr>
   <tr>
     <td>Ph. +62 21 726 06680 / Fax. +62 21 727 971 59</td>
-    <td>Delivery Date</td>
-    <td>:&nbsp;<?php echo $row->lastmodified;?></td>
-  </tr>
-  <tr>
     <td>&nbsp;</td>
-    <td>Delivery</td>
-    <td>:&nbsp;<strong><?php echo $reck;?></strong></td>
+    <td>&nbsp;</td>
   </tr>
 </table>
-
 <p>&nbsp;</p>
 <table style="border-collapse:collapse;" width="450" border="1" align="center">
-    <tr class="head">
-        <td width="20" align="center"><strong>No.</strong></td>
-        <td width="70" align="center"><strong>Item Code</strong></td>
-        <td width="50" align="center"><strong>Description</strong></td>
-        <td width="30" align="center"><strong>UOM</strong></td>
-        <td width="70" align="center"><strong>SR QTY</strong></td>
-        <td width="60" align="center"><strong>TF QTY</strong></td>
-        <td width="60" align="center"><strong>GR QTY</strong></td>
-        <td width="60" align="center"><strong>Variance</strong></td>
-    </tr>
-    <?php 
-        $no=1;
-        $loop = count($data->result_array());
-        foreach($data->result() as $row1) {
-            $tf_qty=$row1->Tf_Qty;
-            $sr_qty=$row1->Sr_Qty; 
-            $gr_qty=$row1->gr_quantity;
-    ?>
-    <tr>
-        <td align="center" height="25"><?php echo $no++;?></td>
-        <td align="center"><?php echo $row1->material_no;?></td>
-        <td>
-        <div style="width:300px;">   
-        <?php 
-        $desc=$row1->material_desc ? $row1->material_desc : '';
-        echo $desc; 
-        ?>
-        </div>
-        </td>
-        <td align="center"><?php echo $row1->uom;?></td>
-        <td align="right"><?php echo number_format($sr_qty,2,'.','');?></td>
-        <td align="right"><?php echo number_format($tf_qty,2,'.','');?></td>
-        <td align="right"><?php echo number_format($gr_qty,2,'.','');?></td>
-        <td align="right"><?php echo number_format(0,2,'.','');?></td>
-    </tr>
-    <?php 
+  <tr class="head">
+    <td width="20" align="center"><strong>No.</strong></td>
+    <td width="70" align="center"><strong>Item Code</strong></td>
+    <td width="50" align="center"><strong>Description</strong></td>
+    <td width="30" align="center"><strong>QTY</strong></td>
+    <td width="30" align="center"><strong>UOM</strong></td>
+    <td width="70" align="center"><strong>Production Code</strong></td>
+    <td width="50" align="center"><strong>Check Out</strong></td>
+    <td width="50" align="center"><strong>Check In</strong></td>
+  </tr>
+  <?php
+  $no = 1;
+  $loop = count($data);
+  foreach($data as $row1) {
+    $item=$row1['material_no'];
+    $SAP_MSI->select('U_Note');
+    $SAP_MSI->from('WTR1');
+    $SAP_MSI->where('DocEntry',$po);
+    $SAP_MSI->where('ItemCode',$item);
+    $query = $SAP_MSI->get();
+    $sell= $query->result_array();
+
+    $DistNumber='';
+    if(count($sell) > 0){
+      $DistNumber = $sell[0]['U_Note'];
+    } else {
+      $DistNumber = '';
     }
-    $h = (17-$loop)*30;
+  ?>
+  <tr>
+    <td align="center" height="25"><?php echo $no++;?></td>
+    <td align="center"><?php echo $row1['material_no'];?></td>
+    <td>
+    <div style="width:300px;">   
+    <?php 
+    $desc=$row1['material_desc'] ? $row1['material_desc'] : '';
+    echo $desc; 
     ?>
-    <tr>
-      <td height="<?php echo $h; ?>"></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
+    </div>
+    </td>
+    <td align="right">
+    <?php 
+    $qty=$row1['gr_quantity'];
+    echo number_format($qty,2,'.','');
+    ?>
+    </td>
+    <td align="center"><?php echo $row1['uom'];?></td>
+    <td><?php echo $DistNumber;?></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <?php
+  }
+  $h = (17-$loop)*30;
+  ?>
+  <tr>
+    <td height="<?php echo $h; ?>"></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
 </table>
+<?php 
+  $SAP_MSI->select('Comments');
+  $SAP_MSI->from('OWTR');
+  $SAP_MSI->where('DocEntry',$po);
+  $query = $SAP_MSI->get();
+  $sell2= $query->result_array();
+  $sel2Coment='';
+
+
+  if(count($sell2) > 0){
+    $sel2Coment = $sell2[0]['Comments'];
+  }
+?>
 <p class="m">Comments :</p>
-<p class="space"><?php echo $remark;?></p>
-<table width="600" border="1"   style="border-collapse:collapse;" align="center">
+<p class="space"><?php echo $sel2Coment;?></p>
+<table width="600" style="border-collapse:collapse;" border="0" align="center">
   <tr>
-    <td width="120" align="center" scope="col">Checked By :</td>
-    <td width="120" align="center" scope="col">Shipped By (Driver):</td>
-    <td width="120" align="center" scope="col">Verified By (Security):</td>
-    <td width="120" align="center" scope="col">Verified By (QC):</td>
-    <td width="120" align="center" scope="col">Approved By (Manager):</td>
-    <td width="120" align="center" scope="col">Posted By (Admin):</td>
-  </tr>
-  <tr>
-    <td height="100" align="left" valign="bottom">(Name)</td>
-    <td align="left" valign="bottom">(Name)</td>
-    <td align="left" valign="bottom">(Name)</td>
-    <td align="left" valign="bottom">(Name)</td>
-    <td align="left" valign="bottom">(Name)</td>
-    <td align="left" valign="bottom">(Name)</td>
-  </tr>
-  <tr>
-    <td align="left" valign="bottom">(Date)</td>
-    <td align="left" valign="bottom">(Date)</td>
-    <td align="left" valign="bottom">(Date)</td>
-    <td align="left" valign="bottom">(Date)</td>
-    <td align="left" valign="bottom">(Date)</td>
-    <td align="left" valign="bottom">(Date)</td>
+    <td width="300">
+      <table width="300" border="1" style="border-collapse:collapse;">
+        <tr>
+          <td colspan="3">Loading</td>
+        </tr>
+        <tr>
+          <td width="100">
+            <p>Store</p>
+            <p>&nbsp;</p>
+          </td>
+          <td width="100">
+            <p>Loading</p>
+            <p>&nbsp;</p
+          ></td>
+          <td width="100">
+            <p>Security</p>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr>
+          <td>Name</td>
+          <td>Name</td>
+          <td>Name</td>
+        </tr>
+        <tr>
+          <td>Date</td>
+          <td>Date</td>
+          <td>Date</td>
+        </tr>
+      </table>
+    </td>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+    <td width="300">
+      <table width="300" border="1" style="border-collapse:collapse;">
+        <tr>
+          <td colspan="3">Unloading</td>
+        </tr>
+        <tr>
+          <td width="100">
+            <p>Store</p>
+            <p>&nbsp;</p>
+          </td>
+          <td width="100">
+            <p>Unloading</p>
+            <p>&nbsp;</p>
+          </td>
+          <td width="100">
+            <p>Security</p>
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr>
+          <td>Name</td>
+          <td>Name</td>
+          <td>Name</td>
+        </tr>
+        <tr>
+          <td>Date</td>
+          <td>Date</td>
+          <td>Date</td>
+        </tr>
+      </table>
+    </td>
   </tr>
 </table>
+<p>&nbsp;</p>
