@@ -195,38 +195,71 @@ class Auth {
 				if(empty($perm_value))
 					return TRUE;
 	
-					$perm_groups_id = $this->CI->m_perm->admin_perm_group_ids_select($admin_id);
-
-					foreach($perm_groups_id as $perm_group_id) {
-						$admin_perm = $this->CI->m_perm->admin_perm_select($perm_group_id);
-						$perm_code = $this->CI->m_perm->perm_category_code_select($perm_value);
-						@$perm_have = substr_count($admin_perm, $perm_code);
-
-						if($perm_have || ($admin_perm == "*"))
-							return TRUE;
-					}
-	
-				}
-	
-				return FALSE;
-	
-			} else {
-	
 				$perm_groups_id = $this->CI->m_perm->admin_perm_group_ids_select($admin_id);
-	
+
 				foreach($perm_groups_id as $perm_group_id) {
 					$admin_perm = $this->CI->m_perm->admin_perm_select($perm_group_id);
-					$perm_code = $this->CI->m_perm->perm_category_code_select($perm_name);
+					$perm_code = $this->CI->m_perm->perm_category_code_select($perm_value);
 					@$perm_have = substr_count($admin_perm, $perm_code);
-	
+
 					if($perm_have || ($admin_perm == "*"))
 						return TRUE;
 				}
 	
-				return FALSE;
-	
 			}
+
+			return FALSE;
+	
+		} else {
+	
+			$perm_groups_id = $this->CI->m_perm->admin_perm_group_ids_select($admin_id);
+
+			foreach($perm_groups_id as $perm_group_id) {
+				$admin_perm = $this->CI->m_perm->admin_perm_select($perm_group_id);
+				$perm_code = $this->CI->m_perm->perm_category_code_select($perm_name);
+				@$perm_have = substr_count($admin_perm, $perm_code);
+
+				if($perm_have || ($admin_perm == "*"))
+					return TRUE;
+			}
+
+			return FALSE;
 	
 		}
+	
+	}
+
+	function is_freeze() {
+		$this->CI->lang->load('g_perm', $this->CI->session->userdata('lang_name'));
+
+		$object['opname_header']['freeze'] = $this->CI->st_model->freeze();
+		$arr_ids = explode(", ",$this->CI->session->userdata['ADMIN']['admin_perm_grup_ids']);
+		
+		$ids = 0;
+		$freeze = [];
+		$mgrState = [];
+		
+        foreach($arr_ids as $val){
+            if($val == 14){
+                $ids = $val;
+            }elseif($val == 10064){
+                $ids = $val;
+            }
+		}
+
+		if ($object['opname_header']['freeze']){
+			foreach ($object['opname_header']['freeze'] as $is_freeze) {
+				$freeze[] = $is_freeze['freeze'];
+				$mgrState[] = $is_freeze['am_approved'].$is_freeze['rm_approved'];
+			}
+		} 
+		
+		$isFreeze['stock_opname']['is_freeze'] = count($freeze) > 0 && in_array('Y',$freeze) ? 1 : 0;
+		$isFreeze['stock_opname']['is_reject'] = count($mgrState) > 0 && (in_array('01',$mgrState) || in_array('11',$mgrState) || in_array('21',$mgrState) || in_array('10',$mgrState) || in_array('12',$mgrState)) ? 1 : 0;
+		$isFreeze['stock_opname']['is_mgr'] = $ids;
+
+		return $isFreeze['stock_opname'];
+		
+	}
 
 }
