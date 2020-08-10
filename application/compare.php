@@ -1,8 +1,8 @@
 <?php
   $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
   foreach($data as $row) 
-   $po=$row['grsto_no'];
-   $po1=$row['grsto_no1'];
+   $po=$row['gistonew_out_no'];
+   $po1=$row['gistonew_out_no1'];
 ?>
 
 <style type="text/css">
@@ -28,7 +28,7 @@
     <td width="350">
       <img src="<?php echo base_url('/files/');?>assets/images/logo.jpeg" alt="logo-harvest" width="270">
     </td>
-    <td colspan="2" align="center"><span class="style7">TRANSFER IN</span></td>
+    <td colspan="2" align="center"><span class="style7">TRANSFER OUT</span></td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -41,12 +41,12 @@
   <tr>
     <td><strong>PT. Mount Scopus Indonesia</strong></td>
     <td>No.</td>
-    <td>:&nbsp;<?php echo $row['grsto_no1'];?></td>
+    <td>:&nbsp;<?php echo $po1;?></td>
   </tr>
   <tr>
     <td>Plaza Simatupang Lt. 8 - 9</td>
     <td>Date</td>
-    <td>:&nbsp;<?php echo date("d-m-Y",strtotime($row['delivery_date']));
+    <td>:&nbsp;<?php echo date("d-m-Y",strtotime($row['posting_date']));
 	?></td>
   </tr>
   <tr>
@@ -95,10 +95,11 @@
     } else {
       $DistNumber = '';
     }
+    $for_no[]=1;
   ?>
   <tr>
     <td align="center" height="25"><?php echo $no++;?></td>
-    <td align="center"><?php echo $row1['material_no'];?></td>
+    <td align="center"><?php echo $row1["material_no"];?></td>
     <td>
     <div style="width:300px;">   
     <?php 
@@ -109,11 +110,11 @@
     </td>
     <td align="right">
     <?php 
-    $qty=$row1['gr_quantity'];
+    $qty=$row1["gr_quantity"];
     echo number_format($qty,2,'.','');
     ?>
     </td>
-    <td align="center"><?php echo $row1['uom'];?></td>
+    <td align="center"><?php echo $row1["uom"];?></td>
     <td><?php echo $DistNumber;?></td>
     <td></td>
     <td></td>
@@ -133,21 +134,8 @@
     <td></td>
   </tr>
 </table>
-<?php 
-  $SAP_MSI->select('Comments');
-  $SAP_MSI->from('OWTR');
-  $SAP_MSI->where('DocEntry',$po);
-  $query = $SAP_MSI->get();
-  $sell2= $query->result_array();
-  $sel2Coment='';
-
-
-  if(count($sell2) > 0){
-    $sel2Coment = $sell2[0]['Comments'];
-  }
-?>
 <p class="m">Comments :</p>
-<p class="space"><?php echo $sel2Coment;?></p>
+<p class="space"><?php echo $data[0]['remark'];?></p>
 <table width="600" style="border-collapse:collapse;" border="0" align="center">
   <tr>
     <td width="300">

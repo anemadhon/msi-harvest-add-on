@@ -205,7 +205,7 @@ class Returnin extends CI_Controller {
         
         $retin_header['id_retin_plant'] = $this->rIn_model->id_retin_plant_new_select($retin_header['plant'],$retin_header['posting_date']);
         $retin_header['status'] = $approve == 2 ? $approve: '1';
-        $retin_header['id_user_input'] = '2392';
+        $retin_header['id_user_input'] = $admin_id;
         $retin_header['id_user_approved'] = $approve == 2 ? $admin_id : 0;
         $retin_header['id_user_cancel'] = 0;
         $retin_header['back'] = 1;

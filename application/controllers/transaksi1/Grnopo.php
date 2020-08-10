@@ -212,10 +212,11 @@ class Grnopo extends CI_Controller {
     }
 
     public function addDataUpdate(){
+        $admin_id = $this->session->userdata['ADMIN']['admin_id'];
         $grnonpo_header['id_grnonpo_header'] = $this->input->post('idgrnonpo_header');
         $grnonpo_header['posting_date'] = $this->l_general->str_to_date($this->input->post('pstDate'));
         $grnonpo_header['status'] = $this->input->post('aapr')? $this->input->post('aapr') : '1';
-        $grnonpo_header['id_user_approved'] = $this->input->post('aapr')? '2392' : 0;
+        $grnonpo_header['id_user_approved'] = $this->input->post('aapr')? $admin_id : 0;
         $grnonpo_header['remark'] = $this->input->post('Remark');
         
         $grnonpo_details['material_no'] = $this->input->post('detMatrialNo');
