@@ -227,11 +227,11 @@
 															</select>
 														</td>
 														<td ></td>
-														<td><input type="text" class="form-control qty" name="qty[]" id="qty" style="width:100px"></td>
-														<td><input type="text" class="form-control prc" name="prc[]" id="prc" style="width:100px"></td>
+														<td><input type="text" class="form-control qty" name="qty[]" id="qty" style="width:150px"></td>
+														<td><input type="text" class="form-control prc" name="prc[]" id="prc" style="width:150px"></td>
 														<td id="total"></td>
 														<td></td>
-														<td><input type="text" class="form-control" name="text[]" id="text" style="width:100px"></td>
+														<td><input type="text" class="form-control" name="text[]" id="text" style="width:150px"></td>
 													</tr>
 												</tbody>
 										</table>
@@ -328,8 +328,8 @@
 								${showMatrialDetailData(matrialGroup,elementSelect)}
 							</select>`,
 				"3":"",
-				"4":`<input type="text" class="form-control qty" id="gr_qty_${count}" value="" style="width:100%">`,
-				"5":`<input type="text" class="form-control prc" id="gr_prc_${count}" value="" style="width:100%">`,
+				"4":`<input type="text" class="form-control qty" id="gr_qty_${count}" value="" style="width:150px">`,
+				"5":`<input type="text" class="form-control prc" id="gr_prc_${count}" value="" style="width:150px">`,
 				"6":"",
 				"7":"",
 				"8":`<input type="text" class="form-control" id="text_${count}" value="" style="width:150px">`

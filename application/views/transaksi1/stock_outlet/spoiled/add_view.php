@@ -333,7 +333,7 @@
 								<option value="Jatuh/Tumpah">Jatuh/Tumpah</option>
 								<option value="Wastage">Wastage</option>
 							</select>`,
-				"8":`<input type="text" class="form-control" id="text_${count}" value="" style="width:100%">`
+				"8":`<input type="text" class="form-control" id="text_${count}" value="" style="width:150px">`
 				}).draw();
 				count++;
 
