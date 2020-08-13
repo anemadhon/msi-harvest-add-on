@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			.after-submit {
 				display: none;
@@ -68,9 +68,9 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 				<?php if ($this->session->flashdata('success')): ?>
@@ -84,8 +84,8 @@
 					</div>
 				<?php endif; ?>
 					<form action="#" method="POST">
-					<input type="hidden" name="status" id="status" value="<?=$disassembly_header['status']?>">
-					<input type="hidden" name="kode_paket" id="kode_paket" value="<?=$disassembly_header['kode_paket']?>">
+						<input type="hidden" name="status" id="status" value="<?=$disassembly_header['status']?>">
+						<input type="hidden" name="kode_paket" id="kode_paket" value="<?=$disassembly_header['kode_paket']?>">
 						<div class="card">
 							<div class="card-body">
 								<div class="row">
@@ -167,30 +167,29 @@
 								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Disassembly</legend>
 							</div>
 							<div class="card-body">
-							<div class="col-md-12" style="overflow:auto">
-								<table id="table-manajemen" class="table table-striped " style="width:100%">
-									<thead>
-										<tr>
-											<th style="text-align: left">No</th>
-											<th>Material No</th>
-											<th>Material Desc</th>
-											<th>Quantity</th>
-											<th>Uom</th>
-											<th>On Hand</th>
-										</tr>
-									</thead>
-									<tbody>
-									</tbody>
-								</table>
+								<div class="col-md-12" style="overflow:auto">
+									<table id="table-manajemen" class="table table-striped " style="width:100%">
+										<thead>
+											<tr>
+												<th style="text-align: left">No</th>
+												<th>Material No</th>
+												<th>Material Desc</th>
+												<th>Quantity</th>
+												<th>Uom</th>
+												<th>On Hand</th>
+											</tr>
+										</thead>
+										<tbody></tbody>
+									</table>
 								</div>
 							</div>
 						</div>
 					</form>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php  $this->load->view("_template/js.php")?>
+		<?php $this->load->view("_template/js.php")?>
 		<script>
 			
             $(document).ready(function(){
@@ -244,47 +243,47 @@
 
 			function addDatadb(id_approve = ''){
 						
-			idWoHeader 		= $('#id_wo_header').val();
-			kodePaket 		= $('#kode_paket').val();
-			approve			= id_approve;
+				idWoHeader 		= $('#id_wo_header').val();
+				kodePaket 		= $('#kode_paket').val();
+				approve			= id_approve;
 
-			table = $('#table-manajemen > tbody');
-			let matrialNo =[];
-			let matrialDesc =[];
-			let qty =[];
-			let uom =[];
-			let onHand =[];
-			let minStock =[];
-			let outStandTot =[];
-			table.find('tr').each(function(i, el){
-				let td = $(this).find('td');
-				matrialNo.push(td.eq(1).text()); 
-				matrialDesc.push(td.eq(2).text().trim());
-				qty.push(td.eq(3).text());
-				uom.push(td.eq(4).text());	
-				onHand.push(td.eq(5).text());	
-				minStock.push(td.eq(6).text());	
-				outStandTot.push(td.eq(7).text());
-			});
-			$('#load').show();
-			$("#after-submit").addClass('after-submit');
-
-			setTimeout(() => {
-				$.post("<?php echo site_url('transaksi1/disassembly/addUpdateData')?>",{
-					id_wo_header:idWoHeader, kd_paket:kodePaket, approve:approve, matrialNo:matrialNo, matrialDesc:matrialDesc, qty:qty, uom:uom, onHand:onHand, minStock:minStock, outStandTot:outStandTot
-				}, function(){
-					$('#load').hide();
-				})
-				.done(function() {
-					location.replace("<?php echo site_url('transaksi1/disassembly/')?>");
-				})
-				.fail(function(xhr, status) {
-					alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
-					location.reload(true);
+				table = $('#table-manajemen > tbody');
+				let matrialNo =[];
+				let matrialDesc =[];
+				let qty =[];
+				let uom =[];
+				let onHand =[];
+				let minStock =[];
+				let outStandTot =[];
+				table.find('tr').each(function(i, el){
+					let td = $(this).find('td');
+					matrialNo.push(td.eq(1).text()); 
+					matrialDesc.push(td.eq(2).text().trim());
+					qty.push(td.eq(3).text());
+					uom.push(td.eq(4).text());	
+					onHand.push(td.eq(5).text());	
+					minStock.push(td.eq(6).text());	
+					outStandTot.push(td.eq(7).text());
 				});
-			}, 600);
-			
-		}
+				$('#load').show();
+				$("#after-submit").addClass('after-submit');
+
+				setTimeout(() => {
+					$.post("<?php echo site_url('transaksi1/disassembly/addUpdateData')?>",{
+						id_wo_header:idWoHeader, kd_paket:kodePaket, approve:approve, matrialNo:matrialNo, matrialDesc:matrialDesc, qty:qty, uom:uom, onHand:onHand, minStock:minStock, outStandTot:outStandTot
+					}, function(){
+						$('#load').hide();
+					})
+					.done(function() {
+						location.replace("<?php echo site_url('transaksi1/disassembly/')?>");
+					})
+					.fail(function(xhr, status) {
+						alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
+						location.reload(true);
+					});
+				}, 600);
+				
+			}
         
         </script>
 	</body>

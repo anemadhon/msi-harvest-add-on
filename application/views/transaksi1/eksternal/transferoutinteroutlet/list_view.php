@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+	    <?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
                 <?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
-					<?php endif; ?>
-					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
-					<?php endif; ?>
+                    <div class="alert alert-success" role="alert">
+                        <?php echo $this->session->flashdata('success'); ?>
+                    </div>
+                <?php endif; ?>
+                <?php if ($this->session->flashdata('failed')): ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php echo $this->session->flashdata('failed'); ?>
+                    </div>
+                <?php endif; ?>
                     <div class="card">
                         <div class="card-header">
                             <legend class="font-weight-semibold"><i class="icon-search4 mr-2"></i>Search of Transfer Out Inter Outlet</legend>  
                         </div>
                         <div class="card-body">
-
 							<form action="#" method="POST">
 								<div class="row">
 									<div class="col-md-12">
@@ -78,8 +77,8 @@
                         <div class="card-header">
                             <legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List of Transfer Out</legend>
                             <?php if (($isFreeze == 0 && $isMgr == 0) || $isReject == 1):?>
-                            <a href="<?php echo site_url('transaksi1/transferoutinteroutlet/add') ?>" class="btn btn-primary"> Add New</a>
-                            <input type="button" value="Delete" class="btn btn-danger" id="deleteRecord">  
+                                <a href="<?php echo site_url('transaksi1/transferoutinteroutlet/add') ?>" class="btn btn-primary"> Add New</a>
+                                <input type="button" value="Delete" class="btn btn-danger" id="deleteRecord">  
                             <?php endif; ?>
                         </div>
                         <div class="card-body">
@@ -102,19 +101,18 @@
                                                 <th style="text-align: center">Log</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                        </tbody>
+                                        <tbody></tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
                     </div>                   
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php  $this->load->view("_template/modal_delete.php")?>
-        <?php  $this->load->view("_template/js.php")?>
+        <?php $this->load->view("_template/modal_delete.php")?>
+        <?php $this->load->view("_template/js.php")?>
         <script>
             $(document).ready(function(){
                 $('#fromDate').datepicker();
@@ -133,7 +131,7 @@
                 });
 
                 $("#deleteRecord").click(function(){
-                    let deleteidArr=[];
+                    let deleteidArr = [];
                     $("input:checkbox[class=check_delete]:checked").each(function(){
                         deleteidArr.push($(this).val());
                     })
@@ -217,14 +215,14 @@
                     },
                     "columns": [
                         {"data":"id_gistonew_out_header", "className":"dt-center", render:function(data, type, row, meta){
-                            rr=`<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">`;
+                            rr = `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">`;
                             return rr;
                         }},
                         {"data":"id_gistonew_out_header", "className":"dt-center", render:function(data, type, row, meta){
                             rr = `<div style="width:100px">
-										<a onClick="printPdf(${data})" href="#" ><i class='icon-printer' title="Print"></i></a>&nbsp;
-                                        ${freeze == 0 || reject == 1 ? `<a href='<?php echo site_url('transaksi1/transferoutinteroutlet/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;` : ''}
-                                    </div>`;
+                                    <a onClick="printPdf(${data})" href="#" ><i class='icon-printer' title="Print"></i></a>&nbsp;
+                                    ${freeze == 0 || reject == 1 ? `<a href='<?php echo site_url('transaksi1/transferoutinteroutlet/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;` : ''}
+                                </div>`;
                             return rr;
                         }},
                         {"data":"id_gistonew_out_header"},

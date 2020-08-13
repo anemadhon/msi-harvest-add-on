@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			th{
 				text-align:center;
@@ -78,26 +78,24 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 					<?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
+					<div class="alert alert-success" role="alert">
+						<?php echo $this->session->flashdata('success'); ?>
+					</div>
 					<?php endif; ?>
 					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
+					<div class="alert alert-danger" role="alert">
+						<?php echo $this->session->flashdata('failed'); ?>
+					</div>
 					<?php endif; ?>
                     <form action="#" method="POST">
-					<input type="hidden" name="status" id="status" value="<?=$grnonpo_header['status']?>">
-					<div class="card">
-                        <div class="card-body">
-                            
+						<div class="card">
+                        	<div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <fieldset>
@@ -142,6 +140,7 @@
                                             <div class="form-group row">
 												<label class="col-lg-3 col-form-label">Status</label>
 												<div class="col-lg-9">
+													<input type="hidden" name="status" id="status" value="<?=$grnonpo_header['status']?>">
 													<input type="text" class="form-control" value="<?=$grnonpo_header['status_string']?>" id="status_string" name="status_string" readOnly>
 												</div>
 											</div>
@@ -175,29 +174,27 @@
 											</div>
 
 											<?php if($grnonpo_header['status']=='1'): ?>
-											<div class="form-group row" id="after-submit">
-												<div class="col-lg-12 text-right">
-													<div class="text-right">
-														<button type="button" class="btn btn-primary" id="btn-update" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
-														<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-														<button type="button" class="btn btn-success" id="btn-update" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
-														<?php endif;?>
+												<div class="form-group row" id="after-submit">
+													<div class="col-lg-12 text-right">
+														<div class="text-right">
+															<button type="button" class="btn btn-primary" id="btn-update" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
+															<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
+															<button type="button" class="btn btn-success" id="btn-update" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
+															<?php endif;?>
+														</div>
 													</div>
 												</div>
-											</div>
 											<?php endif;?>
-
                                         </fieldset>
                                     </div>
                                 </div>
-								</div>
-                    </div>
-					<div id="load" style="display:none"></div>
-					<div class="card">
-                        <div class="card-body">
-                            
+							</div>
+                    	</div>
+						<div id="load" style="display:none"></div>
+						<div class="card">
+                        	<div class="card-body">
 								<div class="row">
-								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
+									<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
 									<div class="col-md-12" style="overflow: auto">
 										<table class="table table-striped" id="tblWhole">
 										<?php if($grnonpo_header['status']!='2'):?>
@@ -224,15 +221,14 @@
 										</table>
 									</div>
 								</div>
-								</div>
-                    </div>
-                            </form>
-                                            
+							</div>
+                    	</div>
+                    </form>                            
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php  $this->load->view("_template/js.php")?>
+        <?php $this->load->view("_template/js.php")?>
 		<script>
             $(document).ready(function(){
                 let id_grnonpo_header = $('#idgrnonpo').val();
@@ -259,24 +255,24 @@
 					"columns": [
 						
 						{"data":"id_grnonpo_detail", "className":"dt-center", render:function(data, type, row, meta){
-								rr=(row["status"] == 2) ? '' : `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" >`;
+								rr = (row["status"] == 2) ? '' : `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" >`;
 								return rr;
 						}},
 						{"data":"no", "className":"dt-center"},
 						{"data":"material_no", "className":"dt-center"},
 						{"data":"material_desc"},
 						{"data":"gr_quantity", "className":"dt-center",render:function(data, type, row, meta){
-							rr=  (row["status"] == 2) ? data : `<input type="text" class="form-control qty" id="gr_qty_${row['no']}" value="${data}">`;
+							rr = (row["status"] == 2) ? data : `<input type="text" class="form-control qty" id="gr_qty_${row['no']}" value="${data}">`;
 							return rr;
 						}},
 						{"data":"price", "className":"dt-center",render:function(data, type, row, meta){
-							rr=  (row["status"] == 2) ? data : `<input type="text" class="form-control prc" id="gr_prc_${row['no']}" value="${data}">`;
+							rr = (row["status"] == 2) ? data : `<input type="text" class="form-control prc" id="gr_prc_${row['no']}" value="${data}">`;
 							return rr;
 						}},
 						{"data":"total"},
 						{"data":"uom"},
 						{"data":"text", "className":"dt-center",render:function(data, type, row, meta){
-							rr= (row["status"] == 2) ? data : `<input type="text" class="form-control" id="text_${row['no']}" value="${data}">`;
+							rr = (row["status"] == 2) ? data : `<input type="text" class="form-control" id="text_${row['no']}" value="${data}">`;
 							return rr;
 						}}
 					],
@@ -288,7 +284,7 @@
 
 				$("#cancelRecord").click(function(){
 					const id_grnonpo_header = $('#idgrnonpo').val();
-                    let deleteidArr=[];
+                    let deleteidArr = [];
                     $("input:checkbox[class=check_delete]:checked").each(function(){
                         deleteidArr.push($(this).val());
                     })
@@ -310,7 +306,7 @@
 				});
 				
 				$("#deleteRecord").click(function(){
-					let deleteidArr=[];
+					let deleteidArr = [];
 					let getTable = $("#tblWhole").DataTable();
 					$("input:checkbox[class=check_delete]:checked").each(function(){
 						deleteidArr.push($(this).val());
@@ -349,8 +345,8 @@
 					"total":"",
 					"uom":"",
 					"text":""
-					}).draw();
-					count++;
+				}).draw();
+				count++;
 
 				tbody = $("#tblWhole tbody");
 				tbody.on('change','.testSelect', function(){
@@ -375,7 +371,7 @@
 				});
 			}
 
-			function showMatrialDetailData(cboMatrialGroup='',do_no='', selectTable){
+			function showMatrialDetailData(cboMatrialGroup = '', do_no = '', selectTable){
 				
 				const select = selectTable ? selectTable : $('#matrialGroupDetail');
 
@@ -389,7 +385,7 @@
 				})		
 			}
 
-			function setValueTable(doNo='',id,no){
+			function setValueTable(doNo = '', id, no){
 				doNo = doNo ? doNo : $('#srEntry').val();
 				table = document.getElementById("tblWhole").rows[no].cells;
 				$.post(
@@ -407,22 +403,22 @@
 				)
 			}
 
-			function setTotal(qty,prc,no){
+			function setTotal(qty, prc, no){
 				table = document.getElementById("tblWhole").rows[no].cells;
 				table[6].innerHTML = (parseFloat(qty)*parseFloat(prc))
 			}
 
-			function addDatadb(id_approve=''){
+			function addDatadb(id_approve = ''){
 				const id_grnonpo_header = $('#idgrnonpo').val();
 				const approve = id_approve;
-				const postingDate= $('#postingDate').val();
-				const remark= $('#remark').val();
+				const postingDate = $('#postingDate').val();
+				const remark = $('#remark').val();
 				const tbodyTable = $("#tblWhole > tbody");
-				let matrial_no=[];
-				let matrialDesc =[];
-				let qty =[];
-				let prc =[];
-				let uom =[];
+				let matrial_no = [];
+				let matrialDesc = [];
+				let qty = [];
+				let prc = [];
+				let uom = [];
 				let text = [];
 				tbodyTable.find('tr').each(function(i,el){
 					let td = $(this).find('td');
@@ -454,6 +450,5 @@
 			}
         
         </script>
-		</script>
 	</body>
 </html>

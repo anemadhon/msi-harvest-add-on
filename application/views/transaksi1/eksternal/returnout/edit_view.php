@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			th{
 				text-align:center;
@@ -78,23 +78,22 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-					<?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
-					<?php endif; ?>
-					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
-					<?php endif; ?>
+				<?php if ($this->session->flashdata('success')): ?>
+					<div class="alert alert-success" role="alert">
+						<?php echo $this->session->flashdata('success'); ?>
+					</div>
+				<?php endif; ?>
+				<?php if ($this->session->flashdata('failed')): ?>
+					<div class="alert alert-danger" role="alert">
+						<?php echo $this->session->flashdata('failed'); ?>
+					</div>
+				<?php endif; ?>
                     <form action="#" method="POST">
-					<input type="hidden" name="status" id="status" value="<?=$retOut_header['status']?>">
 						<div class="card">
                         	<div class="card-body">
                                 <div class="row">
@@ -140,6 +139,7 @@
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Status</label>
 												<div class="col-lg-9">
+													<input type="hidden" name="status" id="status" value="<?=$retOut_header['status']?>">
 													<input type="text" class="form-control" value="<?=$retOut_header['status_string']?>" id="status_string" name="status_string" readOnly>
 												</div>
 											</div>
@@ -174,14 +174,12 @@
 
                                             <div class="text-right" id="after-submit">
 												<?php if($retOut_header['status'] !='2'): ?>
-												<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save<i class="icon-paperplane ml-2"></i></button> 
+													<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save<i class="icon-paperplane ml-2"></i></button> 
 													<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
 													<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve<i class="icon-paperplane ml-2"></i></button>
 													<?php endif;?>
 												<?php endif;?>
                                             </div>
-
-											
                                         </fieldset>
                                     </div>
                                 </div>
@@ -191,7 +189,7 @@
 						<div class="card">
                         	<div class="card-body">  
 								<div class="row">
-								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
+									<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
 									<div class="col-md-12 mb-2">
 										<div class="text-left">
 										<?php if($retOut_header['status'] !='2'): ?>
@@ -221,10 +219,10 @@
 						</div>
                     </form>
                 </div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php  $this->load->view("_template/js.php")?>
+        <?php $this->load->view("_template/js.php")?>
 		<script>
 		$(document).ready(function(){
 			const id_gisto_dept_header = $('#idreturnOut').val();
@@ -244,16 +242,16 @@
 					{"data":"material_desc"},
 					{"data":"stock", "className":"dt-center"},
 					{"data":"gr_quantity", "className":"dt-center", render:function(data, type, row, meta){
-						rr= stts == 1 ? `<input type="text" class="form-control qty" value="${data}">`: `${row['gr_quantity']}`;
+						rr = stts == 1 ? `<input type="text" class="form-control qty" value="${data}">`: `${row['gr_quantity']}`;
 						return rr;
 					}},
 					{"data":"uom", "className":"dt-center"},
 					{"data":"reason", "className":"dt-center", render:function(data, type, row, meta){
-						rr= stts == 1 ? `<input type="text" class="form-control remark" value="${data}">`: `${row['reason']}`;
+						rr = stts == 1 ? `<input type="text" class="form-control remark" value="${data}">`: `${row['reason']}`;
 						return rr;
 					}},
 					{"data":"id_gisto_dept_detail", "className":"dt-center", render:function(data, type, row, meta){
-						rr=stts==2 ? '' : `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">`;
+						rr = stts == 2 ? '' : `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">`;
 						return rr;
 					}},
 				],
@@ -264,11 +262,10 @@
 
 			$("#cancelRecord").click(function(){
 				const id_gisto_dept_header = $('#idreturnOut').val();
-				let deleteidArr=[];
+				let deleteidArr = [];
 				$("input:checkbox[class=check_delete]:checked").each(function(){
 					deleteidArr.push($(this).val());
 				})
-
 
 				// mengecek ckeckbox tercheck atau tidak
 				if(deleteidArr.length > 0){
@@ -299,7 +296,7 @@
 			}
 
 			$("#deleteRecord").click(function(){
-				let deleteidArr=[];
+				let deleteidArr = [];
 				$("input:checkbox[class=check_delete]:checked").each(function(){
 					deleteidArr.push($(this).val());
 				})
@@ -340,9 +337,9 @@
 			getTable.row.add({
 				"no":count,
 				"material_no":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
-						<option value="">Select Item</option>
-						${showMatrialDetailData(requestOutlet, matrialGroup, elementSelect)}
-					</select>`,
+									<option value="">Select Item</option>
+									${showMatrialDetailData(requestOutlet, matrialGroup, elementSelect)}
+								</select>`,
 				"material_desc":"",
 				"stock":"",
 				"gr_quantity":"",
@@ -350,8 +347,8 @@
 				"uom":"",
 				"reason":"",
 				"id_gisto_dept_detail":"id_gisto_dept_detail",
-				}).draw();
-				count++;
+			}).draw();
+			count++;
 
 			tbody = $("#tblWhole tbody");
 			tbody.on('change','.testSelect', function(){
@@ -362,7 +359,7 @@
 			});
 		}
 
-		function setValueTable(id,no){
+		function setValueTable(id, no){
 			const reqtOutlet = $('#receiving_plant').val();
 			const arrOutletVal = reqtOutlet.split('|');
 			const requestToOutlet = arrOutletVal[0];
@@ -385,7 +382,7 @@
 			)
 		}
 
-		function showMatrialDetailData(requestOutlet='', selectMaterial='',  select){
+		function showMatrialDetailData(requestOutlet = '', selectMaterial = '',  select){
 			$.ajax({
 				url: "<?php echo site_url('transaksi1/returnout/getdataDetailMaterial');?>",
 				type: "POST",
@@ -403,7 +400,7 @@
 			});			
 		}
 
-		function addDatadb(id_approve=''){
+		function addDatadb(id_approve = ''){
 			const approve = id_approve;
 			const postDate= document.getElementById('postingDate').value;
 			const idreto  = document.getElementById('idreturnOut').value;

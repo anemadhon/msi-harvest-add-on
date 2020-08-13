@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			.after-submit {
 				display: none;
@@ -68,9 +68,9 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 				<?php if ($this->session->flashdata('success')): ?>
@@ -84,7 +84,6 @@
 					</div>
 				<?php endif; ?>
 					<form action="#" method="POST">
-					<input type="hidden" name="status" id="status" value="<?=$grsto_header['status']?>">
 						<div class="card">
 							<div class="card-body">
 								<div class="row">
@@ -154,6 +153,7 @@
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Status</label>
 												<div class="col-lg-9">
+													<input type="hidden" name="status" id="status" value="<?=$grsto_header['status']?>">
 													<input type="text" class="form-control" readonly="" value="<?=$grsto_header['status_string']?>">
 												</div>
 											</div>
@@ -214,17 +214,16 @@
 											<th>Uom</th>
 										</tr>
 									</thead>
-									<tbody>
-									</tbody>
+									<tbody></tbody>
 								</table>
 							</div>
 						</div>
 					</form>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php  $this->load->view("_template/js.php")?>
+		<?php $this->load->view("_template/js.php")?>
 		<script>
             $(document).ready(function(){
                 let id_grsto_header = $('#id_grsto_header').val();
@@ -251,8 +250,8 @@
 					"columns": [
 						
 						{"data":"id_gistonew_out_detail", "className":"dt-center", render:function(data, type, row, meta){
-								rr=row['status']==2 ? '' : `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" >`;
-								return rr;
+							rr = row['status'] == 2 ? '' : `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" >`;
+							return rr;
 						}},
 						{"data":"no", "className":"dt-center"},
 						{"data":"material_no", "className":"dt-center"},
@@ -260,7 +259,7 @@
 						{"data":"in_whs_qty", "className":"dt-center"},
 						{"data":"outstanding_qty", "className":"dt-center"},
 						{"data":"gr_quantity", "className":"dt-center",render:function(data, type, row, meta){
-							rr=  `<input type="text" class="form-control gr_qty" id="gr_qty_${data}" value="${data}" ${row['status']==1 ?'':'readonly'}>`;
+							rr = `<input type="text" class="form-control gr_qty" id="gr_qty_${data}" value="${data}" ${row['status']==1 ?'':'readonly'}>`;
 							return rr;
 						}},
 						{"data":"uom"}
@@ -273,7 +272,7 @@
 
 				$("#cancelRecord").click(function(){
 					const id_grsto_header = $('#id_grsto_header').val();
-                    let deleteidArr=[];
+                    let deleteidArr = [];
                     $("input:checkbox[class=check_delete]:checked").each(function(){
                         deleteidArr.push($(this).val());
                     })
@@ -295,7 +294,7 @@
 				});
 				
 				$("#deleteRecord").click(function(){
-					let deleteidArr=[];
+					let deleteidArr = [];
 					let getTable = $("#table-manajemen").DataTable();
 					$("input:checkbox[class=check_delete]:checked").each(function(){
 						deleteidArr.push($(this).val());
@@ -334,8 +333,8 @@
 					"gr_quantity":"",
 					"uom_req":"",
 					"uom":""
-					}).draw();
-					count++;
+				}).draw();
+				count++;
 
 				tbody = $("#table-manajemen tbody");
 				tbody.on('change','.testSelect', function(){
@@ -346,7 +345,7 @@
 				});
 			}
 
-			function showMatrialDetailData(cboMatrialGroup='',do_no='', selectTable){
+			function showMatrialDetailData(cboMatrialGroup = '',do_no = '', selectTable){
 				
 				const select = selectTable ? selectTable : $('#matrialGroupDetail');
 
@@ -360,7 +359,7 @@
 				})		
 			}
 
-			function setValueTable(doNo='',id,no){
+			function setValueTable(doNo = '', id, no){
 				doNo = doNo ? doNo : $('#srEntry').val();
 				table = document.getElementById("table-manajemen").rows[no].cells;
 				$.post(
@@ -381,7 +380,7 @@
 				)
 			}
 
-			function addDatadb(id_approve=''){
+			function addDatadb(id_approve = ''){
 				const id_grsto_header = $('#id_grsto_header').val();
 				const srEntry = $('#srEntry').val();
 				const srEntry1 = $('#srEntry1').val();

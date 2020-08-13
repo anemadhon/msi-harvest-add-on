@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			th{
 				text-align:center;
@@ -79,21 +79,21 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-					<?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
-					<?php endif; ?>
-					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
-					<?php endif; ?>
+				<?php if ($this->session->flashdata('success')): ?>
+					<div class="alert alert-success" role="alert">
+						<?php echo $this->session->flashdata('success'); ?>
+					</div>
+				<?php endif; ?>
+				<?php if ($this->session->flashdata('failed')): ?>
+					<div class="alert alert-danger" role="alert">
+						<?php echo $this->session->flashdata('failed'); ?>
+					</div>
+				<?php endif; ?>
                     <form action="#" method="POST">
 						<div class="card">
                         	<div class="card-body">
@@ -150,108 +150,108 @@
 											</div>
 											
 											<div id="form1" style="display:none">
-                                           	<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Material Group</label>
-												<div class="col-lg-9">
-													<select class="form-control form-control-select2" data-live-search="true" id="materialGroup" name="materialGroup" onchange="showMatrialDetail(this.value)">
-													<option value="">Select Item</option>
-														<option value="all">All</option>
-														<?php foreach($matrialGroup as $key=>$val):?>
-															<option value="<?=$val['ItmsGrpNam']?>"><?=$val['ItmsGrpNam']?></option>
-														<?php endforeach;?>
-													</select>
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Material Group</label>
+													<div class="col-lg-9">
+														<select class="form-control form-control-select2" data-live-search="true" id="materialGroup" name="materialGroup" onchange="showMatrialDetail(this.value)">
+														<option value="">Select Item</option>
+															<option value="all">All</option>
+															<?php foreach($matrialGroup as $key=>$val):?>
+																<option value="<?=$val['ItmsGrpNam']?>"><?=$val['ItmsGrpNam']?></option>
+															<?php endforeach;?>
+														</select>
+													</div>
 												</div>
-											</div>
 											</div>
 											
 											<div id="form2" style="display:none">
-                                            <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label">Posting Date</label>
-                                                <div class="col-lg-9 input-group date">
-                                                    <input type="text" class="form-control" id="postDate" autocomplete="off" readonly>
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="basic-addon1">
-                                                            <i class="icon-calendar"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-											</div>
-
-											<div class="form-group row">
-													<label class="col-lg-3 col-form-label">Remarks</label>
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Posting Date</label>
 													<div class="col-lg-9 input-group date">
-														<textarea id="remark" cols="30" rows="3" class="form-control"></textarea>
+														<input type="text" class="form-control" id="postDate" autocomplete="off" readonly>
+														<div class="input-group-prepend">
+															<span class="input-group-text" id="basic-addon1">
+																<i class="icon-calendar"></i>
+															</span>
+														</div>
 													</div>
 												</div>
 
-                                            <div class="text-right" id="after-submit">
-                                                <button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
-												<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-												<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve<i class="icon-paperplane ml-2"></i></button>
-												<?php endif;?>
-                                            </div>
+												<div class="form-group row">
+														<label class="col-lg-3 col-form-label">Remarks</label>
+														<div class="col-lg-9 input-group date">
+															<textarea id="remark" cols="30" rows="3" class="form-control"></textarea>
+														</div>
+													</div>
+
+												<div class="text-right" id="after-submit">
+													<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
+													<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
+													<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve<i class="icon-paperplane ml-2"></i></button>
+													<?php endif;?>
+												</div>
 											</div>
 											
                                         </fieldset>
                                     </div>
                                 </div>
-								</div>
+							</div>
                     	</div>   
 						<div id="load" style="display:none"></div>
 						<div id="form3" style="display:none">	
-						<div class="card">
-							<div class="card-body">
-								<div class="row">
-								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
-								<div class="col-md-12 mb-2">
-									<div class="text-left">
-										<input type="button" class="btn btn-primary" value="Add" id="addTable" onclick="onAddrow()"> 
-										<input type="button" value="Delete" class="btn btn-danger" id="deleteRecord">
-									</div>
-								</div>
-                                            
-									<div class="col-md-12" style="overflow: auto">
-										<table class="table table-striped" id="tblWhole">
-											<thead>
-												<tr>
-													<th></th>
-													<th>No</th>
-													<th>Material No</th>
-													<th>Material Desc</th>
-													<th>In Whs Quantity</th>
-													<th>Quantity</th>
-													<th>UOM</th>
-													<th>Remarks</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td><input type="checkbox" id="record"/></td>
-													<td>1</td>
-													<td width="25%">
-														<select class="form-control form-control-select2" data-live-search="true" id="matrialGroup" onchange="setValueTable(this.value,1)" >
-															<option value="">Select Item</option>
-														</select>
-													</td>
-													<td width="30%"></td>
-													<td></td>
-													<td><input type="text" class="form-control  qty" name="qty[]" id="qty" style="width:100%" autocomplete="off"></td>
-													<td></td>
-													<td><input type="text" class="form-control remark" name="remark[]" id="remark" style="width:100%" autocomplete="off"></td>
-												</tr>
-											</tbody>
-										</table>
+							<div class="card">
+								<div class="card-body">
+									<div class="row">
+										<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
+										<div class="col-md-12 mb-2">
+											<div class="text-left">
+												<input type="button" class="btn btn-primary" value="Add" id="addTable" onclick="onAddrow()"> 
+												<input type="button" value="Delete" class="btn btn-danger" id="deleteRecord">
+											</div>
+										</div>
+												
+										<div class="col-md-12" style="overflow: auto">
+											<table class="table table-striped" id="tblWhole">
+												<thead>
+													<tr>
+														<th></th>
+														<th>No</th>
+														<th>Material No</th>
+														<th>Material Desc</th>
+														<th>In Whs Quantity</th>
+														<th>Quantity</th>
+														<th>UOM</th>
+														<th>Remarks</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td><input type="checkbox" id="record"/></td>
+														<td>1</td>
+														<td width="25%">
+															<select class="form-control form-control-select2" data-live-search="true" id="matrialGroup" onchange="setValueTable(this.value,1)" >
+																<option value="">Select Item</option>
+															</select>
+														</td>
+														<td width="30%"></td>
+														<td></td>
+														<td><input type="text" class="form-control  qty" name="qty[]" id="qty" style="width:100%" autocomplete="off"></td>
+														<td></td>
+														<td><input type="text" class="form-control remark" name="remark[]" id="remark" style="width:100%" autocomplete="off"></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
 						</div>	
 					</form>
                 </div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php  $this->load->view("_template/js.php")?>
+        <?php $this->load->view("_template/js.php")?>
 		<script>
 		$(document).ready(function(){
 			
@@ -264,7 +264,7 @@
 			});
 
 			$("#deleteRecord").click(function(){
-                    let deleteidArr=[];
+                    let deleteidArr = [];
                     $("input:checkbox[class=check_delete]:checked").each(function(){
                         deleteidArr.push($(this).val());
                     })
@@ -332,8 +332,8 @@
 				
 				"6":"",
 				"7":`<input type="text" class="form-control remark" id="remark_${count}" value="" style="width:100%" autocomplete="off">`,
-				}).draw();
-				count++;
+			}).draw();
+			count++;
 
 			tbody = $("#tblWhole tbody");
 			tbody.on('change','.testSelect', function(){
@@ -344,7 +344,7 @@
 			});
 		}
 
-		function setValueTable(id,no){
+		function setValueTable(id, no){
 			const oc = $('#outletcode').val().split(' - ');
 			const reqtOutlet = oc[0];
 			const arrOutletVal = reqtOutlet.split('|');
@@ -375,7 +375,7 @@
 			showMatrialDetailData(requestOutlet, selectMaterial, select);
 		}
 
-		function showMatrialDetailData(requestOutlet='', selectMaterial='',  select){
+		function showMatrialDetailData(requestOutlet = '', selectMaterial = '',  select){
 			$.ajax({
 				url: "<?php echo site_url('transaksi1/returnout/getdataDetailMaterial');?>",
 				type: "POST",
@@ -393,11 +393,8 @@
 			});			
 		}
 
-		function addDatadb(id_approve=''){
-			if($('#postDate').val().trim() ==''){
-				alert('Tanggal Posting harus di isi');
-				return false;
-			}
+		function addDatadb(id_approve = ''){
+			
 			const status= document.getElementById('status').value;
 			const reqtOutlet = document.getElementById('rto').value;
 			const arrOutletVal = reqtOutlet.split('|');
@@ -417,28 +414,37 @@
 			let validasi = true;
 			let validasiQty = true;
 			let dataValidasi = [];
+			let dataValidasiEmptyQty = [];
+			let errorMesseges = [];
 			tbodyTable.find('tr').each(function(i, el){
-					let td = $(this).find('td');
-					if(td.eq(4).find('input').val().trim() == ''){
-						validasi = false;
-					}
-					if(parseInt(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
-						dataValidasi.push(td.eq(2).find('select').val());
-						validasiQty = false;
-					}	
-					matrialNo.push(td.eq(2).find('select').val()); 
-					matrialDesc.push(td.eq(3).text());
-					whsQty.push(td.eq(4).text());
-					qty.push(td.eq(5).find('input').val());
-					uom.push(td.eq(6).text());
-					remark.push(td.eq(7).find('input').val());
-				})
+				let td = $(this).find('td');
+				if(td.eq(4).find('input').val().trim() == ''){
+					dataValidasiEmptyQty.push(td.eq(2).find('select').val());
+					validasi = false;
+				}
+				if(parseInt(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
+					dataValidasi.push(td.eq(2).find('select').val());
+					validasiQty = false;
+				}	
+				matrialNo.push(td.eq(2).find('select').val()); 
+				matrialDesc.push(td.eq(3).text());
+				whsQty.push(td.eq(4).text());
+				qty.push(td.eq(5).find('input').val());
+				uom.push(td.eq(6).text());
+				remark.push(td.eq(7).find('input').val());
+			})
+			if(pstDate.trim() == ''){
+				errorMesseges.push('Posting Date harus di isi. \n');
+			}
+
 			if(!validasi){
-				alert('Quatity Tidak boleh Kosong, Harap isi Quantity');
-				return false;
+				errorMesseges.push(`Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
 			}
 			if(!validasiQty){
-				alert('Material Number '+dataValidasi.join()+' Quatity Tidak boleh Lebih Kecil dari In Whs Qty');
+				errorMesseges.push('Material Number '+dataValidasi.join()+' Quatity Tidak boleh Lebih Kecil dari In Whs Qty');
+			}
+			if (errorMesseges.length > 0) {
+				alert(errorMesseges.join(''));
 				return false;
 			}
 

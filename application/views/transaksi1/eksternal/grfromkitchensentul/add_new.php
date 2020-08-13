@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			.hide, 
 			.after-submit {
@@ -71,26 +71,24 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-
-				<?php if ($this->session->flashdata('success')): ?>
+					<?php if ($this->session->flashdata('success')): ?>
 					<div class="alert alert-success" role="alert">
 						<?php echo $this->session->flashdata('success'); ?>
 					</div>
-				<?php endif; ?>
-				<?php if ($this->session->flashdata('failed')): ?>
+					<?php endif; ?>
+					<?php if ($this->session->flashdata('failed')): ?>
 					<div class="alert alert-danger" role="alert">
 						<?php echo $this->session->flashdata('failed'); ?>
 					</div>
-				<?php endif; ?>
-
+					<?php endif; ?>
+					<form action="#" method="POST">
 						<div class="card">
 							<div class="card-body">
-								
 								<div class="row">
 									<div class="col-md-12">
 										<fieldset>
@@ -199,7 +197,8 @@
 
 														</div>
 													</div>
-												</div>											
+												</div>
+											</div>											
 										</fieldset>
 									</div>
 								</div>	
@@ -208,7 +207,7 @@
 						<div id="load" style="display:none"></div>
 						<div class='hide' id="form3">
 							<div class="card">
-							<ul class="nav nav-tabs ">
+								<ul class="nav nav-tabs ">
 									<li class="nav-item">
 										<a href="#gr_list" class="nav-link font-size-sm text-uppercase active" data-toggle="tab" data-tab-remote="">
 											GR List
@@ -242,10 +241,8 @@
 													<th>TF Qty</th>
 													<th>GR Qty</th>
 													<th>Uom</th>
-													
 												</tr>
 											</thead>
-						
 										</table>				
 									</div>
 									<div class="tab-pane" id="sr_list">
@@ -257,10 +254,8 @@
 													<th>Material Desc</th>
 													<th>Quantity</th>
 													<th>Uom</th>
-													
 												</tr>
 											</thead>
-						
 										</table>				
 									</div>
 									<div class="tab-pane" id="sr_list_now">
@@ -272,24 +267,19 @@
 													<th>Material Desc</th>
 													<th>Quantity</th>
 													<th>Uom</th>
-													
 												</tr>
 											</thead>
-						
 										</table>				
 									</div>
-									
 								</div>
 							</div>
 						</div>
-						
 					</form>
-
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php  $this->load->view("_template/js.php")?>
+		<?php $this->load->view("_template/js.php")?>
 		<script>
 
 			$(document).ready(function(){
@@ -314,8 +304,8 @@
 
 			});
 
-			function btnSave(id_approve=''){
-				const donoLong= document.getElementById('slipNumberEntry');
+			function btnSave(id_approve = ''){
+				const donoLong = document.getElementById('slipNumberEntry');
 				const Text = donoLong.options[donoLong.selectedIndex].text;
 				const Arr = Text.split(' - ');
 				
@@ -337,13 +327,13 @@
 				dayPostingDate = splitDate[0];
 				monthPostingDate = splitDate[1];
 				yearPostingDate = splitDate[2];
-				posDate= `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+				posDate = `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
 
 				splitdelvDate = grHeader.delivery_date.split('-');
 				dayDeliveryDate = splitdelvDate[2];
 				monthDeliveryDate = splitdelvDate[1];
 				yearDeliveryDate = splitdelvDate[0];
-				delDate= `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+				delDate = `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
 
 				postingDate = new Date(posDate);
 				deliverDate = new Date(delDate);
@@ -352,7 +342,7 @@
 
 				let urut = 1;
 				let item = 0;
-				let grDetail=[];
+				let grDetail = [];
 				let dataValidasiQty = [];
 				let dataValidasiLessQty = [];
 				let dataValidasiEmptyQty = [];
@@ -399,10 +389,10 @@
 				})
 				
 				// validasi
-				if(grHeader.posting_date.trim() ==''){
+				if(grHeader.posting_date.trim() == ''){
 					errorMesseges.push('Posting Date harus di isi. \n');
 				}
-				if(grHeader.remark.trim() ==''){
+				if(grHeader.remark.trim() == ''){
 					errorMesseges.push('Remark harus di isi. \n');
 				}
 				if(!validasiEmptyQty){
@@ -556,7 +546,7 @@
 							const res = JSON.parse(data);
 							if(res.hasOwnProperty('data')){
 
-								let i=0;
+								let i = 0;
 								for(let key in res.data){ 
 									i++;
 									
@@ -579,7 +569,7 @@
 							const res = JSON.parse(data);
 							if(res.hasOwnProperty('data')){
 
-								let i=0;
+								let i = 0;
 								for(let key in res.data){ 
 									i++;
 									

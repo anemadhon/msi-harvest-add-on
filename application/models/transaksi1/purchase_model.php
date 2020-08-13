@@ -15,8 +15,13 @@ class Purchase_model extends CI_Model {
   
   function showMatrialGroup(){
     $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+    $SAP_MSI->distinct();
     $SAP_MSI->select('ItmsGrpNam');
-    $SAP_MSI->from('OITB');
+    $SAP_MSI->from('OITB t0');
+    $SAP_MSI->join('OITM t1','t0.ItmsGrpCod = t1.ItmsGrpCod','inner');
+    $SAP_MSI->where('t1.validFor', 'Y');
+    $SAP_MSI->where('t1.U_PurcReq <>', 'Y');
+    $SAP_MSI->where('t1.PrchseItem ', 'Y');
 
     $query = $SAP_MSI->get();
     $ret = $query->result_array();
@@ -31,7 +36,7 @@ class Purchase_model extends CI_Model {
     $SAP_MSI->join('OITB t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
     $SAP_MSI->join('OITW t2','t2.ItemCode = t0.ItemCode','inner');
     $SAP_MSI->where('validFor', 'Y');
-    $SAP_MSI->where('U_PurcReq', 'Y');
+    $SAP_MSI->where('U_PurcReq <>', 'Y');
     $SAP_MSI->where('t0.PrchseItem ', 'Y');
     $SAP_MSI->where('WhsCode ', $kd_plant);
 
@@ -56,7 +61,7 @@ class Purchase_model extends CI_Model {
     $SAP_MSI->join('OITB t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
     $SAP_MSI->join('OITW t2','t2.ItemCode = t0.ItemCode','inner');
     $SAP_MSI->where('validFor', 'Y');
-    $SAP_MSI->where('U_PurcReq', 'Y');
+    $SAP_MSI->where('U_PurcReq <>', 'Y');
     $SAP_MSI->where('t0.PrchseItem ', 'Y');
     $SAP_MSI->where('WhsCode ', $kd_plant);
     $SAP_MSI->where('t0.ItemCode', $itemSelect);
@@ -116,7 +121,7 @@ class Purchase_model extends CI_Model {
     $SAP_MSI->from('OITM t0');
     $SAP_MSI->join('OITB t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
     $SAP_MSI->where('validFor', 'Y');
-    $SAP_MSI->where('U_PurcReq', 'Y');
+    $SAP_MSI->where('U_PurcReq <>', 'Y');
     $SAP_MSI->where('t0.PrchseItem ', 'Y');
     $SAP_MSI->where('t1.ItmsGrpNam ', $item_group);
     

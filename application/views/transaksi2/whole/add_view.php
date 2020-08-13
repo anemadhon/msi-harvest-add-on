@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			th{
 				text-align:center;
@@ -76,25 +76,24 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-					<?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
-					<?php endif; ?>
-					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
-					<?php endif; ?>
+				<?php if ($this->session->flashdata('success')): ?>
+					<div class="alert alert-success" role="alert">
+						<?php echo $this->session->flashdata('success'); ?>
+					</div>
+				<?php endif; ?>
+				<?php if ($this->session->flashdata('failed')): ?>
+					<div class="alert alert-danger" role="alert">
+						<?php echo $this->session->flashdata('failed'); ?>
+					</div>
+				<?php endif; ?>
                     <form action="#" method="POST">
-					<div class="card">
-                        <div class="card-body">
-                            
+						<div class="card">
+                        	<div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <fieldset>
@@ -165,19 +164,16 @@
 												<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve<i class="icon-paperplane ml-2"></i></button>
 												<?php endif;?>
                                             </div>
-
-											
                                         </fieldset>
                                     </div>
                                 </div>
-								</div>
-                                </div>
-								<div id="load" style="display:none"></div>  
-								<div class="card">
-                        		<div class="card-body">
-                            
+							</div>
+                        </div>
+						<div id="load" style="display:none"></div>  
+						<div class="card">
+        	        		<div class="card-body">                
 								<div class="row">
-								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
+									<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
 									<div class="col-md-12 mb-2">
 										<div class="text-left">
 											<input type="button" class="btn btn-primary" value="Add" id="addTable" onclick="onAddrow()"> 
@@ -223,244 +219,256 @@
 											</tbody>
 										</table>
 									</div>
-									
 								</div>
-								</div>
-                    		</div> 
-                    </form>
-                                           
+							</div>
+                    	</div> 
+                    </form>                     
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php  $this->load->view("_template/js.php")?>
+        <?php $this->load->view("_template/js.php")?>
 		<script>
-		$(document).ready(function(){
-			$('#qty').change(function(){
-				let qty = parseFloat($('#qty').val());
-				let vol = parseFloat($('#volume').val());
-				let potong = $('#potong');
-				$('#volume').val((qty*vol).toFixed(4));
-				potong.text((qty*vol).toFixed(4));
-			})
-			var table = $("#tblWhole").DataTable({
-				"ordering":false,
-				"paging":false,
-				drawCallback: function() {
-					$('.form-control-select2').select2();
-				}
-			});
-			count = 1;
-
-			$("#deleteRecord").click(function(){
-				let deleteidArr=[];
-				$("input:checkbox[class=check_delete]:checked").each(function(){
-					deleteidArr.push($(this).val());
+			$(document).ready(function(){
+				$('#qty').change(function(){
+					let qty = parseFloat($('#qty').val());
+					let vol = parseFloat($('#volume').val());
+					let potong = $('#potong');
+					$('#volume').val((qty*vol).toFixed(4));
+					potong.text((qty*vol).toFixed(4));
 				})
-
-				// mengecek ckeckbox tercheck atau tidak
-				if(deleteidArr.length > 0){
-					var confirmDelete = confirm("Do you really want to Delete records?");
-					if(confirmDelete == true){
-						$("input:checked").each(function(){
-							table.row($(this).closest("tr")).remove().draw();;
-						});
+				var table = $("#tblWhole").DataTable({
+					"ordering":false,
+					"paging":false,
+					drawCallback: function() {
+						$('.form-control-select2').select2();
 					}
+				});
+				count = 1;
+
+				$("#deleteRecord").click(function(){
+					let deleteidArr=[];
+					$("input:checkbox[class=check_delete]:checked").each(function(){
+						deleteidArr.push($(this).val());
+					})
+
+					// mengecek ckeckbox tercheck atau tidak
+					if(deleteidArr.length > 0){
+						var confirmDelete = confirm("Do you really want to Delete records?");
+						if(confirmDelete == true){
+							$("input:checked").each(function(){
+								table.row($(this).closest("tr")).remove().draw();;
+							});
+						}
+					}
+					
+				});
+
+				checkcheckbox = () => {
+					let totalChecked = 0;
+					$(".check_delete").each(function(){
+						if($(this).is(":checked")){
+							totalChecked += 1;
+						}
+					});
 				}
+
+				const date = new Date();
+				const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+				var optSimple = {
+					format: 'dd-mm-yyyy',
+					todayHighlight: true,
+					orientation: 'bottom right',
+					autoclose: true
+				};
+				$('#postDate').datepicker(optSimple);
+			});
+
+			function setDetail(item){
+				const text = item.options[item.selectedIndex].text;
+				const textArr = text.split(' - ');
+				const itemCode = textArr[0];
+				$('#itemDesc').val(textArr[1]);
+				const select = $('#matrialGroup');
+				showMatrialDetailData(itemCode, select);
+				$.post("<?php echo site_url('transaksi2/whole/getOnHand')?>",{
+					item_code:itemCode},
+					function(res){
+						value = JSON.parse(res);
+						$('#onHand').val(value[0].Onhand.slice(0,-2));
+						$('#volume').val(value[0].SVolume.slice(0,-2));
+						$('#qty').change(function(){
+							let qty = parseFloat($('#qty').val());
+							let vol = parseFloat(value[0].SVolume);
+							let potong = $('#potong');
+							$('#volume').val((qty*vol).toFixed(4));
+							potong.text((qty*vol).toFixed(4));
+						})
+				});
 				
-			});
+			}
 
-			checkcheckbox = () => {
-				let totalChecked = 0;
-				$(".check_delete").each(function(){
-					if($(this).is(":checked")){
-						totalChecked += 1;
+			function showMatrialDetailData(itemCode='', select){
+				$.ajax({
+					url: "<?php echo site_url('transaksi2/whole/getdataDetailMaterial');?>",
+					type: "POST",
+					data: {
+						item_code: itemCode
+					},
+					success:function(res) {
+						optData = JSON.parse(res);
+						optData.forEach((val)=>{						
+							$("<option />", {value:val.MATNR1, text:val.MATNR1 +' - '+ val.MAKTX1+' - '+val.UOM}).appendTo(select);
+						})
 					}
-				});
+				});			
 			}
 
-			const date = new Date();
-			const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-			var optSimple = {
-				format: 'dd-mm-yyyy',
-				todayHighlight: true,
-				orientation: 'bottom right',
-				autoclose: true
-			};
-			$('#postDate').datepicker(optSimple);
-		});
-
-		function setDetail(item){
-			const text = item.options[item.selectedIndex].text;
-			const textArr = text.split(' - ');
-			const itemCode = textArr[0];
-			$('#itemDesc').val(textArr[1]);
-			const select = $('#matrialGroup');
-			showMatrialDetailData(itemCode, select);
-			$.post("<?php echo site_url('transaksi2/whole/getOnHand')?>",{
-				item_code:itemCode},
-				function(res){
-					value = JSON.parse(res);
-					$('#onHand').val(value[0].Onhand.slice(0,-2));
-					$('#volume').val(value[0].SVolume.slice(0,-2));
-					$('#qty').change(function(){
-						let qty = parseFloat($('#qty').val());
-						let vol = parseFloat(value[0].SVolume);
-						let potong = $('#potong');
-						$('#volume').val((qty*vol).toFixed(4));
-						potong.text((qty*vol).toFixed(4));
-					})
-			});
-			
-		}
-
-		function showMatrialDetailData(itemCode='', select){
-			$.ajax({
-				url: "<?php echo site_url('transaksi2/whole/getdataDetailMaterial');?>",
-				type: "POST",
-				data: {
-					item_code: itemCode
-				},
-				success:function(res) {
-					optData = JSON.parse(res);
-					optData.forEach((val)=>{						
-						$("<option />", {value:val.MATNR1, text:val.MATNR1 +' - '+ val.MAKTX1+' - '+val.UOM}).appendTo(select);
-					})
-				}
-			});			
-		}
-
-		function onAddrow(){
-			let getTable = $("#tblWhole").DataTable();
-			count = getTable.rows().count() + 2;
-			let elementSelect = document.getElementsByClassName(`dt_${count}`);
-			const itemCode = $('#itemCode').val();
-			
-			getTable.row.add({
-				"0":`<input type="checkbox" class="check_delete" id="chk_${count}" value="${count}">`,
-				"1":count -1,
-				"2":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
-								<option value="">Select Item</option>
-								${showMatrialDetailData(itemCode, elementSelect)}
-							</select>`,
-				"3":"",
-				"4":`<input type="text" class="form-control qty qty_${count}" id="gr_qty_${count}" value="" style="width:90px" autocomplete="off" onchange="setVolumeSisa(this.value,${count})">`,
-				"5":"",
-				"6":""
+			function onAddrow(){
+				let getTable = $("#tblWhole").DataTable();
+				count = getTable.rows().count() + 2;
+				let elementSelect = document.getElementsByClassName(`dt_${count}`);
+				const itemCode = $('#itemCode').val();
+				
+				getTable.row.add({
+					"0":`<input type="checkbox" class="check_delete" id="chk_${count}" value="${count}">`,
+					"1":count -1,
+					"2":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
+									<option value="">Select Item</option>
+									${showMatrialDetailData(itemCode, elementSelect)}
+								</select>`,
+					"3":"",
+					"4":`<input type="text" class="form-control qty qty_${count}" id="gr_qty_${count}" value="" style="width:90px" autocomplete="off" onchange="setVolumeSisa(this.value,${count})">`,
+					"5":"",
+					"6":""
 				}).draw();
-			count++;
+				count++;
 
-			tbody = $("#tblWhole tbody");
-			tbody.on('change','.testSelect', function(){
-				tr = $(this).closest('tr');
-				no = tr[0].rowIndex;
-				id = $('.dt_'+no).val();
-				setValueTable(id,no);
-			});
-		}
-
-		function setValueTable(id,no){
-			table = document.getElementById("tblWhole").rows[no].cells;
-			const itemCode = $('#itemCode').val();
-			
-			$.post(
-				"<?php echo site_url('transaksi2/whole/getdataDetailMaterial')?>",{ item_code: itemCode, MATNR:id },(res)=>{
-					matSelect = JSON.parse(res);
-					matSelect.map((val)=>{
-						table[3].innerHTML = val.MAKTX1;
-						table[4].innerHTML = `<input type="text" class="form-control qty qty_${no}" id="gr_qty_${no}" value="" style="width:90px" autocomplete="off" onchange="setVolumeSisa(this.value,${no},${val.VOL})">`;
-						table[5].innerHTML = val.UOM;
-						table[6].innerHTML = val.VOL.slice(0,-2);
-					})
-				}
-			)
-		}
-
-		function setVolumeSisa(val,no,vol){
-			table = document.getElementById("tblWhole").rows[no].cells;
-
-			let volume = $('#volume').val();
-			let potong = $('#potong').text();
-			let sisa = $('#sisa');
-			let qty_row = table[4].children[0].value;
-			let vol_pot = parseFloat(vol);
-			let hasilPtgArr = [];
-
-			table[6].innerHTML = (qty_row*vol_pot).toFixed(4);
-			$('#tblWhole tbody tr').each(function() {
-				hasilPtgArr.push(parseFloat($(this).find('td').last().text())); 
-			});
-			let hasilPtg = hasilPtgArr.reduce((a, b) => a + b, 0);
-			let hasilSisa = volume - hasilPtg;
-			$('#potong').text(hasilPtg.toFixed(4));
-			$('#sisa').text(hasilSisa.toFixed(4));
-			if (hasilSisa < 0) {
-				$('#text-sisa').addClass('text-danger font-weight-bold');
-			} else {
-				$('#text-sisa').removeClass('text-danger font-weight-bold');
-			}
-		}
-
-		function addDatadb(id_approve=''){
-			let vol = parseFloat($('#volume').val());
-			let potong = parseFloat($('#potong').text());
-			if($('#qty').val().trim() == ''){
-				alert('Quantity Header Harus Diisi')
-				return false
-			}
-			if($('.qty').val().trim() ==''){
-				alert('Quantity harus di isi');
-				return false;
-			}
-
-			if($('#postDate').val().trim() ==''){
-				alert('Tanggal Posting harus di isi');
-				return false;
-			}
-
-			if (vol != potong) {
-				alert('Total Volume Harus Sama Dengan Volume Loyang');
-				return false;
-			}
-
-			const itemCode= document.getElementById('itemCode').value;
-			const itemDesc= document.getElementById('itemDesc').value;
-			const qtyPaket= document.getElementById('qty').value;
-			const postDate= document.getElementById('postDate').value;
-			const approve = id_approve;
-			const tbodyTable = $('#tblWhole > tbody');
-			let matrialNo =[];
-			let matrialDesc =[];
-			let qty =[];
-			let uom =[];
-			let volD = [];
-			tbodyTable.find('tr').each(function(i, el){
-				let td = $(this).find('td');
-				matrialNo.push(td.eq(2).find('select').val()); 
-				matrialDesc.push(td.eq(3).text());
-				qty.push(td.eq(4).find('input').val());
-				uom.push(td.eq(5).text());
-				volD.push((parseFloat(td.eq(6).text())/parseFloat(td.eq(4).find('input').val())));
-			})
-
-			$('#load').show();
-			$("#after-submit").addClass('after-submit');
-
-			setTimeout(() => {
-				$.post("<?php echo site_url('transaksi2/whole/addData')?>",{
-					item_code: itemCode, item_desc: itemDesc, qty_paket: qtyPaket, appr: approve, postingDate:postDate, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detQty: qty, detUom: uom, Vol:volD
-				}, function(){
-					$('#load').hide();
-				})
-				.done(function() {
-					location.replace("<?php echo site_url('transaksi2/whole/')?>");
-				})
-				.fail(function(xhr, status) {
-					alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
-					location.reload(true);
+				tbody = $("#tblWhole tbody");
+				tbody.on('change','.testSelect', function(){
+					tr = $(this).closest('tr');
+					no = tr[0].rowIndex;
+					id = $('.dt_'+no).val();
+					setValueTable(id,no);
 				});
-			}, 600);
-		}
+			}
+
+			function setValueTable(id,no){
+				table = document.getElementById("tblWhole").rows[no].cells;
+				const itemCode = $('#itemCode').val();
+				
+				$.post(
+					"<?php echo site_url('transaksi2/whole/getdataDetailMaterial')?>",{ item_code: itemCode, MATNR:id },(res)=>{
+						matSelect = JSON.parse(res);
+						matSelect.map((val)=>{
+							table[3].innerHTML = val.MAKTX1;
+							table[4].innerHTML = `<input type="text" class="form-control qty qty_${no}" id="gr_qty_${no}" value="" style="width:90px" autocomplete="off" onchange="setVolumeSisa(this.value,${no},${val.VOL})">`;
+							table[5].innerHTML = val.UOM;
+							table[6].innerHTML = val.VOL.slice(0,-2);
+						})
+					}
+				)
+			}
+
+			function setVolumeSisa(val,no,vol){
+				table = document.getElementById("tblWhole").rows[no].cells;
+
+				let volume = $('#volume').val();
+				let potong = $('#potong').text();
+				let sisa = $('#sisa');
+				let qty_row = table[4].children[0].value;
+				let vol_pot = parseFloat(vol);
+				let hasilPtgArr = [];
+
+				table[6].innerHTML = (qty_row*vol_pot).toFixed(4);
+				$('#tblWhole tbody tr').each(function() {
+					hasilPtgArr.push(parseFloat($(this).find('td').last().text())); 
+				});
+				let hasilPtg = hasilPtgArr.reduce((a, b) => a + b, 0);
+				let hasilSisa = volume - hasilPtg;
+				$('#potong').text(hasilPtg.toFixed(4));
+				$('#sisa').text(hasilSisa.toFixed(4));
+				if (hasilSisa < 0) {
+					$('#text-sisa').addClass('text-danger font-weight-bold');
+				} else {
+					$('#text-sisa').removeClass('text-danger font-weight-bold');
+				}
+			}
+
+			function addDatadb(id_approve=''){
+
+				const itemCode= document.getElementById('itemCode').value;
+				const itemDesc= document.getElementById('itemDesc').value;
+				const qtyPaket= document.getElementById('qty').value;
+				const postDate= document.getElementById('postDate').value;
+				const approve = id_approve;
+				const tbodyTable = $('#tblWhole > tbody');
+
+				let matrialNo =[];
+				let matrialDesc =[];
+				let qty =[];
+				let uom =[];
+				let volD = [];
+
+				let vol = parseFloat($('#volume').val());
+				let potong = parseFloat($('#potong').text());
+
+				let errorMessages = [];
+				let dataValidateQty = [];
+				let ValidateQty = true;
+
+				tbodyTable.find('tr').each(function(i, el){
+					let td = $(this).find('td');
+					if(td.eq(4).find('input').val().trim() == '' || td.eq(4).find('input').val().trim() == null){
+						dataValidateQty.push(td.eq(2).find('select').val())
+						validateQty = false
+					}
+					matrialNo.push(td.eq(2).find('select').val()); 
+					matrialDesc.push(td.eq(3).text());
+					qty.push(td.eq(4).find('input').val());
+					uom.push(td.eq(5).text());
+					volD.push((parseFloat(td.eq(6).text())/parseFloat(td.eq(4).find('input').val())));
+				})
+
+				if(qtyPaket.trim() == ''){
+					errorMessages.push('Quantity Header Harus Diisi. \n')
+				}
+
+				if(postDate.trim() ==''){
+					errorMessages.push('Tanggal Posting harus di isi. \n');
+				}
+
+				if(!validateQty){
+					errorMessages.push(`Quantity untuk Material No. ${dataValidateQty.join()} harus di isi. \n`);
+				}
+
+				if (vol != potong) {
+					errorMessages.push('Total Volume Harus Sama Dengan Volume Loyang. \n');
+				}
+
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join(''));
+					return false;
+				}
+
+				$('#load').show();
+				$("#after-submit").addClass('after-submit');
+
+				setTimeout(() => {
+					$.post("<?php echo site_url('transaksi2/whole/addData')?>",{
+						item_code: itemCode, item_desc: itemDesc, qty_paket: qtyPaket, appr: approve, postingDate:postDate, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detQty: qty, detUom: uom, Vol:volD
+					}, function(){
+						$('#load').hide();
+					})
+					.done(function() {
+						location.replace("<?php echo site_url('transaksi2/whole/')?>");
+					})
+					.fail(function(xhr, status) {
+						alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
+						location.reload(true);
+					});
+				}, 600);
+			}
 
 		</script>
 	</body>

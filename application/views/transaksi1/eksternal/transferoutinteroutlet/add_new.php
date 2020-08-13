@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			.hide, 
 			.after-submit {
@@ -72,9 +72,9 @@
 	</head>
 	
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 				<?php if ($this->session->flashdata('success')): ?>
@@ -108,91 +108,91 @@
 												</div>
 											</div>
 
-										<div id='form1' style="display:none">
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Transfer Slip Number</label>
-												<div class="col-lg-9"><input type="text" class="form-control" readonly="" value="(Auto Number after Posting to SAP)." name="transferSlipNumber" id="transferSlipNumber">
-												</div>
-											</div>
-
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Delivery Date</label>
-												<div class="col-lg-9">
-													<input type="text" class="form-control" readonly="" value="" name="delivDate" id="delivDate">
-												</div>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Outlet</label>
-												<div class="col-lg-9">
-													<input type="text" class="form-control" readonly="" value="<?= $plant ?>" name="outlet" id="outlet">
-												</div>
-											</div>
-											
-											<div class="form-group row" hidden>
-												<label class="col-lg-3 col-form-label">Storage Location</label>
-												<div class="col-lg-9">
-													<input type="text" class="form-control" readonly="" value="<?= $storage_location ?>" name="storageLocation" id="storageLocation">
-												</div>
-											</div>
-
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Request To</label>
-												<div class="col-lg-9">
-													<input type="text" class="form-control" readonly=""  name="rto" id="rto">
-												</div>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Status</label>
-												<div class="col-lg-9">
-													<input type="hidden" name="status" id="status" value="1" >
-													<input type="text" class="form-control" placeholder="" readonly="" value="Not Approved" name="status_string" id="status_string">
-												</div>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Material Group</label>
-												<div class="col-lg-9">
-													<select class="form-control form-control-select2" data-live-search="true" name="MatrialGroup" id="MatrialGroup">
-														
-													</select>
-												</div>
-											</div>
-
-										</div>
-										<div class='hide' id="form2">
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Posting Date</label>
-												<div class="col-lg-9 input-group date">
-													<input type="text" class="form-control" readonly="" id="postingDate">
-													<div class="input-group-prepend">
-                                                        <span class="input-group-text" id="basic-addon1">
-                                                            <i class="icon-calendar"></i>
-                                                        </span>
-                                                    </div>
-												</div>
-											</div>
-
-											<div class="form-group row">
-                                                <label class="col-lg-3 col-form-label">Remarks</label>
-                                                <div class="col-lg-9 input-group date">
-                                                    <textarea id="remark" cols="30" rows="3" class="form-control"></textarea>
-                                                </div>
-											</div>
-											
-											<div class="form-group row" id="after-submit">
-												<div class="col-lg-12 text-right">
-													<div class="text-right">
-														<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
-														<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-														<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
-														<?php endif;?>
+											<div id='form1' style="display:none">
+												
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Transfer Slip Number</label>
+													<div class="col-lg-9"><input type="text" class="form-control" readonly="" value="(Auto Number after Posting to SAP)." name="transferSlipNumber" id="transferSlipNumber">
 													</div>
 												</div>
+
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Delivery Date</label>
+													<div class="col-lg-9">
+														<input type="text" class="form-control" readonly="" value="" name="delivDate" id="delivDate">
+													</div>
+												</div>
+												
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Outlet</label>
+													<div class="col-lg-9">
+														<input type="text" class="form-control" readonly="" value="<?= $plant ?>" name="outlet" id="outlet">
+													</div>
+												</div>
+												
+												<div class="form-group row" hidden>
+													<label class="col-lg-3 col-form-label">Storage Location</label>
+													<div class="col-lg-9">
+														<input type="text" class="form-control" readonly="" value="<?= $storage_location ?>" name="storageLocation" id="storageLocation">
+													</div>
+												</div>
+
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Request To</label>
+													<div class="col-lg-9">
+														<input type="text" class="form-control" readonly=""  name="rto" id="rto">
+													</div>
+												</div>
+												
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Status</label>
+													<div class="col-lg-9">
+														<input type="hidden" name="status" id="status" value="1" >
+														<input type="text" class="form-control" placeholder="" readonly="" value="Not Approved" name="status_string" id="status_string">
+													</div>
+												</div>
+												
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Material Group</label>
+													<div class="col-lg-9">
+														<select class="form-control form-control-select2" data-live-search="true" name="MatrialGroup" id="MatrialGroup">
+															
+														</select>
+													</div>
+												</div>
+
 											</div>
-										</div>	
+											<div class='hide' id="form2">
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Posting Date</label>
+													<div class="col-lg-9 input-group date">
+														<input type="text" class="form-control" readonly="" id="postingDate">
+														<div class="input-group-prepend">
+															<span class="input-group-text" id="basic-addon1">
+																<i class="icon-calendar"></i>
+															</span>
+														</div>
+													</div>
+												</div>
+
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Remarks</label>
+													<div class="col-lg-9 input-group date">
+														<textarea id="remark" cols="30" rows="3" class="form-control"></textarea>
+													</div>
+												</div>
+												
+												<div class="form-group row" id="after-submit">
+													<div class="col-lg-12 text-right">
+														<div class="text-right">
+															<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
+															<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
+															<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
+															<?php endif;?>
+														</div>
+													</div>
+												</div>
+											</div>	
 										</fieldset>
 									</div>
 								</div>	
@@ -200,41 +200,41 @@
 							</div>
 						</div>  
 						<div id="load" style="display:none"></div>                  
-					<div class='hide' id="form3">
-						<div class="card">
-							<div class="card-header">
-								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Transfer Out Inter Outlet</legend>
-							</div>
-							<div class="card-body">
-								<div class="col-md-12 mb-2">
-									<div class="text-left">
-										<input type="button" value="Delete" class="btn btn-danger" id="deleteRecord"> 
-									</div>
+						<div class='hide' id="form3">
+							<div class="card">
+								<div class="card-header">
+									<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Transfer Out Inter Outlet</legend>
 								</div>
-								<table id="tblWhole" class="table table-striped " style="width:100%">
-									<thead>
-										<tr>
-											<th></th>
-											<th style="text-align: left">No</th>
-											<th>Material No</th>
-											<th>Material Desc</th>
-											<th>In WHS Quantity</th>
-											<th>Outstanding Qty</th>
-											<th>Quantity</th>
-											<th>Uom Reg.</th>
-											<th>Uom</th>
-										</tr>
-									</thead>
-								</table>
+								<div class="card-body">
+									<div class="col-md-12 mb-2">
+										<div class="text-left">
+											<input type="button" value="Delete" class="btn btn-danger" id="deleteRecord"> 
+										</div>
+									</div>
+									<table id="tblWhole" class="table table-striped " style="width:100%">
+										<thead>
+											<tr>
+												<th></th>
+												<th style="text-align: left">No</th>
+												<th>Material No</th>
+												<th>Material Desc</th>
+												<th>In WHS Quantity</th>
+												<th>Outstanding Qty</th>
+												<th>Quantity</th>
+												<th>Uom Reg.</th>
+												<th>Uom</th>
+											</tr>
+										</thead>
+									</table>
+								</div>
 							</div>
 						</div>
-					</div>
 					</form>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php  $this->load->view("_template/js.php")?>
+		<?php $this->load->view("_template/js.php")?>
 		<script>
             $(document).ready(function(){
 				table = $("#tblWhole").DataTable({
@@ -257,7 +257,7 @@
 				$('#postingDate').datepicker( 'setDate', today );
 
 				$("#deleteRecord").click(function(){
-					let deleteidArr=[];
+					let deleteidArr = [];
 					let getTable = $("#tblWhole").DataTable();
 					$("input:checkbox[class=check_delete]:checked").each(function(){
 						deleteidArr.push($(this).val());
@@ -312,7 +312,7 @@
 				$("#form1").css('display', '');
 			}
 
-			function showMatrialDetailData(cboMatrialGroup='',do_no=''){
+			function showMatrialDetailData(cboMatrialGroup = '', do_no = ''){
 				
 				const select = cboMatrialGroup;
 
@@ -339,7 +339,7 @@
 						}},
 						{data:"NO","className":"dt-center" ,render:function(data, type, row, meta){
 							rr = `<input type="hidden" value="${row['item']}">`;
-							return rr+ data;
+							return rr + data;
 						}},
 						{data:"MATNR"},
 						{data:"MAKTX"},
@@ -349,7 +349,6 @@
 						}},
 						{data:"LFIMG"},
 						{data:"GRQUANTITY","className":"dt-center",render:function(data, type, row, meta){
-							
 							rr=  `<input type="text" class="form-control qty" id="gr_qty_${row['NO']}" value="">`;
 							return rr;
 						}},
@@ -359,17 +358,7 @@
 				});	
 			}
 
-			function addDatadb(id_approve=''){
-				if($('.qty').val().trim() ==''){
-					alert('Quatity harus di isi');
-					
-					return false;
-				}
-
-				if($('#postingDate').val().trim() ==''){
-					alert('Tanggal Posting harus di isi');
-					return false;
-				}
+			function addDatadb(id_approve = ''){
 				
 				const requestResponLong= document.getElementById('srEntry');
 				const rrText = requestResponLong.options[requestResponLong.selectedIndex].text;
@@ -392,12 +381,20 @@
 				let uom =[];
 				let validasi = true;
 				let dataValidasi = [];
+				let dataValidasiEmptyQty = [];
+				let errorMesseges = [];
+				let validasiEmptyQty = true;
 				tbodyTable.find('tr').each(function(i, el){
 					let td = $(this).find('td');
 
 					if(parseInt(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(5).text()) || parseInt(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
 						dataValidasi.push(td.eq(2).text());
 						validasi = false;
+					}
+
+					if(td.eq(6).find('input').val().trim() == ''){
+						dataValidasiEmptyQty.push(td.eq(1).text());
+						validasiEmptyQty = false;
 					}
 	
 					matrialNo.push(td.eq(2).text()); 
@@ -410,8 +407,19 @@
 					
 				})
 
+				if(postingDate.trim() == ''){
+					errorMesseges.push('Tanggal Posting harus di isi. \n');
+				}
+
+				if(!validasiEmptyQty){
+					errorMesseges.push(`Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+				}
+
 				if(!validasi){
-					alert('Material Number '+dataValidasi.join()+' Quatity Tidak boleh lebih besar dari Outstanding Quantity dan In Warehouse Quantity');
+					errorMesseges.push('Quatity Untuk Material Number '+dataValidasi.join()+' Tidak boleh lebih besar dari Outstanding Quantity dan In Warehouse Quantity. \n');
+				}
+				if (errorMesseges.length > 0) {
+					alert(errorMesseges.join(''));
 					return false;
 				}
 

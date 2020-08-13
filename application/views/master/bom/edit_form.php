@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+	<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 					<form action="#" method="POST">
@@ -76,10 +76,10 @@
 						</div>
 					</form>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php  $this->load->view("_template/js.php")?>
+        <?php $this->load->view("_template/js.php")?>
 		<script>
             $(document).ready(function(){
                 var table = $("#table-bom").DataTable({

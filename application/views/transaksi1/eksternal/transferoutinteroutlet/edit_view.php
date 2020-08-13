@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			.after-submit {
 				display: none;
@@ -68,9 +68,9 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 				<?php if ($this->session->flashdata('success')): ?>
@@ -84,7 +84,6 @@
 					</div>
 				<?php endif; ?>
 					<form action="#" method="POST">
-					<input type="hidden" name="status" id="status" value="<?=$gistonew_out_header['status']?>">
 						<div class="card">
 							<div class="card-body">
 								<div class="row">
@@ -142,6 +141,7 @@
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Status</label>
 												<div class="col-lg-9">
+													<input type="hidden" name="status" id="status" value="<?=$gistonew_out_header['status']?>">
 													<input type="text" class="form-control" readonly="" value="<?=$gistonew_out_header['status_string']?>">
 												</div>
 											</div>
@@ -212,17 +212,16 @@
 											<th>Uom</th>
 										</tr>
 									</thead>
-									<tbody>
-									</tbody>
+									<tbody></tbody>
 								</table>
 							</div>
 						</div>
 					</form>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php  $this->load->view("_template/js.php")?>
+		<?php $this->load->view("_template/js.php")?>
 		<script>
             $(document).ready(function(){
                 let id_gistonew_out_header = $('#id_gistonew_out_header').val();
@@ -239,8 +238,8 @@
 					"columns": [
 						
 						{"data":"id_gistonew_out_detail", "className":"dt-center", render:function(data, type, row, meta){
-								rr=row['status']==2 ? '' : `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" >`;
-								return rr;
+							rr = row['status'] == 2 ? '' : `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" >`;
+							return rr;
 						}},
 						{"data":"no","className":"dt-center" ,render:function(data, type, row, meta){
 							rr = `<input type="hidden" value="${row['posnr']}">`;
@@ -251,8 +250,7 @@
 						{"data":"in_whs_qty", "className":"dt-center whsQty"},
 						{"data":"outstanding_qty", "className":"dt-center"},
 						{"data":"gr_quantity", "className":"dt-center",render:function(data, type, row, meta){
-							rr=  `<input type="text" class="form-control qty" id="gr_qty_${row['no']}" value="${data}" 
-								${row['status']==1 ?'':'readonly'}>`;
+							rr = `<input type="text" class="form-control qty" id="gr_qty_${row['no']}" value="${data}" ${row['status']==1 ?'':'readonly'}>`;
 							return rr;
 						}},
 						{"data":"uom"},
@@ -266,7 +264,7 @@
 
 				$("#cancelRecord").click(function(){
 					const id_gistonew_out_header = $('#id_gistonew_out_header').val();
-                    let deleteidArr=[];
+                    let deleteidArr = [];
                     $("input:checkbox[class=check_delete]:checked").each(function(){
                         deleteidArr.push($(this).val());
                     })
@@ -288,7 +286,7 @@
 				});
 				
 				$("#deleteRecord").click(function(){
-					let deleteidArr=[];
+					let deleteidArr = [];
 					let getTable = $("#table-manajemen").DataTable();
 					$("input:checkbox[class=check_delete]:checked").each(function(){
 						deleteidArr.push($(this).val());
@@ -327,8 +325,8 @@
 					"gr_quantity":"",
 					"uom_req":"",
 					"uom":""
-					}).draw();
-					count++;
+				}).draw();
+				count++;
 
 				tbody = $("#table-manajemen tbody");
 				tbody.on('change','.testSelect', function(){
@@ -339,7 +337,7 @@
 				});
 			}
 
-			function showMatrialDetailData(cboMatrialGroup='',do_no='', selectTable){
+			function showMatrialDetailData(cboMatrialGroup = '', do_no = '', selectTable){
 				
 				const select = selectTable ? selectTable : $('#matrialGroupDetail');
 
@@ -353,7 +351,7 @@
 				})		
 			}
 
-			function setValueTable(doNo='',id,no){
+			function setValueTable(doNo = '', id, no){
 				doNo = doNo ? doNo : $('#srEntry').val();
 				table = document.getElementById("table-manajemen").rows[no].cells;
 				$.post(
@@ -374,11 +372,7 @@
 				)
 			}
 
-			function addDatadb(id_approve=''){
-				if($('.qty').val().trim() ==''){
-					alert('Quatity harus di isi');
-					return false;
-				}
+			function addDatadb(id_approve = ''){
 
 				const id_gistonew_out_header = $('#id_gistonew_out_header').val();
 				const srEntry = $('#srEntry').val();
@@ -395,10 +389,19 @@
 				let uom =[];
 				let uom_reg = [];
 				let validasi = true;
+				let dataValidasi = [];
+				let dataValidasiEmptyQty = [];
+				let errorMesseges = [];
+				let validasiEmptyQty = true;
 				tbodyTable.find('tr').each(function(i,el){
 					let td = $(this).find('td');
 					if(parseInt(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(5).text())){
-							validasi = false;
+						dataValidasi.push(td.eq(2).text());
+						validasi = false;
+					}
+					if(td.eq(6).find('input').val().trim() == ''){
+						dataValidasiEmptyQty.push(td.eq(2).text());
+						validasiEmptyQty = false;
 					}
 
 					matrial_no.push(td.eq(2).text().trim());
@@ -410,8 +413,15 @@
 					uom_reg.push(td.eq(8).text());
 				})
 
+				if(!validasiEmptyQty){
+					errorMesseges.push(`Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+				}
+
 				if(!validasi){
-					alert('Quatity Tidak boleh lebih besar dari Outstanding Quantity');
+					errorMesseges.push('Quatity Untuk Material Number '+dataValidasi.join()+' Tidak boleh lebih besar dari Outstanding Quantity dan In Warehouse Quantity. \n');
+				}
+				if (errorMesseges.length > 0) {
+					alert(errorMesseges.join(''));
 					return false;
 				}
 

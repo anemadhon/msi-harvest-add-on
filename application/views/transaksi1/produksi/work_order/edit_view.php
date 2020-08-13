@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			.after-submit,
 			.hide {
@@ -69,9 +69,9 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+	<	?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 				<?php if ($this->session->flashdata('success')): ?>
@@ -85,7 +85,7 @@
 					</div>
 				<?php endif; ?>
 					<form action="#" method="POST">
-					<input type="hidden" name="status" id="status" value="<?=$wo_header['status']?>">
+						<input type="hidden" name="status" id="status" value="<?=$wo_header['status']?>">
 						<div class="card">
 							<div class="card-body">
 								<div class="row">
@@ -168,30 +168,29 @@
 							</div>
 							<div class="card-body">
 								<div class="col-md-12" style="overflow:auto">
-								<table id="table-manajemen" class="table table-striped " style="width:100%">
-									<thead>
-										<tr>
-											<th><input type="checkbox" name="checkall" id="checkall"></th>
-											<th>No</th>
-											<th>Material No</th>
-											<th>Material Desc</th>
-											<th>Quantity</th>
-											<th>Uom</th>
-											<th>On Hand</th>
-										</tr>
-									</thead>
-									<tbody>
-									</tbody>
-								</table>
+									<table id="table-manajemen" class="table table-striped " style="width:100%">
+										<thead>
+											<tr>
+												<th><input type="checkbox" name="checkall" id="checkall"></th>
+												<th>No</th>
+												<th>Material No</th>
+												<th>Material Desc</th>
+												<th>Quantity</th>
+												<th>Uom</th>
+												<th>On Hand</th>
+											</tr>
+										</thead>
+										<tbody></tbody>
+									</table>
 								</div>
 							</div>
 						</div>
 					</form>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php  $this->load->view("_template/js.php")?>
+		<?php $this->load->view("_template/js.php")?>
 		<script>
 			
             $(document).ready(function(){
@@ -310,8 +309,8 @@
 					"OnHand":"",
 					"MinStock":"",
 					"OpenQty":""
-					}).draw();
-					count++;
+				}).draw();
+				count++;
 
 				tbody = $("#table-manajemen tbody");
 				tbody.on('change','.testSelect', function(){

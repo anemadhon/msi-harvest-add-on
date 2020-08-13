@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+	    <?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
                     <?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
-					<?php endif; ?>
-					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
-					<?php endif; ?>
+                    <div class="alert alert-success" role="alert">
+                        <?php echo $this->session->flashdata('success'); ?>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($this->session->flashdata('failed')): ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php echo $this->session->flashdata('failed'); ?>
+                    </div>
+                    <?php endif; ?>
                     <div class="card" >
                         <div class="card-header">
                             <legend class="font-weight-semibold"><i class="icon-search4 mr-2"></i>Search of Purchase Request (PR)</legend>  
@@ -100,11 +100,11 @@
                         </div>
                     </div>                   
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php  $this->load->view("_template/modal_delete.php")?>
-        <?php  $this->load->view("_template/js.php")?>
+        <?php $this->load->view("_template/modal_delete.php")?>
+        <?php $this->load->view("_template/js.php")?>
         <script>
             $(document).ready(function(){
                 $('#fromDate').datepicker();
@@ -124,7 +124,7 @@
 
                 // end check all
                 $("#deleteRecord").click(function(){
-                    let deleteidArr=[];
+                    let deleteidArr = [];
                     let getTable = $("#tableWhole").DataTable();
                     $("input:checkbox[class=check_delete]:checked").each(function(){
                         deleteidArr.push($(this).val());
@@ -211,14 +211,14 @@
                     },
                     "columns": [
                         {"data":"id_pr_header", "className":"dt-center", render:function(data, type, row, meta){
-                            rr=`<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">`;
+                            rr = `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">`;
                             return rr;
                         }},
                         {"data":"id_pr_header", "className":"dt-center", render:function(data, type, row, meta){
                             rr = `<div style="width:100px">
-										<a onClick="printPdf(${data})" href="#" ><i class='icon-printer' title="Print"></i></a>&nbsp;
-                                        <a href='<?php echo site_url('transaksi1/purchase_request/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;
-                                    </div>`;
+                                    <a onClick="printPdf(${data})" href="#" ><i class='icon-printer' title="Print"></i></a>&nbsp;
+                                    <a href='<?php echo site_url('transaksi1/purchase_request/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;
+                                </div>`;
                             return rr;
                         }},
                         {"data":"id_pr_header"},
@@ -230,21 +230,19 @@
                         {"data":"approved_by"},
                         {"data":"last_modified"},
                         {"data":"po", "className":"dt-center", render:function(data, type, row, meta){ 
-
-                                if(data.length > 0){
-                                    rr = `<div class="for_po_${row['id_pr_header']}">${showAllPO(data, row['id_pr_header'])}</div>`;
-                                }else{
-                                    rr = '';
-                                }
-                                return rr;
+                            if(data.length > 0){
+                                rr = `<div class="for_po_${row['id_pr_header']}">${showAllPO(data, row['id_pr_header'])}</div>`;
+                            }else{
+                                rr = '';
                             }
-                        },
+                            return rr;
+                        }},
                         {"data":"back"}
                     ]
                 });
             }
 
-            function showAllPO(nopo='',id){
+            function showAllPO(nopo = '',id){
                 if (nopo) {
                     nopo.forEach((po)=> {                   
                         var url = "<?php echo site_url('transaksi1/purchase_request/printpdfPO/')?>"+po.DocEntry;

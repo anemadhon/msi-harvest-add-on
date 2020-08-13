@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			.after-submit {
 				display: none;
@@ -70,23 +70,22 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-				<?php if ($this->session->flashdata('success')): ?>
+					<?php if ($this->session->flashdata('success')): ?>
 					<div class="alert alert-success" role="alert">
 						<?php echo $this->session->flashdata('success'); ?>
 					</div>
-				<?php endif; ?>
-				<?php if ($this->session->flashdata('failed')): ?>
+					<?php endif; ?>
+					<?php if ($this->session->flashdata('failed')): ?>
 					<div class="alert alert-danger" role="alert">
 						<?php echo $this->session->flashdata('failed'); ?>
 					</div>
-				<?php endif; ?>
+					<?php endif; ?>
 					<form action="#" method="POST">
-					<input type="hidden" name="status" id="status" value="<?=$grpo_header['status']?>">
 						<div class="card">
 							<div class="card-body">
 								<div class="row">
@@ -171,6 +170,7 @@
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Status</label>
 												<div class="col-lg-9">
+													<input type="hidden" name="status" id="status" value="<?=$grpo_header['status']?>">
 													<input type="text" class="form-control" readonly="" value="<?= $grpo_header['status_string']?>">
 												</div>
 											</div>
@@ -202,16 +202,16 @@
 											</div>
 
 											<?php if($grpo_header['status']=='1'): ?>
-											<div class="form-group row" id="after-submit">
-												<div class="col-lg-12 text-right">
-													<div class="text-right">
-														<button type="button" class="btn btn-primary" id="btn-update">Save <i class="icon-pencil5 ml-2"></i></button>
-														<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-														<button type="button" class="btn btn-success" id="btn-approve">Approve <i class="icon-paperplane ml-2"></i></button>
-														<?php endif;?>
+												<div class="form-group row" id="after-submit">
+													<div class="col-lg-12 text-right">
+														<div class="text-right">
+															<button type="button" class="btn btn-primary" id="btn-update">Save <i class="icon-pencil5 ml-2"></i></button>
+															<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
+															<button type="button" class="btn btn-success" id="btn-approve">Approve <i class="icon-paperplane ml-2"></i></button>
+															<?php endif;?>
+														</div>
 													</div>
 												</div>
-											</div>
 											<?php endif;?>
 										</fieldset>
 									</div>
@@ -237,17 +237,16 @@
 											<th><?php if($grpo_header['status']=='1'): ?>Cancel<?php endif;?></th>
 										</tr>
 									</thead>
-									<tbody>
-									</tbody>
+									<tbody></tbody>
 								</table>
 							</div>
 						</div>
 					</form>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php  $this->load->view("_template/js.php")?>
+		<?php $this->load->view("_template/js.php")?>
 		<script>
             $(document).ready(function(){
 				let id_grpo_header = $('#id_grpo_header').val();
@@ -266,17 +265,16 @@
                         {"data":"material_desc"},
                         {"data":"outstanding_qty", "className":"dt-center"},
                         {"data":"gr_quantity", "className":"dt-center", render:function(data, type, row, meta){
-							
-							rr= row['status'] == 1 ? `<input type="text" class="form-control" id="gr_qty_${data}" value="${data}">`: `${row['gr_quantity']}`;
+							rr = row['status'] == 1 ? `<input type="text" class="form-control" id="gr_qty_${data}" value="${data}">`: `${row['gr_quantity']}`;
                             return rr;
 						}},
                         {"data":"uom", "className":"dt-center"},
 						{"data":"qc", "className":"dt-center", render:function(data, type, row, meta){
-                            rr=`<input type="text" class="form-control" value="${data}" id="${row['id_grpo_detail']}">`;
+                            rr = `<input type="text" class="form-control" value="${data}" id="${row['id_grpo_detail']}">`;
                             return rr;
                         }},
 						{"data":"id_grpo_detail", "className":"dt-center", render:function(data, type, row, meta){
-                            rr=row['status'] == 2 ? '' :`<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();" hidden>`;
+                            rr = row['status'] == 2 ? '' :`<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();" hidden>`;
                             return rr;
                         }},
                     ]
@@ -294,19 +292,19 @@
 					dayPostingDate = splitDate[0];
 					monthPostingDate = splitDate[1];
 					yearPostingDate = splitDate[2];
-					posDate= `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+					posDate = `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
 
 					splitdelvDate = delvDate.split('-');
 					dayDeliveryDate = splitdelvDate[0];
 					monthDeliveryDate = splitdelvDate[1];
 					yearDeliveryDate = splitdelvDate[2];
-					delDate= `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+					delDate = `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
 
 					datePosting = new Date(posDate);
 					deliverDate = new Date(delDate);
 
-					let grQty=[];
-					let remark=[];
+					let grQty = [];
+					let remark = [];
 					let dataValidasiQty = [];
 					let dataValidasiLessQty = [];
 					let dataValidasiEmptyQty = [];
@@ -413,21 +411,21 @@
 					dayPostingDate = splitDate[0];
 					monthPostingDate = splitDate[1];
 					yearPostingDate = splitDate[2];
-					posDate= `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+					posDate = `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
 
 					splitdelvDate = delvDate.split('-');
 					dayDeliveryDate = splitdelvDate[0];
 					monthDeliveryDate = splitdelvDate[1];
 					yearDeliveryDate = splitdelvDate[2];
-					delDate= `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+					delDate = `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
 
 					datePosting = new Date(posDate);
 					deliverDate = new Date(delDate);
 
 					table = $('#table-manajemen > tbody');
 
-					let grQty=[];
-					let remark=[];
+					let grQty = [];
+					let remark = [];
 					let dataValidasiQty = [];
 					let dataValidasiLessQty = [];
 					let dataValidasiEmptyQty = [];
@@ -438,7 +436,7 @@
 					let validasiLessQty = true;
 					let validasiEmptyQty = true;
 					let confirmNext;
-					let id_grpo_detail=[];
+					let id_grpo_detail = [];
 
 					table.find('tr').each(function(i, el){
 						let td = $(this).find('td');
@@ -467,10 +465,10 @@
 						id_grpo_detail.push(td.eq(6).find('input').attr('id'));	
 					})
 					// validasi
-					if(postingDate.trim() ==''){
+					if(postingDate.trim() == ''){
 						errorMesseges.push('Posting Date harus di isi. \n');
 					}
-					if(remarkHead.trim() ==''){
+					if(remarkHead.trim() == ''){
 						errorMesseges.push('Remark harus di isi. \n');
 					}
 					if(!validasiEmptyQty){
@@ -525,7 +523,7 @@
 
 				$("#cancelRecord").click(function(){
 					const idGrpoHeader = $('#id_grpo_header').val();
-                    let deleteidArr=[];
+                    let deleteidArr = [];
                     $("input:checkbox[class=check_delete]:checked").each(function(){
                         deleteidArr.push($(this).val());
                     })

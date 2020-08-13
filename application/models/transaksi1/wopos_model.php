@@ -259,6 +259,7 @@ class Wopos_model extends CI_Model {
 	$SAP_MSI->select("T0.Code, T1.ItemName, T0.U_Locked, T1.InvntryUom");
 	$SAP_MSI->from('OITT T0');
 	$SAP_MSI->join('OITM T1','T1.ItemCode = T0.Code');
+	$SAP_MSI->where('T0.U_CantProduce <>','Y');
 
 	if($material_no != ''){
 		$SAP_MSI->where('T0.Code',$material_no);

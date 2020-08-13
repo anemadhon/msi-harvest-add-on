@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			th{
 				text-align:center;
@@ -77,9 +77,9 @@
 		<link href="<?php echo base_url('/files/');?>assets/css/components.min.css" rel="stylesheet" type="text/css">	
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 				<?php if ($this->session->flashdata('success')): ?>
@@ -93,9 +93,8 @@
 					</div>
 				<?php endif; ?>
                     <form action="#" method="POST">
-					<div class="card">
-                        <div class="card-body">
-                            
+						<div class="card">
+                        	<div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <fieldset>
@@ -162,65 +161,63 @@
 
 											<div id='form1' style="display:none">
                                             
-                                            <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label">Delivery Date</label>
-                                                <div class="col-lg-9 input-group date">
-                                                    <input type="text" class="form-control" id="deliveDate" readonly="">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="basic-addon1">
-                                                            <i class="icon-calendar"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-											</div>
-                                            <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label">Created Date</label>
-                                                <div class="col-lg-9 input-group date">
-                                                    <input type="text" class="form-control" id="createdDate" readonly="">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="basic-addon1">
-                                                            <i class="icon-calendar"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-											</div>
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Delivery Date</label>
+													<div class="col-lg-9 input-group date">
+														<input type="text" class="form-control" id="deliveDate" readonly="">
+														<div class="input-group-prepend">
+															<span class="input-group-text" id="basic-addon1">
+																<i class="icon-calendar"></i>
+															</span>
+														</div>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Created Date</label>
+													<div class="col-lg-9 input-group date">
+														<input type="text" class="form-control" id="createdDate" readonly="">
+														<div class="input-group-prepend">
+															<span class="input-group-text" id="basic-addon1">
+																<i class="icon-calendar"></i>
+															</span>
+														</div>
+													</div>
+												</div>
 
-											<div class="form-group row">
-                                                <label class="col-lg-3 col-form-label">Remarks</label>
-                                                <div class="col-lg-9 input-group date">
-                                                    <textarea id="remark" cols="30" rows="3" class="form-control"></textarea>
-                                                </div>
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Remarks</label>
+													<div class="col-lg-9 input-group date">
+														<textarea id="remark" cols="30" rows="3" class="form-control"></textarea>
+													</div>
+												</div>
+
+												<div class="text-right" id="after-submit">
+													<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
+													<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
+													
+													<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve<i class="icon-paperplane ml-2"></i></button>
+													<?php endif; ?>
+												</div>
 											</div>
-
-                                            <div class="text-right" id="after-submit">
-                                                <button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
-												<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-												
-												<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve<i class="icon-paperplane ml-2"></i></button>
-												<?php endif; ?>
-                                            </div>
-
-											
                                         </fieldset>
                                     </div>
                                 </div>
-								</div>
-                                </div>
-								<div id="load" style="display:none"></div>
-								<div id='form2' style="display:none">
-								<div class="card">
-									<div class="card-body">
-										
-										<div class="row">
+							</div>
+                        </div>
+						<div id="load" style="display:none"></div>
+						<div id='form2' style="display:none">
+							<div class="card">
+								<div class="card-body">
+									<div class="row">
 										<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
 										<div class="col-md-12" style="overflow: auto">
 											<table class="table table-striped" id="tblWhole">
-											<div class="col-md-12 mb-2">
-												<div class="text-left">
-													<input type="button" class="btn btn-primary" value="Add" id="addTable" onclick="onAddrow()"> 
-													<input type="button" value="Delete" class="btn btn-danger" id="deleteRecord"> 
+												<div class="col-md-12 mb-2">
+													<div class="text-left">
+														<input type="button" class="btn btn-primary" value="Add" id="addTable" onclick="onAddrow()"> 
+														<input type="button" value="Delete" class="btn btn-danger" id="deleteRecord"> 
+													</div>
 												</div>
-											</div>
 												<thead>
 													<tr>
 														<th></th>
@@ -249,188 +246,187 @@
 												</tbody>
 											</table>
 										</div>
-										</div>
 									</div>
 								</div>
-								</div>
-                            </form>
-                                            
+							</div>
+						</div>
+                    </form>                 
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php  $this->load->view("_template/js.php")?>
+        <?php $this->load->view("_template/js.php")?>
 		<script>
-		var table ='';
-		$(document).ready(function(){
-			table = $("#tblWhole").DataTable({
-				"ordering":false,
-				"paging":false,
-				drawCallback: function() {
-					$('.form-control-select2').select2();
+			var table = '';
+			$(document).ready(function(){
+				table = $("#tblWhole").DataTable({
+					"ordering":false,
+					"paging":false,
+					drawCallback: function() {
+						$('.form-control-select2').select2();
+					}
+				});
+
+				$("#deleteRecord").click(function(){
+					let deleteidArr = [];
+					let getTable = $("#tblWhole").DataTable();
+					$("input:checkbox[class=check_delete]:checked").each(function(){
+						deleteidArr.push($(this).val());
+					})
+
+					// mengecek ckeckbox tercheck atau tidak
+					if(deleteidArr.length > 0){
+						var confirmDelete = confirm("Do you really want to Delete records?");
+						if(confirmDelete == true){
+							$("input:checked").each(function(){
+								getTable.row($(this).closest("tr")).remove().draw();
+							});
+						}
+					}
+					
+				});
+
+				checkcheckbox = () => {
+					let totalChecked = 0;
+					$(".check_delete").each(function(){
+						if($(this).is(":checked")){
+							totalChecked += 1;
+						}
+					});
 				}
+
+				const date = new Date();
+				const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+				var optSimple = {
+					format: 'dd-mm-yyyy',
+					todayHighlight: true,
+					orientation: 'bottom right',
+					autoclose: true
+				};
+				$('#createdDate').datepicker(optSimple);
+				$('#createdDate').datepicker();
+
+				$('#deliveDate').datepicker(optSimple);
+				$('#deliveDate').datepicker();
 			});
 
-			$("#deleteRecord").click(function(){
-				let deleteidArr=[];
+			function onAddrow(){
 				let getTable = $("#tblWhole").DataTable();
-				$("input:checkbox[class=check_delete]:checked").each(function(){
-					deleteidArr.push($(this).val());
-				})
-
-				// mengecek ckeckbox tercheck atau tidak
-				if(deleteidArr.length > 0){
-					var confirmDelete = confirm("Do you really want to Delete records?");
-					if(confirmDelete == true){
-						$("input:checked").each(function(){
-							getTable.row($(this).closest("tr")).remove().draw();
-						});
-					}
-				}
+				count = getTable.rows().count() + 1;
+				let elementSelect = document.getElementsByClassName(`dt_${count}`);
+				const requestReason = $('#rr').val();
+				const matrialGroup = $('#materialGroup').val();
+				const requestToOutlet = $('#rto').val();
 				
-			});
+				getTable.row.add({
+					"0":`<input type="checkbox" class="check_delete" id="chk_${count}" value="${count}">`,
+					"1":count,
+					"2":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
+									<option value="">Select Item</option>
+									${showMatrialDetailData(requestReason, matrialGroup, requestToOutlet, elementSelect)}
+								</select>`,
+					"3":"",
+					"4":`<input type="text" class="form-control qty" id="gr_qty_${count}" value="" style="width:90px" autocomplete="off">`,
+					"5":"",
+					"6":""
+					}).draw();
+					count++;
 
-			checkcheckbox = () => {
-				let totalChecked = 0;
-				$(".check_delete").each(function(){
-					if($(this).is(":checked")){
-						totalChecked += 1;
-					}
+				tbody = $("#tblWhole tbody");
+				tbody.on('change','.testSelect', function(){
+					tr = $(this).closest('tr');
+					no = tr[0].rowIndex;
+					id = $('.dt_'+no).val();
+					setValueTable(id, no);
 				});
 			}
 
-			const date = new Date();
-			const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-			var optSimple = {
-				format: 'dd-mm-yyyy',
-				todayHighlight: true,
-				orientation: 'bottom right',
-				autoclose: true
-			};
-			$('#createdDate').datepicker(optSimple);
-			$('#createdDate').datepicker();
-
-			$('#deliveDate').datepicker(optSimple);
-			$('#deliveDate').datepicker();
-		});
-
-		function onAddrow(){
-			let getTable = $("#tblWhole").DataTable();
-			count = getTable.rows().count() + 1;
-			let elementSelect = document.getElementsByClassName(`dt_${count}`);
-			const requestReason = $('#rr').val();
-			const matrialGroup = $('#materialGroup').val();
-			const requestToOutlet = $('#rto').val();
-			
-			getTable.row.add({
-				"0":`<input type="checkbox" class="check_delete" id="chk_${count}" value="${count}">`,
-				"1":count,
-				"2":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
-								<option value="">Select Item</option>
-								${showMatrialDetailData(requestReason, matrialGroup, requestToOutlet, elementSelect)}
-							</select>`,
-				"3":"",
-				"4":`<input type="text" class="form-control qty" id="gr_qty_${count}" value="" style="width:90px" autocomplete="off">`,
-				"5":"",
-				"6":""
-				}).draw();
-				count++;
-
-			tbody = $("#tblWhole tbody");
-			tbody.on('change','.testSelect', function(){
-				tr = $(this).closest('tr');
-				no = tr[0].rowIndex;
-				id = $('.dt_'+no).val();
-				setValueTable(id,no);
-			});
-		}
-
-		function setValueTable(id,no){
-			let outlet = $('#outlet').val().split(' - ');
-			const requestToOutlet = outlet[0];
-			table = document.getElementById("tblWhole").rows[no].cells;
-			$.post(
-				"<?php echo site_url('transaksi2/sr/getdataDetailMaterialSelect')?>",{ MATNR:id, RTO:requestToOutlet },(res)=>{
-					matSelect = JSON.parse(res);
-					let onHand = matSelect['dataOnHand'] ? matSelect['dataOnHand'][0].OnHand : 0;
-					matSelect['data'].map((val)=>{
-						table[3].innerHTML = val.MAKTX;
-						table[5].innerHTML = val.UNIT;
-						table[6].innerHTML = onHand == '.000000' ? '0.0000' : onHand.slice(0,-2);
-					})
-				}
-			)
-		}
-
-		function showMatrialDetail(){
-			const requestReason = $('#rr').val();
-			const matrialGroup = $('#materialGroup').val();
-			const requestToOutlet = $('#rto').val();
-			const select = $('#matrialGroup');
-			showMatrialDetailData(requestReason, matrialGroup, requestToOutlet, select);		
-
-			$("#form1").css('display', '');
-			$("#form2").css('display', '');
-		}
-
-		function showMatrialDetailData(requestReason='', matrialGroup='', requestToOutlet='', select){
-	
-			$.ajax({
-				url: "<?php echo site_url('transaksi2/sr/getdataDetailMaterial');?>",
-				type: "POST",
-				data: {
-					reqReason: requestReason, 
-					matGroup: matrialGroup, 
-					reqToOutlet: requestToOutlet
-				},
-				success:function(res) {
-					optData = JSON.parse(res);
-					localStorage.setItem('tmpDataMaterial', JSON.stringify(optData));
-					
-					optData.forEach((val)=>{						
-						$("<option />", {value:val.MATNR, text:val.MAKTX +' - '+ val.MATNR+' - '+val.UNIT	}).appendTo(select);
-					})
-				}
-			});			
-		}
-
-		function addDatadb(id_approve=''){
-			if($('.qty').val().trim() ==''){
-				alert('Quantity harus di isi');
-				return false;
+			function setValueTable(id, no){
+				let outlet = $('#outlet').val().split(' - ');
+				const requestToOutlet = outlet[0];
+				table = document.getElementById("tblWhole").rows[no].cells;
+				$.post(
+					"<?php echo site_url('transaksi2/sr/getdataDetailMaterialSelect')?>",{ MATNR:id, RTO:requestToOutlet },(res)=>{
+						matSelect = JSON.parse(res);
+						let onHand = matSelect['dataOnHand'] ? matSelect['dataOnHand'][0].OnHand : 0;
+						matSelect['data'].map((val)=>{
+							table[3].innerHTML = val.MAKTX;
+							table[5].innerHTML = val.UNIT;
+							table[6].innerHTML = onHand == '.000000' ? '0.0000' : onHand.slice(0,-2);
+						})
+					}
+				)
 			}
 
-			if($('#createdDate').val().trim() ==''){
-				alert('Tanggal Posting harus di isi');
-				return false;
+			function showMatrialDetail(){
+				const requestReason = $('#rr').val();
+				const matrialGroup = $('#materialGroup').val();
+				const requestToOutlet = $('#rto').val();
+				const select = $('#matrialGroup');
+				showMatrialDetailData(requestReason, matrialGroup, requestToOutlet, select);		
+
+				$("#form1").css('display', '');
+				$("#form2").css('display', '');
 			}
 
-			if($('#deliveDate').val().trim() ==''){
-				alert('Tanggal Delivery harus di isi');
-				return false;
+			function showMatrialDetailData(requestReason = '', matrialGroup = '', requestToOutlet = '', select){
+		
+				$.ajax({
+					url: "<?php echo site_url('transaksi2/sr/getdataDetailMaterial');?>",
+					type: "POST",
+					data: {
+						reqReason: requestReason, 
+						matGroup: matrialGroup, 
+						reqToOutlet: requestToOutlet
+					},
+					success:function(res) {
+						optData = JSON.parse(res);
+						localStorage.setItem('tmpDataMaterial', JSON.stringify(optData));
+						
+						optData.forEach((val)=>{						
+							$("<option />", {value:val.MATNR, text:val.MAKTX +' - '+ val.MATNR+' - '+val.UNIT	}).appendTo(select);
+						})
+					}
+				});			
 			}
 
-			if($('#remark').val().trim() ==''){
-				alert('Remark harus di isi');
-				return false;
-			}
-			
-			const matrialGroup= document.getElementById('materialGroup').value;
-			const requestToOutlet= document.getElementById('rto').value;
-			const delivDate= document.getElementById('deliveDate').value;
-			const createDate= document.getElementById('createdDate').value;
-			const remark= document.getElementById('remark').value;
-			const approve = id_approve;
-			const tbodyTable = $('#tblWhole > tbody');
-			let matrialNo =[];
-			let matrialDesc =[];
-			let qty =[];
-			let uom =[];
-			let onhand =[];
-			let validateQty = true;
-			tbodyTable.find('tr').each(function(i, el){
+			function addDatadb(id_approve = ''){
+
+				const matrialGroup = document.getElementById('materialGroup').value;
+				const requestToOutlet = document.getElementById('rto').value;
+				const delivDate = document.getElementById('deliveDate').value;
+				const createDate = document.getElementById('createdDate').value;
+				const remark = document.getElementById('remark').value;
+				const approve = id_approve;
+				const tbodyTable = $('#tblWhole > tbody');
+
+				splitDate = createDate.split('-');
+				dayPostingDate = splitDate[0];
+				monthPostingDate = splitDate[1];
+				yearPostingDate = splitDate[2];
+				posDate = `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+
+				splitdelvDate = delivDate.split('-');
+				dayDeliveryDate = splitdelvDate[0];
+				monthDeliveryDate = splitdelvDate[1];
+				yearDeliveryDate = splitdelvDate[2];
+				delDate = `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+
+				postingDate = new Date(posDate);
+				deliverDate = new Date(delDate);
+
+				let matrialNo = [];
+				let matrialDesc = [];
+				let qty = [];
+				let uom = [];
+				let onhand = [];
+				let errorMessages = [];
+				let dataValidateQty = [];
+				let validateQty = true;
+				tbodyTable.find('tr').each(function(i, el){
 					let td = $(this).find('td');
 					if(td.eq(4).find('input').val().trim() == '' || td.eq(4).find('input').val().trim() == null){
+						dataValidateQty.push(td.eq(2).find('select').val())
 						validateQty = false
 					}
 					matrialNo.push(td.eq(2).find('select').val()); 
@@ -439,30 +435,48 @@
 					uom.push(td.eq(5).text());
 					onhand.push(td.eq(6).text());
 				})
-			if(!validateQty){
-				alert('Quantity harus di isi');
-				return false;
+				if(createDate.trim() ==''){
+					errorMessages.push('Tanggal Posting harus di isi. \n');
+				}
+
+				if(postingDate > deliverDate){
+					errorMesseges.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
+				}
+
+				if(delivDate.trim() ==''){
+					errorMessages.push('Tanggal Delivery harus di isi. \n');
+				}
+
+				if(remark.trim() ==''){
+					errorMessages.push('Remark harus di isi. \n');
+				}
+				if(!validateQty){
+					errorMessages.push(`Quantity untuk Material No. ${dataValidateQty.join()} harus di isi. \n`);
+				}
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join(''))
+					return false
+				}
+
+				$('#load').show();
+				$("#after-submit").addClass('after-submit');
+
+				setTimeout(() => {
+					$.post("<?php echo site_url('transaksi2/sr/addData')?>", {
+						matGrp: matrialGroup, reqToOutlet: requestToOutlet, appr: approve, dateDeliv: delivDate, dateCreate: createDate, remarks:remark, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detQty: qty, detUom: uom, OnHand:onhand
+					}, function(){
+						$('#load').hide();
+					})
+					.done(function() {
+						location.replace("<?php echo site_url('transaksi2/sr/')?>");
+					})
+					.fail(function(xhr, status) {
+						alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
+						location.reload(true);
+					});
+				}, 600);
 			}
-
-			$('#load').show();
-			$("#after-submit").addClass('after-submit');
-
-			setTimeout(() => {
-				$.post("<?php echo site_url('transaksi2/sr/addData')?>", {
-					matGrp: matrialGroup, reqToOutlet: requestToOutlet, appr: approve, dateDeliv: delivDate, dateCreate: createDate, remarks:remark, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detQty: qty, detUom: uom, OnHand:onhand
-				}, function(){
-					$('#load').hide();
-				})
-				.done(function() {
-					location.replace("<?php echo site_url('transaksi2/sr/')?>");
-				})
-				.fail(function(xhr, status) {
-					alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
-					location.reload(true);
-				});
-			}, 600);
-		}
 	
-	</script>
+		</script>
 	</body>
 </html>

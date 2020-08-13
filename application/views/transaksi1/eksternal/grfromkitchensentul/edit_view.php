@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			.after-submit {
 				display: none;
@@ -70,23 +70,22 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-
 					<?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
+					<div class="alert alert-success" role="alert">
+						<?php echo $this->session->flashdata('success'); ?>
+					</div>
 					<?php endif; ?>
 					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
+					<div class="alert alert-danger" role="alert">
+						<?php echo $this->session->flashdata('failed'); ?>
+					</div>
 					<?php endif; ?>
-
+					<form action="#" method="POST">
 						<div class="card">
 							<div class="card-body">
 								<div class="row">
@@ -133,21 +132,16 @@
 													<?php 
 														if($gr_list['status'] == 1) {
 													?>
-
 														<input type="text" value="Not Approved" class="form-control" readonly>
-													
 													<?php
 														} else {
 													?>
-
-															<input type="text" value="Approved" class="form-control" readonly>
+														<input type="text" value="Approved" class="form-control" readonly>
 													<?php
 														}
 													?>
 													<input type="hidden" name="status" value="<?php echo $gr_list['status']?>" />
-												
 												</div>
-													
 											</div>
 											
 											<div class="form-group row">
@@ -225,10 +219,8 @@
 												<th>TF Qty</th>
 												<th>GR Qty</th>
 												<th>Uom</th>
-												
 											</tr>
 										</thead>
-					
 									</table>				
 								</div>
 								<div class="tab-pane" id="sr_list">
@@ -240,10 +232,8 @@
 												<th>Material Desc</th>
 												<th>Quantity</th>
 												<th>Uom</th>
-												
 											</tr>
 										</thead>
-					
 									</table>				
 								</div>
 								<div class="tab-pane" id="sr_list_now">
@@ -255,19 +245,18 @@
 												<th>Material Desc</th>
 												<th>Quantity</th>
 												<th>Uom</th>
-												
 											</tr>
 										</thead>
-					
 									</table>				
 								</div>
 							</div>
 						</div>
+					</form>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php  $this->load->view("_template/js.php")?>
+		<?php $this->load->view("_template/js.php")?>
 		<script>
             $(document).ready(function(){
 				let IDheader = <?php echo $gr_list['id_grpodlv_header']; ?>;
@@ -283,7 +272,7 @@
 			 		],
                     "columns": [
                         {"data":"ID","className":"dt-center", render:function(data, type, row, meta){
-                            rr=`<span>${row['no']}</span>
+                            rr = `<span>${row['no']}</span>
 								<input type="hidden" style="text-align: right;" class="form-control" value="${data}"> `;
                             return rr;
                         }},
@@ -292,9 +281,9 @@
 						{"data":"sr_qty"},
 						{"data":"tf_qty"},
 						{"data":"gr_qty", "className":"dt-center", render:function(data, type, row, meta){
-							let readOnly =  row['status'] == 2 ? 'readonly' : '';
-							let gr_qty =  data
-                            rr=`<input type="text" style="text-align: right;" class="form-control" value="${gr_qty}" ${readOnly} > `;
+							let readOnly = row['status'] == 2 ? 'readonly' : '';
+							let gr_qty = data
+                            rr = `<input type="text" style="text-align: right;" class="form-control" value="${gr_qty}" ${readOnly} > `;
                             return rr;
                         }},
                         {"data":"uom"},
@@ -334,7 +323,7 @@
 							const res = JSON.parse(data);
 							if(res.hasOwnProperty('data')){
 
-								let i=0;
+								let i = 0;
 								for(let key in res.data){ 
 									i++;
 									
@@ -357,7 +346,7 @@
 							const res = JSON.parse(data);
 							if(res.hasOwnProperty('data')){
 
-								let i=0;
+								let i = 0;
 								for(let key in res.data){ 
 									i++;
 									
@@ -376,11 +365,10 @@
 
 				$("#cancelRecord").click(function(){
 					const idGrpoHeader = $('#id_grpo_header').val();
-                    let deleteidArr=[];
+                    let deleteidArr = [];
                     $("input:checkbox[class=check_delete]:checked").each(function(){
                         deleteidArr.push($(this).val());
                     })
-
 
                     // mengecek ckeckbox tercheck atau tidak
                     if(deleteidArr.length > 0){
@@ -411,11 +399,12 @@
                 }
 			});
 			
-			function btnSave(id_approve=''){ 
+			function btnSave(id_approve = ''){ 
 
 				table = $('#tblWhole > tbody');
 
-				let grDetail=[];
+				let remark = $('#remark').val();
+				let grDetail = [];
 				let dataValidasiQty = [];
 				let dataValidasiLessQty = [];
 				let dataValidasiEmptyQty = [];
@@ -423,7 +412,7 @@
 				let validasiQty = true;
 				let validasiLessQty = true;
 				let validasiEmptyQty = true;
-				let remark = $('#remark').val();
+
 				table.find('tr').each(function(i, el){
 					
 					let td = $(this).find('td');

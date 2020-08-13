@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			th{
 				text-align:center;
@@ -76,25 +76,24 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 					<?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
+					<div class="alert alert-success" role="alert">
+						<?php echo $this->session->flashdata('success'); ?>
+					</div>
 					<?php endif; ?>
 					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
+					<div class="alert alert-danger" role="alert">
+						<?php echo $this->session->flashdata('failed'); ?>
+					</div>
 					<?php endif; ?>
-                    <form action="#" method="POST">
-					<div class="card">
-                        <div class="card-body">
-                            
+                	<form action="#" method="POST">
+						<div class="card">
+                        	<div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <fieldset>
@@ -180,19 +179,17 @@
 												<button type="button" class="btn btn-success" onclick="addData(2)">Approve<i class="icon-paperplane ml-2"></i></button>
 												<?php endif;?>
                                             </div>
-
                                         </fieldset>
                                     </div>
                                 </div>
-								</div>
-                                </div>
-								<div id="load" style="display:none"></div> 
-								<div class="card hid" style="display:none">
-                        <div class="card-body">
-                            
+							</div>
+                        </div>
+						<div id="load" style="display:none"></div> 
+						<div class="card hid" style="display:none">
+                        	<div class="card-body">
 								<div class="row">
-								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
-								<div class="col-md-12 mb-2">
+									<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
+									<div class="col-md-12 mb-2">
 										<div class="text-left">
 											<input type="button" class="btn btn-primary" value="Add" id="addTable" onclick="addRow()"> 
 											<input type="button" value="Delete" class="btn btn-danger" id="deleteRecord"> 
@@ -223,246 +220,255 @@
 													</td>
 													<td width="30%"></td>
 													<td></td>
-													<td><input type="text" class="form-control cv" id="cv" name="qty[]" value="" style="width:100%"></td>
-													<td></td>
 													<td>
-														<input type="text" class="form-control" name="reason[]" value="" style="width:100%">
-													</td>
-												</tr>
-											</tbody>
-										</table>
+														<input type="text" class="form-control cv" id="cv" name="qty[]" value="" style="width:100%">
+														</td>
+														<td></td>
+														<td>
+															<input type="text" class="form-control" name="reason[]" value="" style="width:100%">
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
-								</div>
-                    </div> 
-                            </form>
-                                          
+							</div> 
+						</form>                     
+					</div>
+					<?php $this->load->view("_template/footer.php")?>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
 			</div>
-		</div>
-        <?php  $this->load->view("_template/js.php")?>
-		<script>
-		$(document).ready(function(){
-			var table = $("#tblWhole").DataTable({
-				"ordering":false,
-				"paging":false,
-				drawCallback: function() {
-					$('.form-control-select2').select2();
+			<?php $this->load->view("_template/js.php")?>
+			<script>
+			$(document).ready(function(){
+				var table = $("#tblWhole").DataTable({
+					"ordering":false,
+					"paging":false,
+					drawCallback: function() {
+						$('.form-control-select2').select2();
+					}
+				});
+
+				$("#deleteRecord").click(function(){
+					let deleteidArr = [];
+					$("input:checkbox[class=check_delete]:checked").each(function(){
+						deleteidArr.push($(this).val());
+					})
+
+					// mengecek ckeckbox tercheck atau tidak
+					if(deleteidArr.length > 0){
+						var confirmDelete = confirm("Do you really want to Delete records?");
+						if(confirmDelete == true){
+							$("input:checked").each(function(){
+								table.row($(this).closest("tr")).remove().draw();;
+							});
+						}
+					}
+					
+				});
+
+				checkcheckbox = () => {
+					let totalChecked = 0;
+					$(".check_delete").each(function(){
+						if($(this).is(":checked")){
+							totalChecked += 1;
+						}
+					});
 				}
+
+				const date = new Date();
+				const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+				var optSimple = {
+					format: 'dd-mm-yyyy',
+					todayHighlight: true,
+					orientation: 'bottom right',
+					autoclose: true
+				};
+				$('#postDate').datepicker(optSimple);
 			});
 
-			$("#deleteRecord").click(function(){
-				let deleteidArr=[];
-				$("input:checkbox[class=check_delete]:checked").each(function(){
-					deleteidArr.push($(this).val());
-				})
+			function addRow() {
+				let getTable = $("#tblWhole").DataTable();
+				count = getTable.rows().count() + 1;
+				let elementSelect = document.getElementsByClassName(`dt_${count}`);
+				const matrialGroup = $('#MatrialGroup').val();
+				let elementSelectR = document.getElementsByClassName(`r_${count}`);
 
-				// mengecek ckeckbox tercheck atau tidak
-				if(deleteidArr.length > 0){
-					var confirmDelete = confirm("Do you really want to Delete records?");
-					if(confirmDelete == true){
-						$("input:checked").each(function(){
-							table.row($(this).closest("tr")).remove().draw();;
-						});
-					}
-				}
+				getTable.row.add({
+					"0":`<input type="checkbox" class="check_delete" value="dt_${count}" id="dt_${count}" onclick="checkcheckbox();">`,
+					"1":count,
+					"2":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" data-count="${count}">
+							<option value="">Select Item</option>
+							${showMatrialDetailData(matrialGroup,elementSelect)}
+						</select>`,
+					"3":"",
+					"4":"",
+					"5":`<input type="text" class="form-control cv qty_${count}" id="gi_qty_${count}" value="" style="width:100%" onchange="checkValue(this.value,${count})">`,
+					"6":"",
+					"7":`<input type="text" class="form-control" id="reason_${count}" value="" style="width:100%">`
+				}).draw();
+				count++;
+
+				tbody = $("#tblWhole tbody");
+				tbody.on('change','.testSelect', function(){
+					tr = $(this).closest('tr');
+					no = tr[0].rowIndex;
+					id = $('.dt_'+no).val();
+					setValueTable(id,no);
+				});
+			}
+
+			function showMatrialDetail(){
+				const matrialGroup = $('#MatrialGroup').val();
 				
-			});
+				showMatrialDetailData( matrialGroup);		
 
-			checkcheckbox = () => {
-				let totalChecked = 0;
-				$(".check_delete").each(function(){
-					if($(this).is(":checked")){
-						totalChecked += 1;
+				$('.hid').show();
+			}
+
+			function showMatrialDetailData(matrialGroup, selectTable){
+				const select = selectTable ? selectTable : $('#matrialGroupDetail');
+				$.ajax({
+					url: "<?php echo site_url('transaksi1/goodissue/getdataDetailMaterial');?>",
+					type: "POST",
+					data: {
+						matGroup: matrialGroup
+					},
+					success:function(res) {
+						optData = JSON.parse(res);
+						optData.forEach((val)=>{
+							$("<option />", {value:val.MATNR, text:val.MAKTX +' - '+ val.MATNR+' - '+val.UNIT	}).appendTo(select);
+						})
 					}
-				});
+				});			
 			}
 
-			const date = new Date();
-			const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-			var optSimple = {
-				format: 'dd-mm-yyyy',
-				todayHighlight: true,
-				orientation: 'bottom right',
-				autoclose: true
-			};
-			$('#postDate').datepicker(optSimple);
-		});
+			function setValueTable(id,no){
+				table = document.getElementById("tblWhole").rows[no].cells;
+				$.post(
+					"<?php echo site_url('transaksi1/goodissue/getdataDetailMaterialSelect')?>",{ MATNR:id },(res)=>{
+						matSelect = JSON.parse(res);
+						matSelect.map((val)=>{
+							table[3].innerHTML = val.MAKTX;
+							table[4].innerHTML = val.QTYWH.slice(0,-2);
+							table[5].innerHTML = `<input type="text" class="form-control cv qty_${no}" id="gi_qty_${no}" value="" style="width:100%" onchange="checkValue(this.value,${no})">`;
+							table[6].innerHTML = val.UNIT;
+						})
+					}
+				)
+			}
 
-		function addRow() {
-			let getTable = $("#tblWhole").DataTable();
-			count = getTable.rows().count() + 1;
-			let elementSelect = document.getElementsByClassName(`dt_${count}`);
-			const matrialGroup = $('#MatrialGroup').val();
-			let elementSelectR = document.getElementsByClassName(`r_${count}`);
-
-			getTable.row.add({
-				"0":`<input type="checkbox" class="check_delete" value="dt_${count}" id="dt_${count}" onclick="checkcheckbox();">`,
-				"1":count,
-				"2":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" data-count="${count}">
-						<option value="">Select Item</option>
-						${showMatrialDetailData(matrialGroup,elementSelect)}
-					</select>`,
-				"3":"",
-				"4":"",
-				"5":`<input type="text" class="form-control cv qty_${count}" id="gi_qty_${count}" value="" style="width:100%" onchange="checkValue(this.value,${count})">`,
-				"6":"",
-				"7":`<input type="text" class="form-control" id="reason_${count}" value="" style="width:100%">`
-			}).draw();
-			count++;
-
-			tbody = $("#tblWhole tbody");
-			tbody.on('change','.testSelect', function(){
-				tr = $(this).closest('tr');
-				no = tr[0].rowIndex;
-				id = $('.dt_'+no).val();
-				setValueTable(id,no);
-			});
-		}
-
-		function showMatrialDetail(){
-			const matrialGroup = $('#MatrialGroup').val();
-			
-			showMatrialDetailData( matrialGroup);		
-
-			$('.hid').show();
-		}
-
-		function showMatrialDetailData(matrialGroup, selectTable){
-			const select = selectTable ? selectTable : $('#matrialGroupDetail');
-			$.ajax({
-				url: "<?php echo site_url('transaksi1/goodissue/getdataDetailMaterial');?>",
-				type: "POST",
-				data: {
-					matGroup: matrialGroup
-				},
-				success:function(res) {
-					optData = JSON.parse(res);
-					optData.forEach((val)=>{
-						$("<option />", {value:val.MATNR, text:val.MAKTX +' - '+ val.MATNR+' - '+val.UNIT	}).appendTo(select);
-					})
+			function checkValue(val,no){
+				let cv = $('#cv').val();
+				table = document.getElementById("tblWhole").rows[no].cells;
+				
+				if (val > parseFloat(table[4].innerHTML) || cv > parseFloat(table[4].innerHTML)) {
+					document.getElementById("tblWhole").rows[no].classList.add("bg-danger");
+					alert('Quantity Harus Lebih Kecil dari atau Sama Dengan WHS QTY');
+					return false;
+				} else {
+					document.getElementById("tblWhole").rows[no].classList.remove("bg-danger");
 				}
-			});			
-		}
-
-		function setValueTable(id,no){
-			table = document.getElementById("tblWhole").rows[no].cells;
-			$.post(
-				"<?php echo site_url('transaksi1/goodissue/getdataDetailMaterialSelect')?>",{ MATNR:id },(res)=>{
-					matSelect = JSON.parse(res);
-					matSelect.map((val)=>{
-						table[3].innerHTML = val.MAKTX;
-						table[4].innerHTML = val.QTYWH.slice(0,-2);
-						table[5].innerHTML = `<input type="text" class="form-control cv qty_${no}" id="gi_qty_${no}" value="" style="width:100%" onchange="checkValue(this.value,${no})">`;
-						table[6].innerHTML = val.UNIT;
-					})
-				}
-			)
-		}
-
-		function checkValue(val,no){
-			let cv = $('#cv').val();
-			table = document.getElementById("tblWhole").rows[no].cells;
-			
-			if (val > parseFloat(table[4].innerHTML) || cv > parseFloat(table[4].innerHTML)) {
-				document.getElementById("tblWhole").rows[no].classList.add("bg-danger");
-				alert('Quantity Harus Lebih Kecil dari atau Sama Dengan WHS QTY');
-				return false;
-			} else {
-				document.getElementById("tblWhole").rows[no].classList.remove("bg-danger");
-			}
-		}
-
-		function addData(id_approve=''){
-			if($('#postDate').val().trim() ==''){
-				alert('Tanggal Posting harus di isi');
-				return false;
-			}
-			if($('#txtIssue').val().trim() ==''){
-				alert('Issue Note harus di isi');
-				return false;
-			}
-			if($('.cv').val().trim() ==''){
-				alert('Quatity harus di isi');
-				return false;
-			}
-			const outlet= document.getElementById('outlet').value;
-			const storage_location= document.getElementById('storage_location').value;
-			const cost_center= document.getElementById('cost_center').value;
-			const status= document.getElementById('status').value;
-			const MatrialGroup= document.getElementById('MatrialGroup').value;
-			const postDate= document.getElementById('postDate').value;
-			const note = document.getElementById('txtIssue').value;
-			const approve = id_approve;
-			const tbodyTable = $('#tblWhole > tbody');
-			let matrialNo =[];
-			let matrialDesc =[];
-			let stock = [];
-			let qty =[];
-			let uom =[];
-			let text = [];
-			let validasi = true;
-			let validasiReasson = true;
-			let dataItem = [];
-
-			tbodyTable.find('tr').each(function(i, el){
-				let td = $(this).find('td');	
-				if(td.eq(7).find('input').val().trim() == ''){
-					validasiReasson = false;
-				}
-				matrialNo.push(td.eq(2).find('select').val()); 
-				matrialDesc.push(td.eq(3).text());
-				stock.push(td.eq(4).text());
-				qty.push(td.eq(5).find('input').val());
-				if (parseFloat(td.eq(4).text()) < parseFloat(td.eq(5).find('input').val().trim())) {
-					dataItem.push(td.eq(2).find('select').val());
-					validasi = false;
-				}
-				uom.push(td.eq(6).text());
-				text.push(td.eq(7).find('input').val());
-			})
-			if(!validasiReasson){
-				alert('Reasson Tidak boleh Kosong, Harap di isi');
-				return false;
 			}
 
-			if(!validasi){
-				alert('Quantity Dari Material Number '+dataItem.join()+' Harus Lebih Kecil dari atau Sama Dengan WHS QTY');
-				return false;
-			}
+			function addData(id_approve = ''){
 
-			$('#load').show();
-			$("#after-submit").addClass('after-submit');
+				const outlet = document.getElementById('outlet').value;
+				const storage_location = document.getElementById('storage_location').value;
+				const cost_center = document.getElementById('cost_center').value;
+				const status = document.getElementById('status').value;
+				const MatrialGroup = document.getElementById('MatrialGroup').value;
+				const postDate = document.getElementById('postDate').value;
+				const note = document.getElementById('txtIssue').value;
+				const approve = id_approve;
+				const tbodyTable = $('#tblWhole > tbody');
+				
+				let matrialNo = [];
+				let matrialDesc = [];
+				let stock = [];
+				let qty = [];
+				let uom = [];
+				let text = [];
+				let validasi = true;
+				let validasiReason = true;
+				let validasiEmptyQty = true;
+				let dataItem = [];
+				let dataItemReason = [];
+				let dataItemEmptyQty = [];
+				let errorMessages = [];
 
-			setTimeout(() => {
-				$.post("<?php echo site_url('transaksi1/goodissue/addDataDb')?>", {
-					Plant: outlet, 
-					StorageLoc: storage_location, 
-					costCenter: cost_center, 
-					appr: approve, 
-					matGroup: MatrialGroup, 
-					stts: status, 
-					posting_date: postDate, 
-					Note: note,
-					detMatrialNo: matrialNo, 
-					detMatrialDesc: matrialDesc, 
-					detQty: qty, detUom: uom, 
-					detText: text,
-					onHand: stock
-				}, function(){
-					$('#load').hide();
+				tbodyTable.find('tr').each(function(i, el){
+					let td = $(this).find('td');	
+					if(td.eq(7).find('input').val().trim() == ''){
+						dataItemReason.push(td.eq(2).find('select').val());
+						validasiReason = false;
+					}
+					if(td.eq(5).find('input').val().trim() == ''){
+						dataItemEmptyQty.push(td.eq(2).find('select').val());
+						validasiEmptyQty = false;
+					}
+					if (parseFloat(td.eq(4).text()) < parseFloat(td.eq(5).find('input').val().trim())) {
+						dataItem.push(td.eq(2).find('select').val());
+						validasi = false;
+					}
+					matrialNo.push(td.eq(2).find('select').val()); 
+					matrialDesc.push(td.eq(3).text());
+					stock.push(td.eq(4).text());
+					qty.push(td.eq(5).find('input').val());
+					uom.push(td.eq(6).text());
+					text.push(td.eq(7).find('input').val());
 				})
-				.done(function() {
-					location.replace("<?php echo site_url('transaksi1/goodissue/')?>");
-				})
-				.fail(function(xhr, status) {
-					alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
-					location.reload(true);
-				});
-			}, 600);
-		}
-		
+				if(postDate.trim() ==''){
+					errorMessages.push('Tanggal Posting harus di isi');
+				}
+				if(note.trim() ==''){
+					errorMessages.push('Issue Note harus di isi');
+				}
+				if(!validasiEmptyQty){
+					errorMessages.push('Quantity Untuk Material Number '+dataItemEmptyQty.join()+' Tidak boleh Kosong, Harap di isi');
+				}
+				if(!validasiReason){
+					errorMessages.push('Reasson Untuk Material Number '+dataItemReason.join()+' Tidak boleh Kosong, Harap di isi');
+				}
+				if(!validasi){
+					errorMessages.push('Quantity Untuk Material Number '+dataItem.join()+' Harus Lebih Kecil dari atau Sama Dengan WHS QTY');
+				}
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join())
+					return false
+				}
+
+				$('#load').show();
+				$("#after-submit").addClass('after-submit');
+
+				setTimeout(() => {
+					$.post("<?php echo site_url('transaksi1/goodissue/addDataDb')?>", {
+						Plant: outlet, 
+						StorageLoc: storage_location, 
+						costCenter: cost_center, 
+						appr: approve, 
+						matGroup: MatrialGroup, 
+						stts: status, 
+						posting_date: postDate, 
+						Note: note,
+						detMatrialNo: matrialNo, 
+						detMatrialDesc: matrialDesc, 
+						detQty: qty, detUom: uom, 
+						detText: text,
+						onHand: stock
+					}, function(){
+						$('#load').hide();
+					})
+					.done(function() {
+						location.replace("<?php echo site_url('transaksi1/goodissue/')?>");
+					})
+					.fail(function(xhr, status) {
+						alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
+						location.reload(true);
+					});
+				}, 600);
+			}
 		</script>
 	</body>
 </html>

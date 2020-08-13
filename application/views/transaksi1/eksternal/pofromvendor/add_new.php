@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			.hide,
 			.after-submit {
@@ -72,21 +72,21 @@
 		
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-				<?php if ($this->session->flashdata('success')): ?>
+					<?php if ($this->session->flashdata('success')): ?>
 					<div class="alert alert-success" role="alert">
 						<?php echo $this->session->flashdata('success'); ?>
 					</div>
-				<?php endif; ?>
-				<?php if ($this->session->flashdata('failed')): ?>
+					<?php endif; ?>
+					<?php if ($this->session->flashdata('failed')): ?>
 					<div class="alert alert-danger" role="alert">
 						<?php echo $this->session->flashdata('failed'); ?>
 					</div>
-				<?php endif; ?>
+					<?php endif; ?>
 					<form action="" method="POST" id="form_input">
 						<div class="card">
 							<div class="card-body">
@@ -220,7 +220,6 @@
 										</fieldset>
 									</div>
 								</div>	
-								
 							</div>
 						</div>                    
 						<div id="load" style="display:none"></div>
@@ -242,18 +241,17 @@
 												<th>Remark</th>
 											</tr>
 										</thead>
-										<tbody>
-										</tbody>
+										<tbody></tbody>
 									</table>
 								</div>
 							</div>
 						</div>
 					</form>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php  $this->load->view("_template/js.php")?>
+		<?php $this->load->view("_template/js.php")?>
 		<script>
 			$(document).ready(function(){
 
@@ -312,14 +310,14 @@
 					value.dataTable.forEach(function(val){
 						const qtyOutstanding = parseFloat(val.BSTMG).toFixed(4);
 						tbodyTable.append(`<tr>
-												<td>${val.no}</td>
-												<td>${val.MATNR}</td>
-												<td>${val.MAKTX}</td>
-												<td>${qtyOutstanding}</td>
-												<td><input type="text" class="form-control" name="grOutstanding" id="grOutstanding" required></td>
-												<td>${val.BSTME}</td>
-												<td><input type="text" class="form-control" name="qc_${val.no}" id="qc_${val.no}"></td>
-											</tr>`);
+											<td>${val.no}</td>
+											<td>${val.MATNR}</td>
+											<td>${val.MAKTX}</td>
+											<td>${qtyOutstanding}</td>
+											<td><input type="text" class="form-control" name="grOutstanding" id="grOutstanding" required></td>
+											<td>${val.BSTME}</td>
+											<td><input type="text" class="form-control" name="qc_${val.no}" id="qc_${val.no}"></td>
+										</tr>`);
 					})
 
 					$("#form1").css('display', '');
@@ -350,21 +348,21 @@
 				dayPostingDate = splitDate[0];
 				monthPostingDate = splitDate[1];
 				yearPostingDate = splitDate[2];
-				posDate= `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+				posDate = `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
 
 				splitdelvDate = delvDate.split('-');
 				dayDeliveryDate = splitdelvDate[0];
 				monthDeliveryDate = splitdelvDate[1];
 				yearDeliveryDate = splitdelvDate[2];
-				delDate= `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+				delDate = `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
 
 				postingDate = new Date(posDate);
 				deliverDate = new Date(delDate);
 				
 				table = $('#table-manajemen > tbody');
 
-				let grQty=[];
-				let remark=[];
+				let grQty = [];
+				let remark = [];
 				let dataValidasiQty = [];
 				let dataValidasiLessQty = [];
 				let dataValidasiEmptyQty = [];
@@ -403,10 +401,10 @@
 					remark.push(td.eq(6).find('input').val());	
 				})
 				// validasi
-				if(pstDate.trim() ==''){
+				if(pstDate.trim() == ''){
 					errorMesseges.push('Posting Date harus di isi. \n');
 				}
-				if(remarkHead.trim() ==''){
+				if(remarkHead.trim() == ''){
 					errorMesseges.push('Remark harus di isi. \n');
 				}
 				if(!validasiEmptyQty){

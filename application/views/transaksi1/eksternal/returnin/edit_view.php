@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			th{
 				text-align:center;
@@ -78,25 +78,24 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-					<?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
-					<?php endif; ?>
-					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
-					<?php endif; ?>
+				<?php if ($this->session->flashdata('success')): ?>
+					<div class="alert alert-success" role="alert">
+						<?php echo $this->session->flashdata('success'); ?>
+					</div>
+				<?php endif; ?>
+				<?php if ($this->session->flashdata('failed')): ?>
+					<div class="alert alert-danger" role="alert">
+						<?php echo $this->session->flashdata('failed'); ?>
+					</div>
+				<?php endif; ?>
                     <div class="card">
                         <div class="card-body">
                             <form action="#" method="POST">
-							<input type="hidden" name="status" id="status" value="<?=$retin_header['status']?>">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <fieldset>
@@ -148,6 +147,7 @@
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Status</label>
 												<div class="col-lg-9">
+													<input type="hidden" name="status" id="status" value="<?=$retin_header['status']?>">
 													<input type="text" class="form-control" value="<?=$retin_header['status_string']?>" id="status_string" name="status_string" readOnly>
 												</div>
 											</div>
@@ -188,7 +188,6 @@
 													<?php endif;?>
 												<?php endif;?>
                                             </div>
-
 											
                                         </fieldset>
                                     </div>
@@ -215,12 +214,12 @@
                         </div>
                     </div>                    
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php  $this->load->view("_template/js.php")?>
+        <?php $this->load->view("_template/js.php")?>
 		<script>
-		$(document).ready(function(){
+			$(document).ready(function(){
                 let id_retin_header = $('#idreturn').val();
 				let stts = $('#status').val();
 
@@ -248,12 +247,12 @@
                         {"data":"material_desc"},
                         {"data":"outstanding_qty", "className":"dt-center"},
                         {"data":"gr_quantity", "className":"dt-center", render:function(data, type, row, meta){
-							rr= row['status'] == 1 ? `<input type="text" class="form-control" id="gr_qty_${data}" value="${data}">`: data;
+							rr = row['status'] == 1 ? `<input type="text" class="form-control" id="gr_qty_${data}" value="${data}">`: data;
                             return rr;
 						}},
                         {"data":"uom", "className":"dt-center"},
 						{"data":"id_retin_detail", "className":"dt-center", render:function(data, type, row, meta){
-                            rr= row['status'] == 1 ? `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">` : '';
+                            rr = row['status'] == 1 ? `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">` : '';
                             return rr;
                         }},
                     ],
@@ -265,11 +264,10 @@
 
 				$("#cancelRecord").click(function(){
 					const id_retin_header = $('#idreturn').val();
-                    let deleteidArr=[];
+                    let deleteidArr = [];
                     $("input:checkbox[class=check_delete]:checked").each(function(){
                         deleteidArr.push($(this).val());
                     })
-
 
                     // mengecek ckeckbox tercheck atau tidak
                     if(deleteidArr.length > 0){
@@ -288,7 +286,7 @@
 				});
 				
 				$("#deleteRecord").click(function(){
-					let deleteidArr=[];
+					let deleteidArr = [];
 					let getTable = $("#table-manajemen").DataTable();
 					$("input:checkbox[class=check_delete]:checked").each(function(){
 						deleteidArr.push($(this).val());

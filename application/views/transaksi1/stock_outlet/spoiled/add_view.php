@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			th{
 				text-align:center;
@@ -76,25 +76,24 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-					<?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
-					<?php endif; ?>
-					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
-					<?php endif; ?>
+				<?php if ($this->session->flashdata('success')): ?>
+					<div class="alert alert-success" role="alert">
+						<?php echo $this->session->flashdata('success'); ?>
+					</div>
+				<?php endif; ?>
+				<?php if ($this->session->flashdata('failed')): ?>
+					<div class="alert alert-danger" role="alert">
+						<?php echo $this->session->flashdata('failed'); ?>
+					</div>
+				<?php endif; ?>
                     <form action="#" method="POST">
-					<div class="card">
-                        <div class="card-body">
-                            
+						<div class="card">
+                        	<div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <fieldset>
@@ -246,214 +245,219 @@
 								</div>
 							</div>
 						</div>
-					
-                	</form>
-                                            
+						</form>               
+					</div>
+					<?php $this->load->view("_template/footer.php")?>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
 			</div>
-		</div>
-        <?php  $this->load->view("_template/js.php")?>
-		<script>
-		$(document).ready(function(){
-			var table = $("#tblWhole").DataTable({
-				"ordering":false,
-				"paging":false,
-				drawCallback: function() {
-					$('.form-control-select2').select2();
-				}
-			});
-			
-			$("#deleteRecord").click(function(){
-				let deleteidArr=[];
-				$("input:checkbox[class=check_delete]:checked").each(function(){
-					deleteidArr.push($(this).val());
-				})
-
-				// mengecek ckeckbox tercheck atau tidak
-				if(deleteidArr.length > 0){
-					var confirmDelete = confirm("Do you really want to Delete records?");
-					if(confirmDelete == true){
-						$("input:checked").each(function(){
-							table.row($(this).closest("tr")).remove().draw();;
-						});
+			<?php $this->load->view("_template/js.php")?>
+			<script>
+			$(document).ready(function(){
+				var table = $("#tblWhole").DataTable({
+					"ordering":false,
+					"paging":false,
+					drawCallback: function() {
+						$('.form-control-select2').select2();
 					}
-				}
+				});
 				
-			});
+				$("#deleteRecord").click(function(){
+					let deleteidArr=[];
+					$("input:checkbox[class=check_delete]:checked").each(function(){
+						deleteidArr.push($(this).val());
+					})
 
-			checkcheckbox = () => {
-				let totalChecked = 0;
-				$(".check_delete").each(function(){
-					if($(this).is(":checked")){
-						totalChecked += 1;
+					// mengecek ckeckbox tercheck atau tidak
+					if(deleteidArr.length > 0){
+						var confirmDelete = confirm("Do you really want to Delete records?");
+						if(confirmDelete == true){
+							$("input:checked").each(function(){
+								table.row($(this).closest("tr")).remove().draw();;
+							});
+						}
 					}
+					
+				});
+
+				checkcheckbox = () => {
+					let totalChecked = 0;
+					$(".check_delete").each(function(){
+						if($(this).is(":checked")){
+							totalChecked += 1;
+						}
+					});
+				}
+
+				var optSimple = {
+					format: 'dd-mm-yyyy',
+					todayHighlight: true,
+					orientation: 'bottom right',
+					autoclose: true
+				};
+				$('#postDate').datepicker(optSimple);
+			});
+
+			function showMatrialDetail(){
+				const matrialGroup = $('#MatrialGroup').val();
+				
+				showMatrialDetailData( matrialGroup);		
+
+				$("#form1").css('display', '');
+				$("#form2").css('display', '');
+			}
+
+			function onAddrow(){
+				let getTable = $("#tblWhole").DataTable();
+				count = getTable.rows().count() + 1;
+				let elementSelect = document.getElementsByClassName(`dt_${count}`);
+				const matrialGroup = $('#MatrialGroup').val();
+
+				getTable.row.add({
+					"0":`<input type="checkbox" class="check_delete" id="chk_${count}" value="${count}">`,
+					"1":count,
+					"2":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
+									<option value="">Select Item</option>
+									${showMatrialDetailData(matrialGroup,elementSelect)}
+								</select>`,
+					"3":"",
+					"4":"",
+					"5":`<input type="text" class="form-control" id="gr_qty_${count}" value="" style="width:100%">`,
+					"6":"",
+					"7":`<select class="form-control form-control-select2 rea_${count}" data-live-search="true" data-count="${count}">
+									<option value="">Select Item</option>
+									<option value="Rusak/Reject">Rusak/Reject</option>
+									<option value="Expired">Expired</option>
+									<option value="Jatuh/Tumpah">Jatuh/Tumpah</option>
+									<option value="Wastage">Wastage</option>
+								</select>`,
+					"8":`<input type="text" class="form-control" id="text_${count}" value="" style="width:150px">`
+					}).draw();
+					count++;
+
+				tbody = $("#tblWhole tbody");
+				tbody.on('change','.testSelect', function(){
+					tr = $(this).closest('tr');
+					no = tr[0].rowIndex;
+					id = $('.dt_'+no).val();
+					setValueTable(id,no);
 				});
 			}
 
-			var optSimple = {
-				format: 'dd-mm-yyyy',
-				todayHighlight: true,
-				orientation: 'bottom right',
-				autoclose: true
-			};
-			$('#postDate').datepicker(optSimple);
-		});
-
-		function showMatrialDetail(){
-			const matrialGroup = $('#MatrialGroup').val();
-			
-			showMatrialDetailData( matrialGroup);		
-
-			$("#form1").css('display', '');
-			$("#form2").css('display', '');
-		}
-
-		function onAddrow(){
-			let getTable = $("#tblWhole").DataTable();
-			count = getTable.rows().count() + 1;
-			let elementSelect = document.getElementsByClassName(`dt_${count}`);
-			const matrialGroup = $('#MatrialGroup').val();
-
-			getTable.row.add({
-				"0":`<input type="checkbox" class="check_delete" id="chk_${count}" value="${count}">`,
-				"1":count,
-				"2":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
-								<option value="">Select Item</option>
-								${showMatrialDetailData(matrialGroup,elementSelect)}
-							</select>`,
-				"3":"",
-				"4":"",
-				"5":`<input type="text" class="form-control" id="gr_qty_${count}" value="" style="width:100%">`,
-				"6":"",
-				"7":`<select class="form-control form-control-select2 rea_${count}" data-live-search="true" data-count="${count}">
-								<option value="">Select Item</option>
-								<option value="Rusak/Reject">Rusak/Reject</option>
-								<option value="Expired">Expired</option>
-								<option value="Jatuh/Tumpah">Jatuh/Tumpah</option>
-								<option value="Wastage">Wastage</option>
-							</select>`,
-				"8":`<input type="text" class="form-control" id="text_${count}" value="" style="width:150px">`
-				}).draw();
-				count++;
-
-			tbody = $("#tblWhole tbody");
-			tbody.on('change','.testSelect', function(){
-				tr = $(this).closest('tr');
-				no = tr[0].rowIndex;
-				id = $('.dt_'+no).val();
-				setValueTable(id,no);
-			});
-		}
-
-		function showMatrialDetailData(matrialGroup, selectTable){
-			const select = selectTable ? selectTable : $('#matrialGroupDetail');
-			$.ajax({
-				url: "<?php echo site_url('transaksi1/spoiled/getdataDetailMaterial');?>",
-				type: "POST",
-				data: {
-					matGroup: matrialGroup
-				},
-				success:function(res) {
-					optData = JSON.parse(res);
-					optData.forEach((val)=>{
-						$("<option />", {value:val.MATNR, text:val.MAKTX +' - '+ val.MATNR+' - '+val.UNIT	}).appendTo(select);
-					})
-				}
-			});			
-		}
-
-		function setValueTable(id,no){
-			table = document.getElementById("tblWhole").rows[no].cells;
-			$.post(
-				"<?php echo site_url('transaksi1/spoiled/getdataDetailMaterialSelect')?>",{ MATNR:id },(res)=>{
-					matSelect = JSON.parse(res);
-					matSelect.map((val)=>{
-						table[3].innerHTML = val.MAKTX;
-						table[4].innerHTML = val.WHSQTY;
-						table[6].innerHTML = val.UNIT
-					})
-				}
-			)
-		}
-
-		function addDatadb(id_approve=''){
-			if($('#postDate').val().trim() ==''){
-				alert('Posting date harus di isi');
-				return false;
-			}
-			if($('#remark').val().trim() ==''){
-				alert('Remark harus di isi');
-				return false;
-			}
-			const MatrialGroup= document.getElementById('MatrialGroup').value;
-			const postDate= document.getElementById('postDate').value;
-			const remark= document.getElementById('remark').value;
-			const approve = id_approve;
-			const tbodyTable = $('#tblWhole > tbody');
-			let matrialNo =[];
-			let matrialDesc =[];
-			let qty =[];
-			let whsqty = [];
-			let uom =[];
-			let reason = [];
-			let text = [];
-			let validasi = true;
-			let validasiQty = true;
-			let validasiReasson = true;
-			let dataValidasi = [];
-			tbodyTable.find('tr').each(function(i, el){
-				let td = $(this).find('td');
-				if(td.eq(5).find('input').val().trim() == ''){
-					validasi = false;
-				}
-				if(parseInt(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
-					dataValidasi.push(td.eq(2).find('select').val());
-					validasiQty = false;
-				}	
-				if(td.eq(7).find('select').val().trim() == ''){
-					validasiReasson = false;
-				}
-				matrialNo.push(td.eq(2).find('select').val()); 
-				matrialDesc.push(td.eq(3).text());
-				whsqty.push(td.eq(4).text());
-				qty.push(td.eq(5).find('input').val());
-				uom.push(td.eq(6).text());
-				reason.push(td.eq(7).find('select').val());
-				text.push(td.eq(8).find('input').val());
-			});
-
-			if(!validasi){
-				alert('Quatity Tidak boleh Kosong, Harap isi Quantity');
-				return false;
-			}
-			if(!validasiQty){
-				alert('Material Number '+dataValidasi.join()+' Quatity Tidak boleh Lebih Besar dari In Whs Quantity');
-				return false;
-			}
-			if(!validasiReasson){
-				alert('Reason Tidak boleh Kosong, Harap isi Reason');
-				return false;
+			function showMatrialDetailData(matrialGroup, selectTable){
+				const select = selectTable ? selectTable : $('#matrialGroupDetail');
+				$.ajax({
+					url: "<?php echo site_url('transaksi1/spoiled/getdataDetailMaterial');?>",
+					type: "POST",
+					data: {
+						matGroup: matrialGroup
+					},
+					success:function(res) {
+						optData = JSON.parse(res);
+						optData.forEach((val)=>{
+							$("<option />", {value:val.MATNR, text:val.MAKTX +' - '+ val.MATNR+' - '+val.UNIT	}).appendTo(select);
+						})
+					}
+				});			
 			}
 
-			$('#load').show();
-			$("#after-submit").addClass('after-submit');
+			function setValueTable(id,no){
+				table = document.getElementById("tblWhole").rows[no].cells;
+				$.post(
+					"<?php echo site_url('transaksi1/spoiled/getdataDetailMaterialSelect')?>",{ MATNR:id },(res)=>{
+						matSelect = JSON.parse(res);
+						matSelect.map((val)=>{
+							table[3].innerHTML = val.MAKTX;
+							table[4].innerHTML = val.WHSQTY;
+							table[6].innerHTML = val.UNIT
+						})
+					}
+				)
+			}
 
-			setTimeout(() => {
-				$.post("<?php echo site_url('transaksi1/spoiled/addData')?>", {
-					matGroup: MatrialGroup, appr: approve, posting_date: postDate, Remark:remark, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detWhsQty:whsqty, detQty: qty, detUom: uom, detReason:reason, detText: text
-				}, function(){
-					$('#load').hide();
-				})
-				.done(function() {
-					location.replace("<?php echo site_url('transaksi1/spoiled/')?>");
-				})
-				.fail(function(xhr, status) {
-					alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
-					location.reload(true);
+			function addDatadb(id_approve=''){
+				
+				const MatrialGroup= document.getElementById('MatrialGroup').value;
+				const postDate= document.getElementById('postDate').value;
+				const remark= document.getElementById('remark').value;
+				const approve = id_approve;
+				const tbodyTable = $('#tblWhole > tbody');
+				let matrialNo =[];
+				let matrialDesc =[];
+				let qty =[];
+				let whsqty = [];
+				let uom =[];
+				let reason = [];
+				let text = [];
+				let validasi = true;
+				let validasiQty = true;
+				let validasiReason = true;
+				let dataValidasi = [];
+				let dataValidasiEmptyQty = [];
+				let dataValidasiReason = [];
+
+				let errorMessages = [];
+
+				tbodyTable.find('tr').each(function(i, el){
+					let td = $(this).find('td');
+					if(td.eq(5).find('input').val().trim() == ''){
+						dataValidasiEmptyQty.push(td.eq(2).find('select').val());
+						validasi = false;
+					}
+					if(parseInt(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
+						dataValidasi.push(td.eq(2).find('select').val());
+						validasiQty = false;
+					}	
+					if(td.eq(7).find('select').val().trim() == ''){
+						dataValidasiReason.push(td.eq(2).find('select').val());
+						validasiReason = false;
+					}
+					matrialNo.push(td.eq(2).find('select').val()); 
+					matrialDesc.push(td.eq(3).text());
+					whsqty.push(td.eq(4).text());
+					qty.push(td.eq(5).find('input').val());
+					uom.push(td.eq(6).text());
+					reason.push(td.eq(7).find('select').val());
+					text.push(td.eq(8).find('input').val());
 				});
-			}, 600);
-		}
+
+				if(postDate.trim() ==''){
+					errorMessages.push('Posting date harus di isi. \n');
+				}
+				if(remark.trim() ==''){
+					errorMessages.push('Remark harus di isi. \n');
+				}
+				if(!validasi){
+					errorMessages.push('Quatity untuk '+dataValidasi.join()+' Tidak boleh Kosong, Harap isi Quantity. \n');
+				}
+				if(!validasiQty){
+					errorMessages.push('Quatity untuk Material Number '+dataValidasi.join()+' Tidak boleh Lebih Besar dari In Whs Quantity. \n');
+				}
+				if(!validasiReason){
+					errorMessages.push('Reason untuk Material No. '+dataValidasi.join()+' Tidak boleh Kosong, Harap isi Reason. \n');
+				}
+				if(errorMessages.length > 0){
+					alert(errorMessages.join(''));
+					return false;
+				}
+
+				$('#load').show();
+				$("#after-submit").addClass('after-submit');
+
+				setTimeout(() => {
+					$.post("<?php echo site_url('transaksi1/spoiled/addData')?>", {
+						matGroup: MatrialGroup, appr: approve, posting_date: postDate, Remark:remark, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detWhsQty:whsqty, detQty: qty, detUom: uom, detReason:reason, detText: text
+					}, function(){
+						$('#load').hide();
+					})
+					.done(function() {
+						location.replace("<?php echo site_url('transaksi1/spoiled/')?>");
+					})
+					.fail(function(xhr, status) {
+						alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
+						location.reload(true);
+					});
+				}, 600);
+			}
 		</script>
 	</body>
 </html>

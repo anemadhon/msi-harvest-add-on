@@ -68,7 +68,7 @@ $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
     <td width="223"><?php echo $row["opname_no"];?></td>
     <td width="100">Count Date</td>
     <td width="6">:</td>
-    <td width="158"><?php  $date=$row["created_date"];
+    <td width="158"><?php $date=$row["created_date"];
 	 echo substr($date,0,-8);?></td>
   </tr>
 </table>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php  $this->load->view("_template/head.php")?>
+		<?php $this->load->view("_template/head.php")?>
 		<style>
 			.hide, 
 			.after-submit {
@@ -71,9 +71,9 @@
 		</style>
 	</head>
 	<body>
-	<?php  $this->load->view("_template/nav.php")?>
+		<?php $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php  $this->load->view("_template/sidebar.php")?>
+			<?php $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 				<?php if ($this->session->flashdata('success')): ?>
@@ -114,129 +114,128 @@
 
 											<div id='form1' style="display:none">
 											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Retur In Number</label>
-												<div class="col-lg-9">
-													<input type="text" class="form-control" placeholder="(Auto Number after Posting to SAP)" readonly=""  name="retInNumber" id="retInNumber">
-												</div>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Retur From</label>
-												<div class="col-lg-9">
-													<input type="text" class="form-control" readonly=""  name="returnFrom" id="returnFrom">
-												</div>
-											</div> 
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Delivery Date</label>
-												<div class="col-lg-9 input-group date">
-													<input type="text" class="form-control" id="delivDate">
-													<div class="input-group-prepend">
-														<span class="input-group-text" id="basic-addon1">
-															<i class="icon-calendar"></i>
-														</span>
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Retur In Number</label>
+													<div class="col-lg-9">
+														<input type="text" class="form-control" placeholder="(Auto Number after Posting to SAP)" readonly=""  name="retInNumber" id="retInNumber">
 													</div>
 												</div>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Outlet</label>
-												<div class="col-lg-9">
-													<input type="hidden" name="toPlant" id="toPlant">
-													<input type="text" class="form-control" readonly="" name="outlet" id="outlet">
+												
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Retur From</label>
+													<div class="col-lg-9">
+														<input type="text" class="form-control" readonly=""  name="returnFrom" id="returnFrom">
+													</div>
+												</div> 
+												
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Delivery Date</label>
+													<div class="col-lg-9 input-group date">
+														<input type="text" class="form-control" id="delivDate">
+														<div class="input-group-prepend">
+															<span class="input-group-text" id="basic-addon1">
+																<i class="icon-calendar"></i>
+															</span>
+														</div>
+													</div>
 												</div>
-											</div>
-											
-											<div class="form-group row" hidden>
-												<label class="col-lg-3 col-form-label">Storage Location</label>
-												<div class="col-lg-9">
-													<input type="text" class="form-control" readonly="" name="storageLocation" id="storageLocation">
+												
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Outlet</label>
+													<div class="col-lg-9">
+														<input type="hidden" name="toPlant" id="toPlant">
+														<input type="text" class="form-control" readonly="" name="outlet" id="outlet">
+													</div>
 												</div>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Status</label>
-												<div class="col-lg-9">
-													<input type="hidden" name="status" id="status" value="1" >
-													<input type="text" class="form-control" placeholder="" readonly="" value="Not Approved" name="status_string" id="status_string">
+												
+												<div class="form-group row" hidden>
+													<label class="col-lg-3 col-form-label">Storage Location</label>
+													<div class="col-lg-9">
+														<input type="text" class="form-control" readonly="" name="storageLocation" id="storageLocation">
+													</div>
 												</div>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Material Group</label>
-												<div class="col-lg-9">
-													<select class="form-control form-control-select2" data-live-search="true" name="MatrialGroup" id="MatrialGroup">
-														
-													</select>
+												
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Status</label>
+													<div class="col-lg-9">
+														<input type="hidden" name="status" id="status" value="1" >
+														<input type="text" class="form-control" placeholder="" readonly="" value="Not Approved" name="status_string" id="status_string">
+													</div>
 												</div>
-											</div>
+												
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Material Group</label>
+													<div class="col-lg-9">
+														<select class="form-control form-control-select2" data-live-search="true" name="MatrialGroup" id="MatrialGroup">
+															
+														</select>
+													</div>
+												</div>
 											
 											</div>
 
 											<div class='hide' id="form2">
-											<div class="form-group row" >
-											<label class="col-lg-3 col-form-label">Posting Date</label>
-												<div class="col-lg-9 input-group date">
-													<input type="text" class="form-control" id="postingDate" autocomplete="off">
-													<div class="input-group-prepend">
-														<span class="input-group-text" id="basic-addon1">
-															<i class="icon-calendar"></i>
-														</span>
+												<div class="form-group row" >
+													<label class="col-lg-3 col-form-label">Posting Date</label>
+													<div class="col-lg-9 input-group date">
+														<input type="text" class="form-control" id="postingDate" autocomplete="off">
+														<div class="input-group-prepend">
+															<span class="input-group-text" id="basic-addon1">
+																<i class="icon-calendar"></i>
+															</span>
+														</div>
 													</div>
 												</div>
-											</div>
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Remarks</label>
-												<div class="col-lg-9 input-group date">
-													<textarea id="remark" cols="30" rows="3" class="form-control"></textarea>
-												</div>
-											</div>
-											<div class="form-group row" id="after-submit">
-												<div class="col-lg-12 text-right">
-													<div class="text-right">
-														<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
-														<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-														<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)" >Approve <i class="icon-paperplane ml-2" ></i></button>
-														<?php endif;?>
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Remarks</label>
+													<div class="col-lg-9 input-group date">
+														<textarea id="remark" cols="30" rows="3" class="form-control"></textarea>
 													</div>
 												</div>
-											</div>
+												<div class="form-group row" id="after-submit">
+													<div class="col-lg-12 text-right">
+														<div class="text-right">
+															<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
+															<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
+															<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)" >Approve <i class="icon-paperplane ml-2" ></i></button>
+															<?php endif;?>
+														</div>
+													</div>
+												</div>
 											</div>
 										</fieldset>
 									</div>
 								</div>	
-								
 							</div>
 						</div>                    
 						<div id="load" style="display:none"></div>  
 						<div class='hide' id="form3">
-						<div class="card">
-							<div class="card-header">
-								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
+							<div class="card">
+								<div class="card-header">
+									<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
+								</div>
+								<div class="card-body">
+									<table id="tableManajemen" class="table table-striped " style="width:100%">
+										<thead>
+											<tr>
+												<th style="text-align: left">No</th>
+												<th>Material No</th>
+												<th>Material Desc</th>
+												<th>Outstanding Qty</th>
+												<th>Gr Qty</th>
+												<th>Uom</th>
+											</tr>
+										</thead>
+									</table>
+								</div>
 							</div>
-							<div class="card-body">
-								<table id="tableManajemen" class="table table-striped " style="width:100%">
-									<thead>
-										<tr>
-											<th style="text-align: left">No</th>
-											<th>Material No</th>
-											<th>Material Desc</th>
-											<th>Outstanding Qty</th>
-											<th>Gr Qty</th>
-											<th>Uom</th>
-										</tr>
-									</thead>
-								</table>
-							</div>
-						</div>
 						</div>
 					</form>
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php  $this->load->view("_template/js.php")?>
+		<?php $this->load->view("_template/js.php")?>
 		<script>
 			$(document).ready(function(){
 
@@ -291,7 +290,7 @@
 				$("#form1").css('display', '');
 			}
 
-			function showMatrialDetailData(cboMatrialGroup='',poNo){
+			function showMatrialDetailData(cboMatrialGroup = '',poNo){
 				const MatrialGroup = cboMatrialGroup;
 				
 				var obj = $('#tableManajemen tbody tr').length;
@@ -317,7 +316,7 @@
 						{data:"MAKTX"},
 						{data:"LFIMG"},
 						{data:"U_grqty_web","className":"dt-center",render:function(data, type, row, meta){
-							rr=  `<input type="text" class="form-control gr_qty" id="gr_qty_${row['NO']}" value="${data}">`;
+							rr = `<input type="text" class="form-control gr_qty" id="gr_qty_${row['NO']}" value="${data}">`;
 							return rr;
 						}},
 						{data:"VRKME"}
@@ -327,15 +326,6 @@
 			}
 
 			function addDatadb(id_approve = ''){
-				if($('.gr_qty').val().trim() ==''){
-					alert('Gr Quatity harus di isi');
-					return false;
-				}
-
-				if($('#postingDate').val().trim() ==''){
-					alert('Tanggal Posting harus di isi');
-					return false;
-				}
 
 				retOutEntry = $('#retOutNumber').val();
 				retOutEntryLong = $('#retOutNumber option:selected').text().split(' - ');
@@ -348,7 +338,7 @@
 				pstDate 	= $('#postingDate').val();
 				delvDate 	= $('#delivDate').val();
 				to_plant 	= $('#toPlant').val();
-				remark 	= $('#remark').val();
+				remark 		= $('#remark').val();
 				approve		= id_approve;
 
 				table = $('#tableManajemen > tbody');
@@ -358,14 +348,34 @@
 				let outStdQty = [];
 				let qty =[];
 				let uom =[];
+				let dataValidasiEmptyQty = [];
+				let errorMesseges = [];
+				let validasiEmptyQty = true;
 				table.find('tr').each(function(i, el){
 					let td = $(this).find('td');
+					if(td.eq(4).find('input').val().trim() == ''){
+						dataValidasiEmptyQty.push(td.eq(1).text());
+						validasiEmptyQty = false;
+					}
 					matrialNo.push(td.eq(1).text()); 
 					matrialDesc.push(td.eq(2).text());
 					outStdQty.push(parseFloat(td.eq(3).text()));
 					qty.push(parseInt(td.eq(4).find('input').val(),10));
 					uom.push(td.eq(5).text());	
 				})
+
+				if(pstDate.trim() == ''){
+					errorMesseges.push('Posting Date harus di isi. \n');
+				}
+
+				if(!validasiEmptyQty){
+					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+				}
+
+				if (errorMesseges.length > 0) {
+					alert(errorMesseges.join(''));
+					return false;
+				}
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');
