@@ -197,11 +197,17 @@
 				let kode_paket = $('#kode_paket').val();
 				let qty_paket = $('#qty_paket').val();
 				let stts = $('#status').val();
+				let Quantity = ''
 
 				$.post("<?php echo site_url('transaksi1/wo/wo_header_uom');?>",{material_no: kode_paket},(data)=>{
 					const value = JSON.parse(data);
-					if(value.data[0]['U_Locked'] == 'N'){
-						$("#btnAddListItem").removeClass('hide');
+					if (value.data) {
+						if(value.data[0]['U_Locked'] == 'N'){
+							$("#btnAddListItem").removeClass('hide');
+						}
+						Quantity = value.data[0]['Qauntity']
+					} else {
+						Quantity = 1
 					}
 
 					$('#table-manajemen').DataTable({
@@ -215,7 +221,7 @@
 								id: id_wo_header, 
 								kodepaket:kode_paket,
 								qtypaket:qty_paket,
-								qtyDefault:value.data[0]['Quantity']
+								qtyDefault:Quantity
 							},
 							"type":"POST"
 						},

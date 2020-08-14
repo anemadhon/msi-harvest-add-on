@@ -137,12 +137,10 @@ class Wo extends CI_Controller{
 	 public function wo_header_uom(){
 		$material_no = $this->input->post('material_no');
 		$data = $this->wovendor->sap_wo_headers_select_by_item($material_no);		
-		if(count($data)>0){
-			$json_data=array(
-				"data" => $data
-			);
-			echo json_encode($json_data);
-		}
+		$json_data=array(
+			"data" => $data
+		);
+		echo json_encode($json_data);
      }
 
     public function edit(){
