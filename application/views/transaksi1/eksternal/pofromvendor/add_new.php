@@ -206,7 +206,7 @@
 														<textarea id="remark" cols="30" rows="3" class="form-control"></textarea>
 													</div>
 												</div>
-												<div class="form-group row" id="after-submit">
+												<div class="form-group row hide" id="after-submit">
 													<div class="col-lg-12 text-right">
 														<div class="text-right">
 															<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
@@ -323,7 +323,10 @@
 					$("#form1").css('display', '');
 
 					$('#table-manajemen').DataTable({
-                    	"ordering":false, "paging":false
+                    	"ordering":false, "paging":false,
+						"initComplete": function(settings, json) {
+							$("#after-submit").removeClass('hide');
+						},
 					});
 
 				})

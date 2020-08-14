@@ -182,7 +182,7 @@
 													</div>
 												</div>
 												
-												<div class="form-group row" id="after-submit">
+												<div class="form-group row hide" id="after-submit">
 													<div class="col-lg-12 text-right">
 														<div class="text-right">
 															
@@ -478,6 +478,9 @@
 					}
 					
 
+				})
+				.done(function() {
+					$("#after-submit").removeClass('hide');
 				})
 			}
 
