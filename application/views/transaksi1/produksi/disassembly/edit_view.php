@@ -3,6 +3,7 @@
 	<head>
 		<?php $this->load->view("_template/head.php")?>
 		<style>
+			.hide,
 			.after-submit {
 				display: none;
 			}
@@ -149,7 +150,7 @@
 											</div>
 
 											<?php if($disassembly_header['status'] != "2"):?>
-												<div class="text-right" id="after-submit">
+												<div class="text-right hide" id="after-submit">
 													<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
 													<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
 													<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)" >Approve <i class="icon-paperplane ml-2" ></input></i>
@@ -200,8 +201,11 @@
 
                 $('#table-manajemen').DataTable({
                     "ordering":false,  "paging": false, "searching":true,
-					drawCallback: function() {
-					$('.form-control-select2').select2();
+					"drawCallback": function() {
+						$('.form-control-select2').select2();
+					},
+					"initComplete": function(settings, json) {
+						$("#after-submit").removeClass('hide');
 					},
                     "ajax": {
                         "url":"<?php echo site_url('transaksi1/disassembly/showDetailEdit');?>",

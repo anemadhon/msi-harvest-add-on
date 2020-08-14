@@ -11,6 +11,7 @@
 			}
 		</style>
 		<style>
+			.hide,
 			.after-submit {
 				display: none;
 			}
@@ -163,7 +164,7 @@
                                                 </div>
 											</div>
 
-                                            <div class="text-right" id="after-submit">
+                                            <div class="text-right hide" id="after-submit">
                                                	<?php if($pr_header['status']=='1'):?>
 													<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save<i class="icon-paperplane ml-2"></i></button>
 													<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
@@ -222,6 +223,9 @@
 				let stts = $('#status').val();
 
 				table = $("#tblWhole").DataTable({
+					"initComplete": function(settings, json) {
+						$("#after-submit").removeClass('hide');
+					},
 					"ordering":false,
 					"paging":false,
 					"ajax": {

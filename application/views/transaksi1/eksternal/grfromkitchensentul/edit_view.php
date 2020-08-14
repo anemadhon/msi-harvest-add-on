@@ -3,6 +3,7 @@
 	<head>
 		<?php $this->load->view("_template/head.php")?>
 		<style>
+			.hide,
 			.after-submit {
 				display: none;
 			}
@@ -163,7 +164,7 @@
 											</div>
 											
 											<?php if($gr_list['status']=='1'): ?>
-											<div class="form-group row" id="after-submit">
+											<div class="form-group row hide" id="after-submit">
 												<div class="col-lg-12 text-right">
 													<div class="text-right">
 														<button class="btn btn-primary" onclick="btnSave()">
@@ -262,6 +263,9 @@
 				let IDheader = <?php echo $gr_list['id_grpodlv_header']; ?>;
 
                 $('#tblWhole').DataTable({
+					"initComplete": function(settings, json) {
+						$("#after-submit").removeClass('hide');
+					},
                     "ordering":false,  "paging": false, "searching":true,
                     "ajax": {
                         "url":"<?php echo site_url('transaksi1/grfromkitchensentul/showEditData/'.$gr_list['id_grpodlv_header']);?>",

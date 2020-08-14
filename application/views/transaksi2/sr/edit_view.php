@@ -11,6 +11,7 @@
 			}
 		</style>
 		<style>
+			.hide,
 			.after-submit {
 				display: none;
 			}
@@ -181,7 +182,7 @@
                                                 </div>
 											</div>
 
-                                            <div class="text-right" id="after-submit">
+                                            <div class="text-right hide" id="after-submit">
 												<?php if($stdstock_header['status']=='1' || $stdstock_header['back']=='1'):?>
                                                		<button type="button" class="btn btn-primary" name="save" id="save" onclick="<?= ($stdstock_header['status']=='1') ? 'addDatadb()' : 'updateDataDB()'?>"><?= ($stdstock_header['status']=='1') ? 'Save' : 'Change'?> <i class="icon-pencil5 ml-2"></i></button>
 												<?php endif; ?>
@@ -242,6 +243,9 @@
 				let back = $('#back').val();
 
 				table = $("#tblWhole").DataTable({
+					"initComplete": function(settings, json) {
+						$("#after-submit").removeClass('hide');
+					},
 					"ordering":false,
 					"paging":false,
 					"ajax": {
