@@ -201,8 +201,7 @@ class Spoiled extends CI_Controller{
         $waste_header['id_user_approved'] = $this->input->post('appr')? $admin_id : 0;
         $waste_header['no_acara'] = $this->input->post('Remark');
 
-        $waste_detail['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($waste_detail['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
         
         if($id_waste_header= $this->spol_model->waste_header_insert($waste_header)){
             $input_detail_success = false;
@@ -257,8 +256,7 @@ class Spoiled extends CI_Controller{
         $waste_header['id_user_approved'] = $this->input->post('appr')? $admin_id : 0;
         $waste_header['no_acara'] = $this->input->post('Remark');
         
-        $waste_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($waste_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
         if($this->spol_model->waste_header_update($waste_header)){
             $update_detail_success = false;
             if($this->spol_model->t_waste_details_delete($waste_header['id_waste_header'])){

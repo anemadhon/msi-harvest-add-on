@@ -145,8 +145,7 @@ class Purchase_request extends CI_Controller {
         $pr_header['back'] = 1;
         $pr_header['id_user_approved'] = $this->input->post('appr')? $admin_id : 0;
 
-        $pr_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($pr_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
 
         if($id_pr_header= $this->pr_model->pr_header_insert($pr_header)){
             $input_detail_success = false;
@@ -256,8 +255,7 @@ class Purchase_request extends CI_Controller {
         $pr_header['request_reason'] = $this->input->post('Remark');
         $pr_header['id_user_approved'] = $this->input->post('appr')? $admin_id : 0;
         
-        $pr_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($pr_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
         if($this->pr_model->pr_header_update($pr_header)){
             $update_detail_success = false;
             if($this->pr_model->pr_details_delete($pr_header['id_pr_header'])){

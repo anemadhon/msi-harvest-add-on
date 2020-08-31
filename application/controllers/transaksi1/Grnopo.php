@@ -155,8 +155,7 @@ class Grnopo extends CI_Controller {
         $grnonpo_header['id_user_approved'] = $this->input->post('appr')? $admin_id : 0;
         $grnonpo_header['remark'] = $this->input->post('Remark');
 
-        $grnonpo_detail['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($grnonpo_detail['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
         
         if($id_grnonpo_header= $this->gnon_model->grnonpo_header_insert($grnonpo_header)){
             $input_detail_success = false;
@@ -219,8 +218,7 @@ class Grnopo extends CI_Controller {
         $grnonpo_header['id_user_approved'] = $this->input->post('aapr')? $admin_id : 0;
         $grnonpo_header['remark'] = $this->input->post('Remark');
         
-        $grnonpo_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($grnonpo_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
         if($this->gnon_model->grnonpo_header_update($grnonpo_header)){
             $update_detail_success = false;
             if($this->gnon_model->grnonpo_details_delete($grnonpo_header['id_grnonpo_header'])){

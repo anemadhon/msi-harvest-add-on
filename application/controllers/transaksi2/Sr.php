@@ -145,8 +145,7 @@ class Sr extends CI_Controller {
         $stdstock_header['back'] = 1;
         $stdstock_header['request_reason'] = $this->input->post('remarks');;
 
-        $stdstock_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($stdstock_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
 
         if($id_stdstock_header= $this->sr_model->stdstock_header_insert($stdstock_header)){
             $input_detail_success = false;
@@ -279,8 +278,7 @@ class Sr extends CI_Controller {
         $stdstock_header['request_reason'] = $this->input->post('Remark');
         $stdstock_header['id_user_approved'] = $this->input->post('appr')? $admin_id : 0;
         
-        $stdstock_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($stdstock_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
         if($this->sr_model->stdstock_header_update($stdstock_header)){
             $update_detail_success = false;
             if($this->sr_model->delete_stdstock_details($stdstock_header['id_stdstock_header'])){

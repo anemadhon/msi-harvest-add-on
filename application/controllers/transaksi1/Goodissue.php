@@ -169,9 +169,8 @@ class Goodissue extends CI_Controller {
         $gi_header['no_acara'] = $this->input->post('Note');
         $gi_header['back'] = 1;
         $gi_header['id_user_approved'] = $this->input->post('appr')? $admin_id : 0;
-
-        $gi_detail['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($gi_detail['material_no']);
+        
+        $count = count($this->input->post('detMatrialNo'));
 
         if($id_gi_header= $this->gi_model->gi_header_insert($gi_header)){
             $input_detail_success = false;

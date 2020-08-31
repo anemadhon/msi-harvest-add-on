@@ -212,8 +212,7 @@ class Returnin extends CI_Controller {
         $retin_header['to_plant'] = $this->input->post('toPlant');
         $retin_header['remark'] = $this->input->post('Remark');
 
-        $retin_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($retin_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
 
         if($id_retin_header= $this->rIn_model->retin_header_insert($retin_header)){
             $input_detail_success = false;

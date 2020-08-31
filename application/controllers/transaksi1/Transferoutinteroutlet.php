@@ -211,8 +211,7 @@ class Transferoutinteroutlet extends CI_Controller {
         $gistonew_out_header['to_plant'] = $receiving_plant;
         $gistonew_out_header['back'] = 1;
 
-        $gistonew_out_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($gistonew_out_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
 
         $base = $gistonew_out_header['po_no'];
 
@@ -299,11 +298,9 @@ class Transferoutinteroutlet extends CI_Controller {
         $gistonew_out_header['po_no1'] = $this->input->post('poNo1');
         $gistonew_out_header['remark'] = $this->input->post('Remark');
         $gistonew_out_header['id_user_approved'] = $this->input->post('aapr')? $admin_id : 0;
-
-        $gistonew_out_details['material_no'] = $this->input->post('detMatrialNo');
         
         $base = $gistonew_out_header['po_no'];
-        $count = count($gistonew_out_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
         if($this->tout_model->gistonew_out_header_update($gistonew_out_header)){
             $update_detail_success = false;
             if($this->tout_model->gistonew_out_details_delete($gistonew_out_header['id_gistonew_out_header'])){

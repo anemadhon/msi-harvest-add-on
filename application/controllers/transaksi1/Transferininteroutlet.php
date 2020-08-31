@@ -222,8 +222,7 @@ class Transferininteroutlet extends CI_Controller {
         $grsto_header['id_user_approved'] = $approve == 2 ? $admin_id : 0;
         $grsto_header['back'] = 1;
 
-        $grsto_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($grsto_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
 
         if($id_grsto_header= $this->tIn_model->grsto_header_insert($grsto_header)){
             $input_detail_success = false;
@@ -307,10 +306,8 @@ class Transferininteroutlet extends CI_Controller {
         $grsto_header['id_user_approved'] = $this->input->post('appr') == 2 ? $admin_id : 0;
 
         $approve = $this->input->post('appr');
-        
-        $grsto_details['material_no'] = $this->input->post('detMatrialNo');
        
-        $count = count($grsto_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
  
         $update_not_detail=false;
         if($this->tIn_model->grsto_header_update($grsto_header)){
