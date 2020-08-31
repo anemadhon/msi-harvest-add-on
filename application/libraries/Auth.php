@@ -8,7 +8,7 @@ class Auth {
 	{
 		$this->CI =& get_instance();
 		$this->CI->load->model('master/permission_model', 'm_perm');
-		
+		$this->CI->load->model('transaksi1/stock_model', 'st_model');
 		
 	}
 	
@@ -239,12 +239,12 @@ class Auth {
 		$freeze = [];
 		$mgrState = [];
 		
-        foreach($arr_ids as $val){
-            if($val == 14){
-                $ids = $val;
-            }elseif($val == 10064){
-                $ids = $val;
-            }
+		foreach($arr_ids as $val){
+			if($val == 14){
+				$ids = $val;
+			}elseif($val == 10064){
+				$ids = $val;
+			}
 		}
 
 		if ($object['opname_header']['freeze']){
