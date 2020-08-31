@@ -4,22 +4,23 @@ class Stock_model extends CI_Model {
 
   function freeze(){
     $kd_plant = $this->session->userdata['ADMIN']['plant'];
-    $this->db->select('status, freeze, am_approved, rm_approved');
-    $this->db->from('t_opname_header');
+    $this->db->distinct();
+    $this->db->select('a.id_opname_header, status, freeze, am_approved, rm_approved');
+    $this->db->from('t_opname_header a');
+    $this->db->join('t_opname_detail b','a.id_opname_header = b.id_opname_header');
+    $this->db->where('freeze','Y');
     $this->db->where('plant',$kd_plant);
-    $this->db->order_by('id_opname_header','desc');
-    $this->db->limit(1);
     
     $query = $this->db->get();
 
     if(($query)&&($query->num_rows() > 0)){
-      return $query->row_array();
+      return $query->result_array();
     }else{
       return FALSE;
     }
   }
   
-  function t_opname_headers($fromDate, $toDate, $status){
+  function opname_headers($fromDate, $toDate, $status){
     $kd_plant = $this->session->userdata['ADMIN']['plant'];
     $this->db->select('t_opname_header.*,(select admin_realname from d_admin where admin_id = t_opname_header.id_user_input) as user_input, (select admin_realname from d_admin where admin_id = t_opname_header.id_user_approved) as user_approved ');
     $this->db->from('t_opname_header');
@@ -54,57 +55,6 @@ class Stock_model extends CI_Model {
     $query = $this->db->get();
     $ret = $query->result_array();
     return $ret;
-  }
-  
-  function showMatrialGroup(){
-    $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-    $SAP_MSI->select('ItmsGrpNam');
-    $SAP_MSI->from('OITB');
-
-    $query = $SAP_MSI->get();
-    $ret = $query->result_array();
-    return $ret;
-  }
-
-  function sap_item_groups_select_all_grnonpo($itemSelect='') {
-    $kd_plant = $this->session->userdata['ADMIN']['plant'];
-    $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-    $SAP_MSI->select('t0.ItemCode as MATNR,t0.ItemName as MAKTX,t0.ItmsGrpCod as DISPO,t0.InvntryUom as UNIT,t1.ItmsGrpNam as DSNAM');
-    $SAP_MSI->from('OITM  t0');
-    $SAP_MSI->where('validFor', 'Y');
-    $SAP_MSI->where('t0.InvntItem', 'Y');
-    $SAP_MSI->join('oitb t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
-
-    if($itemSelect != ''){
-      $SAP_MSI->where('ItemCode', $itemSelect);
-    }
-    
-    $item_groups = $SAP_MSI->get();
-
-    if ($item_groups->num_rows() > 0) {
-      return $item_groups->result_array();
-    } else {
-      return FALSE;
-    }
-  }
-
-  function sap_items_select_by_item_group($item_group, $trans_type) {
-    $kd_plant = $this->session->userdata['ADMIN']['plant'];
-    $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-    $SAP_MSI->select('t0.ItemCode as MATNR,t0.ItemName as MAKTX,t0.ItmsGrpCod as DISPO,t0.InvntryUom as UNIT,t1.ItmsGrpNam as DSNAM');
-    $SAP_MSI->from('OITM  t0');
-    $SAP_MSI->join('oitb t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
-    $SAP_MSI->where('validFor', 'Y');
-    $SAP_MSI->where('t0.InvntItem', 'Y');
-    $SAP_MSI->where('t1.ItmsGrpNam ', $item_group);
-    
-    $item_groups = $SAP_MSI->get();
-    
-    if ($item_groups->num_rows() > 0) {
-      return $item_groups->result_array();
-    } else {
-      return FALSE;
-    }
   }
 
   function id_opname_plant_new_select($id_outlet,$created_date="",$id_pr_header="") {
@@ -174,11 +124,13 @@ class Stock_model extends CI_Model {
 			return FALSE;
   }
   
-  function t_opname_header_delete($id_opname_header){
+  function opname_header_delete($id_opname_header){
     $data = $this->opname_header_select($id_opname_header);
     $status = $data['status'];
-    if ($status!=2) {
-      if($this->t_opname_details_delete($id_opname_header)){
+    $am = $data['am_approved'];
+    $rm = $data['rm_approved'];
+    if ($status!=2 || $am!=2 || $rm!=2) {
+      if($this->opname_details_delete($id_opname_header)){
         $this->db->where('id_opname_header', $id_opname_header);
         if($this->db->delete('t_opname_header'))
           return TRUE;
@@ -190,13 +142,22 @@ class Stock_model extends CI_Model {
     }
   }
 
-  function t_opname_details_delete($id_opname_header) {
-      $this->db->where('id_opname_header', $id_opname_header);
-      if($this->db->delete('t_opname_detail'))
-          return TRUE;
-      else
-          return FALSE;
-  }
+  function opname_details_delete($id_opname_header) {
+		$this->db->where('id_opname_header', $id_opname_header);
+		if($this->db->delete('t_opname_detail'))
+			return TRUE;
+		else
+			return FALSE;
+  } 
+
+  function opname_room_delete($id_opname_header, $id_opname_detail) {
+		$this->db->where('id_opname_header', $id_opname_header);
+		$this->db->where('id_opname_detail', $id_opname_detail);
+		if($this->db->delete('t_opname_room'))
+			return TRUE;
+		else
+			return FALSE;
+  } 
 
   function opname_header_select($id_opname_header){
     $kd_plant = $this->session->userdata['ADMIN']['plant'];
@@ -239,14 +200,6 @@ class Stock_model extends CI_Model {
     else
       return FALSE;
 }
-
-  function changeUpdateToDb($data){
-    $this->db->where('id_opname_detail', $data['id_opname_detail']);
-    if($this->db->update('t_opname_detail', $data))
-      return TRUE;
-    else
-      return FALSE;
-  }
 
   function opname_header_update($data){
     $update = array(
@@ -305,23 +258,6 @@ class Stock_model extends CI_Model {
       return FALSE;
   }
 
-  function opname_details_delete($id_opname_header) {
-		$this->db->where('id_opname_header', $id_opname_header);
-		if($this->db->delete('t_opname_detail'))
-			return TRUE;
-		else
-			return FALSE;
-  } 
-
-  function opname_room_delete($id_opname_header, $id_opname_detail) {
-		$this->db->where('id_opname_header', $id_opname_header);
-		$this->db->where('id_opname_detail', $id_opname_detail);
-		if($this->db->delete('t_opname_room'))
-			return TRUE;
-		else
-			return FALSE;
-  } 
-
   function headTemplate(){
     $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
     
@@ -331,11 +267,20 @@ class Stock_model extends CI_Model {
     return $head;
   }
   
-  function template(){
+  function template($parameter=''){
     $kd_plant = $this->session->userdata['ADMIN']['plant'];
     $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+    $whereItemCode = '';
+
+    if ($parameter) {
+      foreach ($parameter as $value) {
+        $whereItemCode .= "AND t0.ItemCode <> '".$value."' ";
+      }
+    }
+
+    $where = ($parameter ? " ".$whereItemCode." " : "");
     
-    $query = $SAP_MSI->query("SELECT t0.ItemCode, t2.ItmsGrpNam, t0.ItemName, t0.InvntryUom as UNIT, t1.OnHand FROM OITM t0 INNER JOIN OITW t1 ON t0.ItemCode = t1.ItemCode INNER JOIN OITB t2 ON t2.ItmsGrpCod = t0.ItmsGrpCod where t1.WhsCode ='$kd_plant' AND InvntItem= 'Y' AND (t0.validFor = 'Y' OR t1.OnHand > 0) ");
+    $query = $SAP_MSI->query("SELECT t0.ItemCode, t2.ItmsGrpNam, t0.ItemName, t0.InvntryUom as UNIT, t1.OnHand FROM OITM t0 INNER JOIN OITW t1 ON t0.ItemCode = t1.ItemCode INNER JOIN OITB t2 ON t2.ItmsGrpCod = t0.ItmsGrpCod where t1.WhsCode = '$kd_plant' AND ItemType = 'I' AND InvntItem= 'Y' AND t0.validFor = 'Y' ".$where." ");
 
     $ret = $query->result_array();
     return $ret;
@@ -345,9 +290,76 @@ class Stock_model extends CI_Model {
     $kd_plant = $this->session->userdata['ADMIN']['plant'];
     $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
     
-    $query = $SAP_MSI->query("SELECT t0.ItemCode FROM OITM t0 INNER JOIN OITW t1 ON t0.ItemCode = t1.ItemCode INNER JOIN OITB t2 ON t2.ItmsGrpCod = t0.ItmsGrpCod where t1.WhsCode ='$kd_plant' AND InvntItem= 'Y' AND t0.ItemCode = '$code' AND (t0.validFor = 'Y' OR t1.OnHand > 0) ");
+    $query = $SAP_MSI->query("SELECT t0.ItemCode FROM OITM t0 INNER JOIN OITW t1 ON t0.ItemCode = t1.ItemCode INNER JOIN OITB t2 ON t2.ItmsGrpCod = t0.ItmsGrpCod where t1.WhsCode ='$kd_plant' AND ItemType = 'I' AND InvntItem= 'Y' AND t0.validFor = 'Y' AND t0.ItemCode = '$code' ");
 
     $valid = $query->row_array();
     return $valid;
   }
+
+  function getBeginBalanceInOut($itemcode){
+    $kd_plant = $this->session->userdata['ADMIN']['plant'];
+    $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+    $SAP_MSI->select('BeginBalance, InQty, OutQty');
+    $SAP_MSI->from('v_stkopnaddon');
+    $SAP_MSI->where('LocCode',$kd_plant);
+    $SAP_MSI->where('ItemCode',$itemcode);
+    
+    $query = $SAP_MSI->get();
+
+    if(($query)&&($query->num_rows() > 0)){
+      $qty = $query->row_array();
+      return $qty;
+    }else{
+      return 0;
+    }
+  }  
+
+  function getSODate() {
+    $kd_plant = $this->session->userdata['ADMIN']['plant'];
+    $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+    
+    $query = $SAP_MSI->query("SELECT U_SODate FROM [@YBC_STK_WHS] a INNER JOIN [@YBC_STK_DATE] b ON a.Code = b.Code WHERE a.Code = '$kd_plant' ");
+
+    if(($query)&&($query->num_rows() > 0)){
+      $soDate = $query->result_array();
+      return $soDate;
+    }else{
+      return FALSE;
+    }
+  }
+
+  function getLastPrice($itemcode){
+    $kd_plant = $this->session->userdata['ADMIN']['plant'];
+    $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+    $SAP_MSI->select('Avgprice');
+    $SAP_MSI->from('OITM');
+    $SAP_MSI->where('ItemCode',$itemcode);
+    
+    $query = $SAP_MSI->get();
+
+    if(($query)&&($query->num_rows() > 0)){
+      $qty = $query->row_array();
+      return $qty;
+    }else{
+      return 0;
+    }
+  } 
+
+  function getUpdateData($item_code){
+    $kd_plant = $this->session->userdata['ADMIN']['plant'];
+    $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+    $SAP_MSI->select('t2.ItmsGrpNam, t0.ItemName, t0.InvntryUom as uom, t1.OnHand');
+    $SAP_MSI->from('OITM t0');
+    $SAP_MSI->join('OITW t1','t0.ItemCode = t1.ItemCode');
+    $SAP_MSI->join('OITB t2','t2.ItmsGrpCod = t0.ItmsGrpCod');
+    $SAP_MSI->where('t1.WhsCode', $kd_plant);
+    $SAP_MSI->where('t0.ItemCode', $item_code);
+    $SAP_MSI->where('ItemType', 'I');
+    $SAP_MSI->where('InvntItem', 'Y');
+    $SAP_MSI->where('validFor', 'Y');
+
+    $query = $SAP_MSI->get();
+    $onHand = $query->row_array();
+    return $onHand;
+}
 }

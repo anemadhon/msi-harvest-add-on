@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php $this->load->view("_template/head.php")?>
+		<?php  $this->load->view("_template/head.php")?>
 		<style>
 			th{
 				text-align:center;
@@ -73,25 +73,25 @@
 		</style>
 	</head>
 	<body>
-	<?php $this->load->view("_template/nav.php")?>
+		<?php  $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php $this->load->view("_template/sidebar.php")?>
+			<?php  $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 				<?php if ($this->session->flashdata('success')): ?>
-						<div class="alert alert-success" role="alert">
-							<?php echo $this->session->flashdata('success'); ?>
-						</div>
-					<?php endif; ?>
-					<?php if ($this->session->flashdata('failed')): ?>
-						<div class="alert alert-danger" role="alert">
-							<?php echo $this->session->flashdata('failed'); ?>
-						</div>
-					<?php endif; ?>
-                   <form enctype="multipart/form-data" method="post" id="formfile">
-				   <input type="hidden" name="status" id="status" value="<?=$opname_header['status']?>">
-				   <input type="hidden" name="am_status" id="am_status" value="<?=$opname_header['am_approved']?>">
-				   <input type="hidden" name="rm_status" id="rm_status" value="<?=$opname_header['rm_approved']?>">
+					<div class="alert alert-success" role="alert">
+						<?php echo $this->session->flashdata('success'); ?>
+					</div>
+				<?php endif; ?>
+				<?php if ($this->session->flashdata('failed')): ?>
+					<div class="alert alert-danger" role="alert">
+						<?php echo $this->session->flashdata('failed'); ?>
+					</div>
+				<?php endif; ?>
+                   	<form enctype="multipart/form-data" method="post" id="formfile">
+						<input type="hidden" name="status" id="status" value="<?=$opname_header['status']?>">
+						<input type="hidden" name="am_status" id="am_status" value="<?=$opname_header['am_approved']?>">
+						<input type="hidden" name="rm_status" id="rm_status" value="<?=$opname_header['rm_approved']?>">
 				   		<div class="card">
                         	<div class="card-body">
                             	<div class="row">
@@ -122,35 +122,35 @@
                                             <div class="form-group row">
 												<label class="col-lg-3 col-form-label">Status Admin</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" value="<?= $opname_header['status_string']?>" readOnly>
+													<input type="text" class="form-control" value="<?= $opname_header['am_approved']==1 || $opname_header['rm_approved']==1 ? 'Not Approved' : $opname_header['status_string']?>" readOnly>
 												</div>
 											</div>
 
 											<?php if($opname_header['status']==2):?>
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Status Area Manager</label>
-												<div class="col-lg-9">
-													<input type="text" class="form-control" value="<?= $opname_header['status_string_am']?>" readOnly>
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Status Area Manager</label>
+													<div class="col-lg-9">
+														<input type="text" class="form-control" value="<?= $opname_header['rm_approved']==1 ? 'Not Approved' : $opname_header['status_string_am']?>" readOnly>
+													</div>
 												</div>
-											</div>
 											<?php endif; ?>
 
 											<?php if($opname_header['am_approved']==2):?>
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Status Regional Manager</label>
-												<div class="col-lg-9">
-													<input type="text" class="form-control" value="<?= $opname_header['status_string_rm']?>" readOnly>
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Status Regional Manager</label>
+													<div class="col-lg-9">
+														<input type="text" class="form-control" value="<?= $opname_header['status_string_rm']?>" readOnly>
+													</div>
 												</div>
-											</div>
 											<?php endif; ?>
 
 											<?php if($opname_header['am_approved']==1 || $opname_header['rm_approved']==1):?>
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Reject Reason</label>
-												<div class="col-lg-9">
-													<textarea name="reject_reason" id="reject_reason" class="form-control" cols="30" rows="5" readOnly><?= $opname_header['request_reason']?></textarea>
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">Reject Reason</label>
+													<div class="col-lg-9">
+														<textarea name="reject_reason" id="reject_reason" class="form-control" cols="30" rows="5" readOnly><?= $opname_header['request_reason']?></textarea>
+													</div>
 												</div>
-											</div>
 											<?php endif; ?>
 
                                             <div class="form-group row">
@@ -166,12 +166,12 @@
 											</div>
 
 											<?php if(!$opname_header['ids'] && ($opname_header['status']==1 || $opname_header['am_approved']==1 || $opname_header['rm_approved']==1)):?>
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">File upload</label>
-												<div class="col-lg-9">
-													<input type="file" name="file" id="file" class="file-input" data-show-preview="false">
+												<div class="form-group row">
+													<label class="col-lg-3 col-form-label">File upload</label>
+													<div class="col-lg-9">
+														<input type="file" name="file" id="file" class="file-input" data-show-preview="false">
+													</div>
 												</div>
-											</div>
 											<?php endif; ?>
 
 											<?php if($opname_header['ids'] && $this->auth->is_have_perm('auth_approve')):?>
@@ -188,7 +188,7 @@
 												<?php endif; ?>
 											<?php else: ?>
 												<?php if($opname_header['status']==1 || $opname_header['am_approved']==1 || $opname_header['rm_approved']==1):?>
-												<div class="text-right after-upload" style="display:none">
+												<div class="text-right after-upload after-upload-displayed" style="display:none">
 													<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
 													<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve<i class="icon-paperplane ml-2"></i></button>
 												</div>
@@ -205,6 +205,11 @@
 
 						<div class="card after-upload" style="display:none">
 							<div class="card-body">
+								<p class="total_upload" style="display:none">Total Data yang di Upload : <span id="total_upload"></span></p>
+								<p class="total_default" style="display:none">Total Data Deafult : <span id="total_default"></span></p>
+								<hr>
+								<p class="count" style="display:none">Total Variance : <span id="total_variance"></span></p>
+								<p class="count" style="display:none">Total Variance Value : <span id="total_variance_value"></span></p>
 								<div class="row">
 									<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
 									<div class="col-md-12" style="overflow: auto">
@@ -217,10 +222,15 @@
 													<th>Item Name</th>
 													<th>On Hand</th>
 													<th>UOM</th>
-													<?php foreach($head as $key=>$val):?>
+													<?php foreach($head as $val):?>
 														<th><?=$val['Name']?></th>
 													<?php endforeach;?>
-													<th>Akumulasi</th>
+													<th>Beginning Balance</th>
+													<th>IN</th>
+													<th>OUT</th>
+													<th>Total Counted</th>
+													<th>Variance</th>
+													<th>Variance Value</th>
 												</tr>
 											</thead>
 										</table>
@@ -252,10 +262,10 @@
 						</div>
 					</div>
 				</div>
-				<?php $this->load->view("_template/footer.php")?>
+				<?php  $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php $this->load->view("_template/js.php")?>
+        <?php  $this->load->view("_template/js.php")?>
 		<script>
 		$(document).ready(function(){
 
@@ -273,39 +283,62 @@
 			let stts = $('#status').val();
 			let am = $('#am_status').val();
 			let rm = $('#rm_status').val();
+			let head = '<?php echo count($head); ?>';
+			let itmcode = ''
+			let var_qty = 0
+			let var_value = 0
 			
-			if (stts==2 && am!=1 && rm!=1) {
+			if (stts == 2 && am != 1 && rm != 1) {
 				$('.after-upload').show();
-				table = $("#tblWhole").DataTable({
-					"ordering":true,
-					"paging":true,
-					"ajax": {
-				            "url":"<?php echo site_url('transaksi1/stock/showStockDetail');?>",
-							"data":{id_opname_header},
-				            "type":"POST"
-				        },
-					"initComplete":function(data){
-							$('.after-displayed').show();
-						},
-					"columns": [
-						{"data":"whscode", "className":"dt-center"},
-						{"data":"itmgrp", "className":"dt-center"},
-						{"data":"itmcode", "className":"dt-center"},
-						{"data":"itmname", "className":"dt-center"},
-						{"data":"onhand", "className":"dt-center"},
-						{"data":"uom", "className":"dt-center"},
-						{"data":"qr1", "className":"dt-center"},
-						{"data":"qr2", "className":"dt-center"},
-						{"data":"qr3", "className":"dt-center"},
-						{"data":"qr4", "className":"dt-center"},
-						{"data":"qr5", "className":"dt-center"},
-						{"data":"qr6", "className":"dt-center"},
-						{"data":"qr7", "className":"dt-center"},
-						{"data":"qr8", "className":"dt-center"},
-						{"data":"akm", "className":"dt-center"}
-					],
-					drawCallback: function() {
-						$('.form-control-select2').select2();
+				$.ajax({
+					url:"<?php echo site_url('transaksi1/stock/showStockDetail');?>",
+					type:"POST",
+					data:{id_opname_header},
+					beforeSend: function() {
+						$('#load').show();
+					},
+					success:function(res) {
+						row = JSON.parse(res);
+						let columns = [
+							{"data":"whscode", "className":"dt-center"},
+							{"data":"itmgrp", "className":"dt-center"},
+							{"data":"itmcode", "className":"dt-center"},
+							{"data":"itmname", "className":"dt-center"},
+							{"data":"onhand", "className":"dt-center"},
+							{"data":"uom", "className":"dt-center"}
+						];
+						for (let i = 1; i <= head; i++) {
+							columns.push({data: "qr"+i, className: "dt-center"});
+						}
+						columns.push(
+							{"data":"begin_balance", "className":"dt-center"},
+							{"data":"in", "className":"dt-center"},
+							{"data":"out", "className":"dt-center"},
+							{"data":"akm", "className":"dt-center"},
+							{"data":"variance", "className":"dt-center"},
+							{"data":"variance_value", "className":"dt-center"}
+						);
+						table = $("#tblWhole").DataTable({
+							"ordering":true,
+							"paging":true,
+							"data":row.data,
+							"columns": columns,
+							drawCallback: function() {
+								$('.form-control-select2').select2();
+							}
+						});
+						var_qty = row.data.map(var_qty => var_qty.variance.replace(',','').replace(',','')).reduce((a,b) => parseFloat(a)+parseFloat(b))
+						var_value = row.data.map(var_value => var_value.variance_value.replace(',','').replace(',','')).reduce((a,b) => parseFloat(a)+parseFloat(b))
+						$('#total_variance').text(var_qty.toLocaleString())
+						$('#total_variance_value').text('Rp. '+var_value.toLocaleString())
+					},
+					error: function(xhr, status) {
+						alert(`Terjadi Eror (${xhr.status} : ${xhr.statusText}). Silahkan Coba Lagi`)
+					},
+					complete: function() {
+						$('#load').hide();
+						$('.after-displayed').show();
+						$('.count').show();
 					}
 				});
 			} else {
@@ -320,46 +353,85 @@
 						cache:false,
 						beforeSend: function() {
 							$('#load').show();
+							$('.fileinput-remove-button').hide()
 						},
 						success:function(res) {
 							row = JSON.parse(res);
 							if (row.error.length > 0) {
-								alert('Terdapat Data yang Tidak Cocok, Silahkan Cek Kembali File Anda')
-								return false;
+								alert(`Data Untuk Kode ${row.error[row.error.length-1].message} Tidak Ditemukan, Silahkan Cek Kembali File Anda`)
+								location.reload(true);
 							} else {
+								itmcode = row.data.map(itmcode => itmcode.itmcode)
+								var_qty = row.data.map(var_qty => var_qty.variance.replace(',','').replace(',','')).reduce((a,b) => parseFloat(a)+parseFloat(b))
+								var_value = row.data.map(var_value => var_value.variance_value.replace(',','').replace(',','')).reduce((a,b) => parseFloat(a)+parseFloat(b))
+
+								let columns = [
+									{"data":"whscode", "className":"dt-center"},
+									{"data":"itmgrp", "className":"dt-center"},
+									{"data":"itmcode", "className":"dt-center"},
+									{"data":"itmname", "className":"dt-center"},
+									{"data":"onhand", "className":"dt-center"},
+									{"data":"uom", "className":"dt-center"}
+								];
+								for (let i = 1; i <= head; i++) {
+									columns.push({data: "qr"+i, className: "dt-center"});
+								}
+								columns.push(
+									{"data":"begin_balance", "className":"dt-center"},
+									{"data":"in", "className":"dt-center"},
+									{"data":"out", "className":"dt-center"},
+									{"data":"akm", "className":"dt-center"},
+									{"data":"variance", "className":"dt-center"},
+									{"data":"variance_value", "className":"dt-center"}
+								);
 								table = $("#tblWhole").DataTable({
 									"ordering":false,
 									"paging":false,
 									"data":row.data,
-									"columns": [
-										{"data":"whscode", "className":"dt-center"},
-										{"data":"itmgrp", "className":"dt-center"},
-										{"data":"itmcode", "className":"dt-center"},
-										{"data":"itmname", "className":"dt-center"},
-										{"data":"onhand", "className":"dt-center"},
-										{"data":"uom", "className":"dt-center"},
-										{"data":"qr1", "className":"dt-center"},
-										{"data":"qr2", "className":"dt-center"},
-										{"data":"qr3", "className":"dt-center"},
-										{"data":"qr4", "className":"dt-center"},
-										{"data":"qr5", "className":"dt-center"},
-										{"data":"qr6", "className":"dt-center"},
-										{"data":"qr7", "className":"dt-center"},
-										{"data":"qr8", "className":"dt-center"},
-										{"data":"akm", "className":"dt-center"}
-									],
+									"columns": columns,
 									drawCallback: function() {
 										$('.form-control-select2').select2();
 									}
 								});
+								$('#total_upload').text(row.data.length)
+								$('.after-upload').show();
+								$('.after-upload-displayed').hide();
+								$('.total_upload').show();
+								$.ajax({
+									url:"<?php echo site_url('transaksi1/stock/readFileForDefaultData');?>",
+									type:"POST",
+									data:{"dataItemCode":itmcode},
+									success:function(res) {
+										row = JSON.parse(res);
+										let getTable = $("#tblWhole").DataTable();
+										getTable.rows.add(row.data).draw();
+
+										if (row.data.length > 0) {
+											var_qty += row.data.map(var_qty => var_qty.variance.replace(',','').replace(',','')).reduce((a,b) => parseFloat(a)+parseFloat(b))
+											var_value += row.data.map(var_value => var_value.variance_value.replace(',','').replace(',','')).reduce((a,b) => parseFloat(a)+parseFloat(b))
+										}
+
+										$('#total_default').text(row.data.length)
+										$('#total_variance').text(var_qty.toLocaleString())
+										$('#total_variance_value').text('Rp. '+var_value.toLocaleString())
+									},
+									error: function(xhr, status) {
+										alert(`Terjadi Eror (${xhr.status} : ${xhr.statusText}). Silahkan Coba Lagi`)
+										location.reload(true);
+									},
+									complete: function() {
+										$('#load').hide();
+										$('.fileinput-remove-button').show()
+										$('.after-upload-displayed').show();
+										$('.total_default').show();
+										$('.count').show();
+									}
+								});
 							}
-						},
-						complete: function() {
-							$('#load').hide();
-							$('.after-upload').show();
 						},
 						error: function(xhr, status) {
 							alert(`Terjadi Eror Saat Upload (${xhr.status} : ${xhr.statusText}). Silahkan Coba Lagi`)
+							location.reload(true);
 						}
 					});	
 				});
@@ -370,30 +442,45 @@
 			}
 		});
 
-		function addDatadb(id_approve=''){
+		function addDatadb(id_approve = ''){
 			const status= document.getElementById('status').value;
 			const idopname_header= document.getElementById('id_opname_header').value;
 			const postDate= document.getElementById('postDate').value;
 			const approve = id_approve;
 			const tbodyTable = $('#tblWhole > tbody');
+			let head = '<?php echo count($head); ?>';
 			let qr_row = [];
 			let qr_row_temp = [];
 			let itmGrpName =[];
 			let matrialNo =[];
 			let matrialDesc =[];
-			let qty =[];
 			let uom =[];
 			let onhand =[];
+			let qty =[];
+			let begin_balance =[];
+			let data_in =[];
+			let data_out =[];
+			let variance =[];
+			let variance_value =[];
 			tbodyTable.find('tr').each(function(i, el){
 				let td = $(this).find('td');
 				itmGrpName.push(td.eq(1).text()); 
 				matrialNo.push(td.eq(2).text()); 
 				matrialDesc.push(td.eq(3).text());
-				onhand.push(td.eq(4).text());
+				onhand.push(td.eq(4).text().replace(',','').replace(',',''));
 				uom.push(td.eq(5).text());
-				qty.push(td.eq(14).text());
-				qr_row_temp.push(('1|'+(td.eq(6).text()?td.eq(6).text():'0')),('2|'+(td.eq(7).text()?td.eq(7).text():'0')),('3|'+(td.eq(8).text()?td.eq(8).text():'0')),('4|'+(td.eq(9).text()?td.eq(9).text():'0')),('5|'+(td.eq(10).text()?td.eq(10).text():'0')),('6|'+(td.eq(11).text()?td.eq(11).text():'0')),('7|'+(td.eq(12).text()?td.eq(12).text():'0')),('8|'+(td.eq(13).text()?td.eq(13).text():'0')));
-				let temp = qr_row_temp.map(() => qr_row_temp.splice(0,8));
+				begin_balance.push(td.eq(14).text().replace(',','').replace(',',''));
+				data_in.push(td.eq(15).text().replace(',','').replace(',',''));
+				data_out.push(td.eq(16).text().replace(',','').replace(',',''));
+				qty.push(td.eq(17).text().replace(',','').replace(',',''));
+				variance.push(td.eq(18).text().replace(',','').replace(',',''));
+				variance_value.push(td.eq(19).text().replace(',','').replace(',',''));
+
+				for (let idx = 1; idx <= head; idx++) {
+					qr_row_temp.push(idx+'|'+td.eq(idx+5).text().replace(',','').replace(',',''))
+				}
+
+				let temp = qr_row_temp.map(() => qr_row_temp.splice(0,head));
 				qr_row.push(temp[0]);
 			})
 
@@ -401,7 +488,7 @@
 
 			setTimeout(() => {
 				$.post("<?php echo site_url('transaksi1/stock/addDataUpdate')?>", {
-					idHead:idopname_header, appr: approve, stts: status, postDate: postDate, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detQty: qty, detUom: uom, OnHand:onhand, ItemGrp:itmGrpName, Qr:qr_row
+					idHead:idopname_header, appr: approve, stts: status, postDate: postDate, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detQty: qty, detUom: uom, OnHand:onhand, ItemGrp:itmGrpName, Qr:qr_row, beginBalance:begin_balance, dataIn:data_in, dataOut:data_out, variance:variance, varianceValue:variance_value
 				}, function(){
 					$('#load').hide();
 				})
@@ -415,11 +502,16 @@
 			}, 600);
 		}
 
-		function areaMgrAction(ids,status){
+		function areaMgrAction(ids, status){
 			const idopname_header = document.getElementById('id_opname_header').value;
 			const reason = document.getElementById('reason').value;
 			const id_mgr = ids;
 			const status_mgr = status;
+
+			if (status_mgr==1 && reason.trim()=='') {
+				alert('Alasan Tidak Boleh Kosong')
+				return false;
+			}
 
 			$.post("<?php echo site_url('transaksi1/stock/actionAreaMgr')?>", {
 				idHead:idopname_header, idMgr:id_mgr, action:status_mgr, Reason:reason
@@ -429,11 +521,16 @@
 			);
 		}
 
-		function regMgrAction(ids,status){
+		function regMgrAction(ids, status){
 			const idopname_header = document.getElementById('id_opname_header').value;
 			const reason = document.getElementById('reason').value;
 			const id_mgr = ids;
 			const status_mgr = status;
+
+			if (status_mgr==1 && reason.trim()=='') {
+				alert('Alasan Tidak Boleh Kosong')
+				return false;
+			}
 
 			$.post("<?php echo site_url('transaksi1/stock/actionRegMgr')?>", {
 				idHead:idopname_header, idMgr:id_mgr, action:status_mgr, Reason:reason

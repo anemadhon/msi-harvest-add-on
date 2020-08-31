@@ -18,18 +18,8 @@ class Stock extends CI_Controller {
     }
 
     public function index(){
-        $object['opname_header']['freeze'] = $this->st_model->freeze();
-        $arr_ids = explode(", ",$this->session->userdata['ADMIN']['admin_perm_grup_ids']);
-        $ids = '';
-        foreach($arr_ids as $val){
-            if($val == 14){
-                $ids = $val;
-            }elseif($val == 10064){
-                $ids = $val;
-            }
-        }
-        $object['opname_header']['ids'] = $ids;
-        $this->load->view('transaksi1/stock_outlet/stock/list_view',$object);
+        $so_date['so_date'] = $this->st_model->getSODate();
+        $this->load->view('transaksi1/stock_outlet/stock/list_view', $so_date);
     }
 
     public function showAllData(){
@@ -58,7 +48,7 @@ class Stock extends CI_Controller {
             $date_to2='';
         }
 
-        $rs = $this->st_model->t_opname_headers($date_from2, $date_to2, $status);
+        $rs = $this->st_model->opname_headers($date_from2, $date_to2, $status);
 		$data = array();
 		$status_string='';
 
@@ -122,11 +112,8 @@ class Stock extends CI_Controller {
      }
 
     public function add(){
-        $object['request_reason'] = ['Pastry', 'Cake Shop', 'Store', 'Bar'];
-		$object['matrialGroup'] = $this->st_model->showMatrialGroup();
 		$object['head'] = $this->st_model->headTemplate();
 		$object['plant'] = $this->session->userdata['ADMIN']['plant'].' - '.$this->session->userdata['ADMIN']['plant_name'];
-    	$object['storage_location'] = $this->session->userdata['ADMIN']['storage_location'].' - '.$this->session->userdata['ADMIN']['storage_location_name'];
     
         $this->load->view('transaksi1/stock_outlet/stock/add_view', $object);
     }
@@ -157,18 +144,22 @@ class Stock extends CI_Controller {
         $opname_header['freeze'] = 'Y';
         $opname_header['back'] = 1;
 
-        $opname_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($opname_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
 
         if($id_opname_header = $this->st_model->opname_header_insert($opname_header)){
             $input_detail_success = false;
-            for($i =0; $i < $count; $i++){
+            for($i = 0; $i < $count; $i++){
                 $opname_detail['id_opname_header'] = (int)$id_opname_header;
                 $opname_detail['id_opname_h_detail'] = $i+1;
                 $opname_detail['item_grp_name'] = $this->input->post('ItemGrp')[$i];
                 $opname_detail['material_no'] = $this->input->post('detMatrialNo')[$i];
                 $opname_detail['material_desc'] = $this->input->post('detMatrialDesc')[$i];
                 $opname_detail['requirement_qty'] = (float)$this->input->post('detQty')[$i];
+                $opname_detail['begin_balance'] = (float)$this->input->post('beginBalance')[$i];
+                $opname_detail['data_in'] = (float)$this->input->post('dataIn')[$i];
+                $opname_detail['data_out'] = (float)$this->input->post('dataOut')[$i];
+                $opname_detail['variance'] = (float)$this->input->post('variance')[$i];
+                $opname_detail['variance_value'] = (float)$this->input->post('varianceValue')[$i];
                 $opname_detail['uom'] = $this->input->post('detUom')[$i];
                 $opname_detail['stock'] = $this->input->post('OnHand')[$i];
 
@@ -273,11 +264,16 @@ class Stock extends CI_Controller {
                 $nestedData['itmgrp'] = $value['item_grp_name'];
                 $nestedData['itmcode'] = $value['material_no'];
                 $nestedData['itmname'] = $value['material_desc'];
-                $nestedData['onhand'] = $value['stock'];
+                $nestedData['onhand'] = number_format($value['stock'],4,'.',',');
                 $nestedData['uom'] = $value['uom'];
-                $nestedData['akm'] = $value['requirement_qty'];
+                $nestedData['akm'] = number_format($value['requirement_qty'],4,'.',',');
+                $nestedData['variance'] = number_format($value['variance'],4,'.',',');
+                $nestedData['variance_value'] = number_format($value['variance_value'],4,'.',',');
+                $nestedData['begin_balance'] = number_format($value['begin_balance'],4,'.',',');
+                $nestedData['in'] = number_format($value['data_in'],4,'.',',');
+                $nestedData['out'] = number_format($value['data_out'],4,'.',',');
                 for ($j=1; $j <= count($head); $j++) { 
-                    $nestedData['qr'.$room[$j-1]['id_room']] = $room[$j-1]['requirement_qty'];
+                    $nestedData['qr'.$room[$j-1]['id_room']] = number_format($room[$j-1]['requirement_qty'],4,'.',',');
                 }
                 $dt[] = $nestedData;
                 $i++;
@@ -290,44 +286,6 @@ class Stock extends CI_Controller {
         echo json_encode($json_data);
     }
     
-    function getdataDetailMaterial(){
-		$item_group_code = $this->input->post('matGroup');
-		
-		if($item_group_code == 'all'){
-			$data = $this->st_model->sap_item_groups_select_all_grnonpo();
-		}else{
-			$data = $this->st_model->sap_items_select_by_item_group($item_group_code, 'stock');
-		}
-        echo json_encode($data);
-
-	}
-	
-	function getdataDetailMaterialSelect(){
-        $itemSelect = $this->input->post('MATNR');
-        
-        $dataMatrialSelect = $this->st_model->sap_item_groups_select_all_grnonpo($itemSelect);
-
-        echo json_encode($dataMatrialSelect);
-    }
-    
-    public function chageDataDB(){
-        $id_opname_header = $this->input->post('idopname_header');
-        $sum = count($this->input->post('idopname_detail'));
-        $succes_update_detail = false;
-        for($i = 0; $i < $sum; $i++){
-            $opname_detail['id_opname_detail'] = $this->input->post('idopname_detail')[$i];
-            $opname_detail['requirement_qty'] = $this->input->post('qty')[$i];
-            if($this->st_model->changeUpdateToDb($opname_detail))
-            $succes_update_detail = true;
-        }
-
-        if($succes_update_detail){
-            return $this->session->set_flashdata('success', "Stock Opname Berhasil di Update");
-        }else{
-            return $this->session->set_flashdata('failed', "Stock Opname Gagal di Update");
-        } 
-    }
-    
     public function addDataUpdate(){
         $admin_id = $this->session->userdata['ADMIN']['admin_id'];
 
@@ -338,21 +296,25 @@ class Stock extends CI_Controller {
         $opname_header['am_approved'] = 0;
         $opname_header['rm_approved'] = 0;
 
-        $opname_details['material_no'] = $this->input->post('detMatrialNo');
-        $count = count($opname_details['material_no']);
+        $count = count($this->input->post('detMatrialNo'));
 
         $id_detail = $this->st_model->opname_details_select($opname_header['id_opname_header']);
 
         if($this->st_model->opname_header_update($opname_header)){
             $update_detail_success = false;
             if ($this->st_model->opname_details_delete($opname_header['id_opname_header'])) {
-                for($i =0; $i < $count; $i++){
+                for($i = 0; $i < $count; $i++){
                     $opname_detail['id_opname_header'] = (int)$opname_header['id_opname_header'];
                     $opname_detail['id_opname_h_detail'] = $i+1;
                     $opname_detail['item_grp_name'] = $this->input->post('ItemGrp')[$i];
                     $opname_detail['material_no'] = $this->input->post('detMatrialNo')[$i];
                     $opname_detail['material_desc'] = $this->input->post('detMatrialDesc')[$i];
                     $opname_detail['requirement_qty'] = (float)$this->input->post('detQty')[$i];
+                    $opname_detail['begin_balance'] = (float)$this->input->post('beginBalance')[$i];
+                    $opname_detail['data_in'] = (float)$this->input->post('dataIn')[$i];
+                    $opname_detail['data_out'] = (float)$this->input->post('dataOut')[$i];
+                    $opname_detail['variance'] = (float)$this->input->post('variance')[$i];
+                    $opname_detail['variance_value'] = (float)$this->input->post('varianceValue')[$i];
                     $opname_detail['uom'] = $this->input->post('detUom')[$i];
                     $opname_detail['stock'] = $this->input->post('OnHand')[$i];
     
@@ -432,7 +394,7 @@ class Stock extends CI_Controller {
         $id_opname_header = $this->input->post('deleteArr');
         $deleteData = false;
         foreach($id_opname_header as $id){
-            if($this->st_model->t_opname_header_delete($id))
+            if($this->st_model->opname_header_delete($id))
             $deleteData = true;
         }
         
@@ -456,41 +418,73 @@ class Stock extends CI_Controller {
         if ($this->upload->do_upload('file')) {
             $data_upload = $this->upload->data();
 
-            
             $excelreader = new PHPExcel_Reader_Excel2007();
             $loadexcel   = $excelreader->load('files/uploads/'.$data_upload['file_name']);
             $sheet       = $loadexcel->getActiveSheet()->toArray(null, true, true ,true);
 
+            $head = $this->st_model->headTemplate();
+
             $data = array();
             $error = array();
+            $error_data = array();
 
             $numrow = 9;
             $no=0;
+            $lastItem = '';
             foreach($sheet as $row){
                 if($numrow > 17){
                     $object['validate'] = $this->st_model->checkTemplate($row['C']);
                     if ($object['validate']) {
-                        array_push($data, array(
+                        $akm = 0;
+                        $abjadBegin = 'F';
+                        $abjadBeginDouble = 'F';
+                        $dataUpdateData = $this->st_model->getUpdateData($row['C']);
+                        $dataForSO = $this->st_model->getBeginBalanceInOut($row['C']);
+                        $dataForSOPrice = $this->st_model->getLastPrice($row['C']);
+                        if ($dataForSO == 0) {
+                            $BeginBalance = 0;
+                            $InQty = 0;
+                            $OutQty = 0;
+                        } else {
+                            $BeginBalance = $dataForSO['BeginBalance'];
+                            $InQty = $dataForSO['InQty'];
+                            $OutQty = $dataForSO['OutQty'];
+                        }
+                        if ($lastItem === $row['C']) {
+                            for ($i=1; $i <= count($head); $i++) {
+                                $currentAbjadDouble = ++$abjadBeginDouble;
+                                $data[$dataExcel['no']-1]["qr$i"] = number_format(($data[$dataExcel['no']-1]["qr$i"] + (float)$row[$currentAbjadDouble]),4,'.',',');
+                                $data[$dataExcel['no']-1]["akm"] = number_format(($data[$dataExcel['no']-1]["akm"] + (float)$row[$currentAbjadDouble]),4,'.',',');
+                            }
+                            continue;
+                        }
+                        $dataExcel = array(
                             'no' => ($no-8),
                             'whscode' => $row['A'],
-                            'itmgrp' => $row['B'],
+                            'itmgrp' => $dataUpdateData['ItmsGrpNam'],
                             'itmcode' => $row['C'],
-                            'itmname' => $row['D'],
-                            'onhand' => $row['E'],
-                            'uom' => $row['F'],
-                            'qr1' => $row['G'],
-                            'qr2' => $row['H'],
-                            'qr3' => $row['I'],
-                            'qr4' => $row['J'],
-                            'qr5' => $row['K'],
-                            'qr6' => $row['L'],
-                            'qr7' => $row['M'],
-                            'qr8' => $row['N'],
-                            'akm' => ($row['G']+$row['H']+$row['I']+$row['J']+$row['K']+$row['L']+$row['M']+$row['N'])
-                        ));
+                            'itmname' => $dataUpdateData['ItemName'],
+                            'onhand' => number_format((float)$dataUpdateData['OnHand'],4,'.',','),
+                            'uom' => $dataUpdateData['uom']
+                        );
+                        for ($i=1; $i <= count($head); $i++) {
+                            $currentAbjad = ++$abjadBegin;
+                            $dataExcel["qr$i"] = number_format((float)$row[$currentAbjad],4,'.',',');
+                            $akm += (float)$row[$currentAbjad];
+                        }
+                        $dataExcel["begin_balance"] = number_format($BeginBalance,4,'.',','); 
+                        $dataExcel["in"] = number_format($InQty,4,'.',','); 
+                        $dataExcel["out"] = number_format($OutQty,4,'.',','); 
+                        $dataExcel["akm"] = number_format($akm,4,'.',',');
+                        $dataExcel["variance"] = number_format((float)($akm - ($BeginBalance + ($InQty - $OutQty))),4,'.',',');
+                        $dataExcel["variance_value"] = number_format((float)$dataExcel["variance"] * $dataForSOPrice["Avgprice"],4,'.',',');
+                        $lastItem = $row['C'];
+                        array_push($data, $dataExcel);
                     } else {
+                        array_push($error_data, $row['C']);
                         array_push($error, array(
-                            'error' => 1
+                            'error' => 1,
+                            'message' => $error_data
                         ));
                     }
                 }
@@ -508,6 +502,53 @@ class Stock extends CI_Controller {
             echo $this->upload->display_errors();
         }
     }
+
+    function readFileForDefaultData(){
+        $head = $this->st_model->headTemplate();
+        $dataDefault = $this->st_model->template($this->input->post('dataItemCode'));
+
+        $defaultData = array();
+
+        $no = count($this->input->post('dataItemCode'));
+        foreach ($dataDefault as $key => $default) {
+            $dataFromDefault = array(
+                'no' => ($no+1),
+                'whscode' => $this->session->userdata['ADMIN']['plant'],
+                'itmgrp' => $default['ItmsGrpNam'],
+                'itmcode' => $default['ItemCode'],
+                'itmname' => $default['ItemName'],
+                'onhand' => number_format((float)$default['OnHand'],4,'.',','),
+                'uom' => $default['UNIT']
+            );
+            $abjadBegin = 'F';
+            for ($i=1; $i <= count($head); $i++) {
+                $dataFromDefault["qr$i"] = number_format(0,4,'.',',');
+            }
+            $dataForDefault = $this->st_model->getBeginBalanceInOut($default['ItemCode']);
+            $dataForDefaultPrice = $this->st_model->getLastPrice($default['ItemCode']);
+            if ($dataForDefault == 0) {
+                $BeginBalance = 0;
+                $InQty = 0;
+                $OutQty = 0;
+            } else {
+                $BeginBalance = $dataForDefault['BeginBalance'];
+                $InQty = $dataForDefault['InQty'];
+                $OutQty = $dataForDefault['OutQty'];
+            }
+            $dataFromDefault["begin_balance"] = number_format($BeginBalance,4,'.',','); 
+            $dataFromDefault["in"] = number_format($InQty,4,'.',','); 
+            $dataFromDefault["out"] = number_format($OutQty,4,'.',','); 
+            $dataFromDefault["akm"] = number_format(0,4,'.',',');
+            $dataFromDefault["variance"] = number_format((float)($BeginBalance + ($InQty - $OutQty)),4,'.',',');
+            $dataFromDefault["variance_value"] = number_format((float)$dataFromDefault["variance"] * $dataForDefaultPrice["Avgprice"],4,'.',',');
+            array_push($defaultData, $dataFromDefault);
+            $no++;
+        }
+        $json_data = array(
+            "data"  => $defaultData
+        );
+        echo json_encode($json_data);
+    }
     
     function printpdf(){
 		$id_opname_header = $this->uri->segment(4);
@@ -519,7 +560,7 @@ class Stock extends CI_Controller {
 		require_once(APPPATH.'libraries/html2pdf/html2pdf.class.php');
 		try
 		{
-			$html2pdf = new HTML2PDF('P', 'A4', 'en');
+			$html2pdf = new HTML2PDF('L', 'A4', 'en');
 			$html2pdf->setTestTdInOnePage(false);
 			$html2pdf->pdf->SetDisplayMode('fullpage');
 			$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
@@ -609,13 +650,13 @@ class Stock extends CI_Controller {
         $excel->setActiveSheetIndex(0)->setCellValue('D9', "Item Name"); 
         $excel->setActiveSheetIndex(0)->setCellValue('E9', "On Hand");
         $excel->setActiveSheetIndex(0)->setCellValue('F9', "UOM"); 
-        foreach( range('G', 'N') as $key=>$alp) { 
-            $excel->setActiveSheetIndex(0)->setCellValue($alp.'9', $object['head'][$key]['Name']);
+        $abjadBegin = 'F';
+        for ($i=1; $i <= count($object['head']); $i++) {
+            $excel->setActiveSheetIndex(0)->setCellValue(++$abjadBegin.'9', $object['head'][$i-1]['Name']);
         }
 
         $numrow = 10;
         foreach($object['dataOnHand'] as $key=>$r){ 
-            $hrf = range('G', 'N');
             // applying border style
             $excel->getActiveSheet()->getStyle('A'.$numrow.':N'.$numrow)->applyFromArray($styleArray);
 
@@ -633,8 +674,9 @@ class Stock extends CI_Controller {
             $excel->setActiveSheetIndex(0)->setCellValue('E'.$numrow, (float)$r['OnHand']);
             $excel->setActiveSheetIndex(0)->setCellValue('F'.$numrow, $r['UNIT']);
 
-            foreach( range('G', 'N') as $key=>$alp) { 
-                $excel->setActiveSheetIndex(0)->setCellValue($alp.$numrow, '');
+            $abjadBegin = 'F';
+            for ($i=1; $i <= count($object['head']); $i++) {
+                $excel->setActiveSheetIndex(0)->setCellValue(++$abjadBegin.$numrow, '');
             }
             $numrow++;
         }
