@@ -148,7 +148,7 @@ class Wopos_model extends CI_Model {
   function wo_detail_onhand($material_no){
 	$kd_plant = $this->session->userdata['ADMIN']['plant'];
 	$SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-	$SAP_MSI->select("OnHand,MinStock");
+	$SAP_MSI->select("(OnHand - isCommited) as OnHand,MinStock");
 	$SAP_MSI->from('OITW');
 	$SAP_MSI->where('ItemCode',$material_no);
 	$SAP_MSI->where('WhsCode',$kd_plant);
