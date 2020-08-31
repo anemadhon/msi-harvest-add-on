@@ -416,6 +416,7 @@
 				let errorMessages = [];
 				let dataValidateQty = [];
 				let ValidateQty = true;
+				let specialItem = false;
 
 				tbodyTable.find('tr').each(function(i, el){
 					let td = $(this).find('td');
@@ -423,7 +424,10 @@
 						dataValidateQty.push(td.eq(2).find('select').val())
 						validateQty = false
 					}
-					matrialNo.push(td.eq(2).find('select').val()); 
+					matrialNo.push(td.eq(2).find('select').val());
+					if (td.eq(2).find('select').val()==='WPCG004P.TH') {
+						specialItem = true
+					} 
 					matrialDesc.push(td.eq(3).text());
 					qty.push(td.eq(4).find('input').val());
 					uom.push(td.eq(5).text());
@@ -442,7 +446,7 @@
 					errorMessages.push(`Quantity untuk Material No. ${dataValidateQty.join()} harus di isi. \n`);
 				}
 
-				if (vol != potong) {
+				if (vol != potong && !specialItem) {
 					errorMessages.push('Total Volume Harus Sama Dengan Volume Loyang. \n');
 				}
 
