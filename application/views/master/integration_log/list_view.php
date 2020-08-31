@@ -89,6 +89,7 @@
                 const disassembly = '<?php echo site_url('transaksi1/disassembly/edit/')?>'
                 const wo = '<?php echo site_url('transaksi1/wo/edit/')?>'
                 const wopos = '<?php echo site_url('transaksi1/wopos/edit/')?>'
+                const so = '<?php echo site_url('transaksi1/stock/edit/')?>'
 
                 if(keyword.toLowerCase().includes('purchase request')) {
                     return pr+id
@@ -120,6 +121,8 @@
                     return wo+id
                 } else if (keyword.toLowerCase().includes('order pos')) {
                     return wopos+id
+                } else if (keyword.toLowerCase().includes('stock counting opname')) {
+                    return so+id
                 }  
 
             }
