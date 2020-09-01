@@ -43,18 +43,4 @@ class Msi extends CI_Controller {
 		$this->load->view('index', $object);
 	}
 	
-	public function inpofromvendor(){
-		
-		$this->load->view('template/header');
-		$this->load->view('transaksi1/eksternal/po_from_vendor');
-		$this->load->view('template/footer');
-	}
-	
-	public function purchaserequest(){
-		
-		$this->load->view('template/header');
-		$this->load->view('transaksi1/eksternal/purchase_request');
-		$this->load->view('template/footer');
-	}
-	
 }
