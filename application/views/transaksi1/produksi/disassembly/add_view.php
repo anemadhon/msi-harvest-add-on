@@ -224,41 +224,6 @@
 						$('.form-control-select2').select2();
 					}
 				});
-
-				$("#checkall").click(function(){
-					if($(this).is(':checked')){
-						$(".check_delete").prop('checked', true);
-					}else{
-						$(".check_delete").prop('checked', false);
-					}
-				});
-
-				$("#deleteRecord").click(function(){
-					let deleteidArr=[];
-					$("input:checkbox[class=check_delete]:checked").each(function(){
-						deleteidArr.push($(this).val());
-					})
-
-					// mengecek ckeckbox tercheck atau tidak
-					if(deleteidArr.length > 0){
-						var confirmDelete = confirm("Do you really want to Delete records?");
-						if(confirmDelete == true){
-							$("input:checked").each(function(){
-								table.row($(this).closest("tr")).remove().draw();;
-							});
-						}
-					}
-					
-				});
-
-				checkcheckbox = () => {
-					let totalChecked = 0;
-					$(".check_delete").each(function(){
-						if($(this).is(":checked")){
-							totalChecked += 1;
-						}
-					});
-				}
 				
 				const date = new Date();
 				const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -270,23 +235,6 @@
 				};
 
 				$('#postDate').datepicker(optSimple);
-
-				tbody = $("#tblWhole tbody");
-				tbody.on('change','#descmat', function(){
-					tr = $(this).closest('tr');
-					no = tr[0].rowIndex;
-					const qty = $("option:selected", this).attr("matqty");
-					const matrial_no = $("option:selected", this).val();
-					const rel = $("option:selected", this).attr("rel");
-					const onHand = $("option:selected", this).attr("onhand");
-					const minStock = $("option:selected", this).attr("minstock");
-					const uOm = $("option:selected", this).attr("uOm");
-					table = document.getElementById("tblWhole").rows[no].cells;
-					table[1].innerHTML = matrial_no;
-					table[3].innerHTML = qty;
-					table[4].innerHTML = uOm;
-					table[5].innerHTML = onHand;
-				});
 				
 			});
 			
@@ -345,12 +293,12 @@
 						},
 						"ajax": {
 							"url":"<?php echo site_url('transaksi1/disassembly/showDetailInput');?>",
+							"type":"POST",
 							"data":{  
 								kode_paket:kode_paket,
 								Qty:qty
 
-							},
-							"type":"POST"
+							}
 						},
 						"columns": [
 							{"data":"no", "className":"dt-center"},
@@ -363,62 +311,6 @@
 					});
 				}
 			});
-
-			function onAddrow(){
-				let getTable = $("#tblWhole").DataTable();
-				count = getTable.rows().count() + 1;
-				let elementSelect = document.getElementsByClassName(`dt_${count}`);
-				
-				getTable.row.add({
-					"0":count,
-					"material_no":"",
-					"descolumn":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
-									<option value="">Select Item</option>
-									${showMatrialDetailData(elementSelect)}
-								</select>`,
-					"qty":`<input type="text" class="form-control qty" id="editqty_${count}" value="" style="width:100%" autocomplete="off">`,
-					"uom":"",
-					"OnHand":"",
-					"MinStock":"",
-					"OpenQty":""
-					}).draw();
-					count++;
-
-				tbody = $("#tblWhole tbody");
-				tbody.on('change','.testSelect', function(){
-					tr = $(this).closest('tr');
-					no = tr[0].rowIndex;
-					id = $('.dt_'+no+' option:selected').attr('rel');
-					setValueTable(id,no);
-				});
-			}
-
-			function setValueTable(id,no){
-				table = document.getElementById("tblWhole").rows[no].cells;
-				$.post(
-					"<?php echo site_url('transaksi1/disassembly/getdataDetailMaterialSelect')?>",{ MATNR:id },(res)=>{
-						matSelect = JSON.parse(res);
-						matSelect.map((val)=>{
-							table[1].innerHTML = val.MATNR;
-							table[4].innerHTML = val.UNIT;
-							table[5].innerHTML = val.OnHand;
-						})
-					}
-				)
-			}
-
-			function showMatrialDetailData(select){
-				$.ajax({
-					url: "<?php echo site_url('transaksi1/disassembly/addItemRow');?>",
-					type: "POST",
-					success:function(res) {
-						optData = JSON.parse(res);
-						optData.forEach((val)=>{						
-							$("<option />", {value:val.MAKTX, text:val.MAKTX, rel:val.MATNR}).appendTo(select);
-						})
-					}
-				});			
-			}
 
 			function addDatadb(id_approve = ''){
 				
@@ -439,16 +331,10 @@
 				let onHand =[];
 				let minStock =[];
 				let outStandTot =[];
-				let validasi = true;
-				let dataValidasi = [];
 				let errorMessages = [];
 
 				table.find('tr').each(function(i, el){
 					let td = $(this).find('td');
-					if(td.eq(4).find('input').val().trim() == ''){
-						dataValidasi.push(td.eq(1).text())
-						validasi = false;
-					}
 					matrialNo.push(td.eq(1).text()); 
 					matrialDesc.push(td.eq(2).text());
 					qty.push(td.eq(3).text());
@@ -459,9 +345,6 @@
 				});
 				if(postDate.trim() ==''){
 					errorMessages.push('Posting date harus di isi. \n');
-				}
-				if(!validasi){
-					errorMessages.push(`Quatity untuk Material No. ${dataValidasi.join()} Tidak boleh Kosong, Harap isi Quantity. \n`);
 				}
 				if (errorMessages.length > 0) {
 					alert(errorMessages.join(''));

@@ -378,15 +378,14 @@
 				let sisa = $('#sisa');
 				let qty_row = table[4].children[0].value;
 				let vol_pot = parseFloat(vol);
-				let hasilPtgArr = [];
+				let hasilPtgArr = 0;
 
 				table[6].innerHTML = (qty_row*vol_pot).toFixed(4);
 				$('#tblWhole tbody tr').each(function() {
-					hasilPtgArr.push(parseFloat($(this).find('td').last().text())); 
+					hasilPtgArr = hasilPtgArr + parseFloat($(this).find('td').last().text()) 
 				});
-				let hasilPtg = hasilPtgArr.reduce((a, b) => a + b, 0);
-				let hasilSisa = volume - hasilPtg;
-				$('#potong').text(hasilPtg.toFixed(4));
+				let hasilSisa = volume - hasilPtgArr;
+				$('#potong').text(hasilPtgArr.toFixed(4));
 				$('#sisa').text(hasilSisa.toFixed(4));
 				if (hasilSisa < 0) {
 					$('#text-sisa').addClass('text-danger font-weight-bold');
@@ -415,7 +414,7 @@
 
 				let errorMessages = [];
 				let dataValidateQty = [];
-				let ValidateQty = true;
+				let validateQty = true;
 				let specialItem = false;
 
 				tbodyTable.find('tr').each(function(i, el){

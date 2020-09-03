@@ -276,7 +276,7 @@
 				$('#postDate').datepicker(optSimple);
 
 				tbody = $("#tblWhole tbody");
-				tbody.on('change','#descmat', function(){
+				tbody.on('change','.descmat', function(){
 					tr = $(this).closest('tr');
 					no = tr[0].rowIndex;
 					const qty = $("option:selected", this).attr("matqty");
@@ -464,7 +464,7 @@
 						dataValidasiEmpty.push(td.eq(2).text());
 						validasi = false;
 					}
-					if(parseInt(td.eq(4).find('input').val().trim(),10) > parseFloat(td.eq(6).text())){
+					if(parseFloat(td.eq(4).find('input').val().trim(),10) > parseFloat(td.eq(6).text())){
 						dataValidasi.push(td.eq(2).text());
 						validasiQty = false;
 					}

@@ -238,6 +238,7 @@
 				table = $("#tblWhole").DataTable({
 					"initComplete": function(settings, json) {
 						$("#after-submit").removeClass('hide');
+						setSisaPotong()
 					},
 					"ordering":false,
 					"paging":false,
@@ -333,29 +334,6 @@
 					});
 				}
 
-				const itemCode = $('#itemCode').val();
-				const qty = $('#qty').val();
-				$.post("<?php echo site_url('transaksi2/whole/getOnHand')?>",{
-					item_code:itemCode},
-					function(res){
-						value = JSON.parse(res);
-						$('#volume').val((value[0].SVolume*qty).toFixed(4));
-						let volume = value[0].SVolume*qty
-						let hasilPtgArr = [];
-						$('#tblWhole tbody tr').each(function() {
-							hasilPtgArr.push(parseFloat($(this).find('td').last().text())); 
-						});
-						let hasilPtg = hasilPtgArr.reduce((a, b) => a + b, 0);
-						let hasilSisa = volume - hasilPtg;
-						$('#potong').text(hasilPtg?hasilPtg.toFixed(4):'0.0000');
-						$('#sisa').text(hasilSisa?hasilSisa.toFixed(4):'0.0000');
-						if (hasilSisa < 0) {
-							$('#text-sisa').addClass('text-danger font-weight-bold');
-						} else {
-							$('#text-sisa').removeClass('text-danger font-weight-bold');
-						}
-				});
-
 				const date = new Date();
 				const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 				var optSimple = {
@@ -367,77 +345,28 @@
 				$('#postDate').datepicker(optSimple);
 			});
 
-			function addDatadb(id_approve=''){
-				let vol = parseFloat($('#volume').val());
-				let potong = parseFloat($('#potong').text());
-			
-				const idWhole= document.getElementById('idWhole').value;
-				const itemCode= document.getElementById('itemCode').value;
-				const itemDesc= document.getElementById('itemDesc').value;
-				const qtyPaket= document.getElementById('qty').value;
-				const postDate= document.getElementById('postDate').value;
-				const approve = id_approve;
-				const tbodyTable = $('#tblWhole > tbody');
-
-				let id_twtsnew_detail = [];
-				let matrialNo =[];
-				let matrialDesc =[];
-				let qty =[];
-				let uom =[];
-				let volD = [];
-
-				let errorMessages = [];
-				let dataValidateQty = [];
-				let ValidateQty = true;
-				let specialItem = false;
-
-				tbodyTable.find('tr').each(function(i, el){
-					let td = $(this).find('td');
-					if(td.eq(4).find('input').val().trim() == '' || td.eq(4).find('input').val().trim() == null){
-						dataValidateQty.push(td.eq(2).text())
-						validateQty = false
-					}
-					id_twtsnew_detail.push(td.eq(0).find('input').val());
-					matrialNo.push(td.eq(2).text()); 
-					if (td.eq(2).text()==='WPCG004P.TH') {
-						specialItem = true
-					}
-					matrialDesc.push(td.eq(3).text());
-					qty.push(td.eq(4).find('input').val());
-					uom.push(td.eq(5).text());
-					volD.push((parseFloat(td.eq(6).text())/parseFloat(td.eq(4).find('input').val())));
-				})
-
-				if(!validateQty){
-					errorMessages.push(`Quantity untuk Material No. ${dataValidateQty.join()} harus di isi. \n`);
-				}
-
-				if (vol != potong && !specialItem) {
-					errorMessages.push('Total Volume Harus Sama Dengan Volume Loyang. \n');
-				}
-
-				if (errorMessages.length > 0) {
-					alert(errorMessages.join(''));
-					return false;
-				}
-
-				$('#load').show();
-				$("#after-submit").addClass('after-submit');
-
-				setTimeout(() => {
-					$.post("<?php echo site_url('transaksi2/whole/addDataUpdate')?>", {
-						id_whole: idWhole, item_code: itemCode, item_desc: itemDesc, qty_paket: qtyPaket, appr: approve, postingDate:postDate, idTwtsnewDetail:id_twtsnew_detail, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detQty: qty, detUom: uom, Vol:volD
-					}, function(){
-						$('#load').hide();
-					})
-					.done(function() {
-						location.replace("<?php echo site_url('transaksi2/whole/')?>");
-					})
-					.fail(function(xhr, status) {
-						alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
-						location.reload(true);
-					});
-				}, 600);
+			function setSisaPotong() {
+				const itemCode = $('#itemCode').val();
+				const qty = $('#qty').val();
+				$.post("<?php echo site_url('transaksi2/whole/getOnHand')?>",{
+					item_code:itemCode},
+					function(res){
+						value = JSON.parse(res);
+						$('#volume').val((value[0].SVolume*qty).toFixed(4));
+						let volume = value[0].SVolume*qty
+						let hasilPtgArr = 0;
+						$('#tblWhole tbody tr').each(function() {
+							hasilPtgArr = hasilPtgArr + parseFloat($(this).find('td').last().text())
+						});
+						let hasilSisa = volume - hasilPtgArr;
+						$('#potong').text(hasilPtgArr?hasilPtgArr.toFixed(4):'0.0000');
+						$('#sisa').text(hasilSisa?hasilSisa.toFixed(4):'0.0000');
+						if (hasilSisa < 0) {
+							$('#text-sisa').addClass('text-danger font-weight-bold');
+						} else {
+							$('#text-sisa').removeClass('text-danger font-weight-bold');
+						}
+				});
 			}
 
 			function setDetail(item){
@@ -528,21 +457,93 @@
 				let sisa = $('#sisa');
 				let qty_row = table[4].children[0].value;
 				let vol_pot = parseFloat(vol);
-				let hasilPtgArr = [];
+				let hasilPtgArr = 0;
 
 				table[6].innerHTML = (qty_row*vol_pot).toFixed(4);
 				$('#tblWhole tbody tr').each(function() {
-					hasilPtgArr.push(parseFloat($(this).find('td').last().text())); 
+					hasilPtgArr = hasilPtgArr + parseFloat($(this).find('td').last().text())
 				});
-				let hasilPtg = hasilPtgArr.reduce((a, b) => a + b, 0);
-				let hasilSisa = volume - hasilPtg;
-				$('#potong').text(hasilPtg.toFixed(4));
+				let hasilSisa = volume - hasilPtgArr;
+				$('#potong').text(hasilPtgArr.toFixed(4));
 				$('#sisa').text(hasilSisa.toFixed(4));
 				if (hasilSisa < 0) {
 					$('#text-sisa').addClass('text-danger font-weight-bold');
 				} else {
 					$('#text-sisa').removeClass('text-danger font-weight-bold');
 				}
+			}
+
+			function addDatadb(id_approve=''){
+				let vol = parseFloat($('#volume').val());
+				let potong = parseFloat($('#potong').text());
+			
+				const idWhole= document.getElementById('idWhole').value;
+				const itemCode= document.getElementById('itemCode').value;
+				const itemDesc= document.getElementById('itemDesc').value;
+				const qtyPaket= document.getElementById('qty').value;
+				const postDate= document.getElementById('postDate').value;
+				const approve = id_approve;
+				const tbodyTable = $('#tblWhole > tbody');
+
+				let id_twtsnew_detail = [];
+				let matrialNo =[];
+				let matrialDesc =[];
+				let qty =[];
+				let uom =[];
+				let volD = [];
+
+				let errorMessages = [];
+				let dataValidateQty = [];
+				let validateQty = true;
+				let specialItem = false;
+
+				tbodyTable.find('tr').each(function(i, el){
+					let td = $(this).find('td');
+					if(td.eq(4).find('input').val().trim() == '' || td.eq(4).find('input').val().trim() == null){
+						dataValidateQty.push(td.eq(2).text())
+						validateQty = false
+					}
+					id_twtsnew_detail.push(td.eq(0).find('input').val());
+					matrialNo.push(td.eq(2).text()); 
+					if (td.eq(2).text()==='WPCG004P.TH') {
+						specialItem = true
+					}
+					matrialDesc.push(td.eq(3).text());
+					qty.push(td.eq(4).find('input').val());
+					uom.push(td.eq(5).text());
+					volD.push((parseFloat(td.eq(6).text())/parseFloat(td.eq(4).find('input').val())));
+				})
+
+				if(!validateQty){
+					errorMessages.push(`Quantity untuk Material No. ${dataValidateQty.join()} harus di isi. \n`);
+				}
+
+				if (vol != potong && !specialItem) {
+					errorMessages.push('Total Volume Harus Sama Dengan Volume Loyang. \n');
+				}
+
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join(''));
+					return false;
+				}
+
+				$('#load').show();
+				$("#after-submit").addClass('after-submit');
+
+				setTimeout(() => {
+					$.post("<?php echo site_url('transaksi2/whole/addDataUpdate')?>", {
+						id_whole: idWhole, item_code: itemCode, item_desc: itemDesc, qty_paket: qtyPaket, appr: approve, postingDate:postDate, idTwtsnewDetail:id_twtsnew_detail, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detQty: qty, detUom: uom, Vol:volD
+					}, function(){
+						$('#load').hide();
+					})
+					.done(function() {
+						location.replace("<?php echo site_url('transaksi2/whole/')?>");
+					})
+					.fail(function(xhr, status) {
+						alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
+						location.reload(true);
+					});
+				}, 600);
 			}
 		</script>
 	</body>

@@ -82,7 +82,6 @@
                                     <table id="tableWhole" class="table table-striped" >
                                         <thead>
                                             <tr>
-                                                <th style="text-align: left"><input type="checkbox" name="checkall" id="checkall"></th>
                                                 <th style="text-align: center">Action</th>
                                                 <th style="text-align: center">ID</th>
                                                 <th style="text-align: center">Item No</th>
@@ -149,11 +148,7 @@
                         "data":{fDate: fromDate, tDate: toDate, stts: status}
                     },
                     "columns": [
-                        {"data":"id_prodpos_header", "className":"dt-center", render:function(data, type, row, meta){
-                            rr=`<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">`;
-                            return rr;
-                        }},
-                        {"data":"id_prodpos_header", "className":"dt-center", render:function(data, type, row, meta){
+                        {"data":"id_prodpos_header", "className":"text-center", render:function(data, type, row, meta){
                             rr = `<div style="width:100px">
                                     ${freeze == 0 || reject == 1 ? `<a href='<?php echo site_url('transaksi1/wopos/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;` : ''}
                                 </div>`;
@@ -182,59 +177,7 @@
 
                 showDataList();
                 
-                // untuk check all
-                $("#checkall").click(function(){
-                    if($(this).is(':checked')){
-                        $(".check_delete").prop('checked', true);
-                    }else{
-                        $(".check_delete").prop('checked', false);
-                    }
-                });
-                // end check all
-                $("#deleteRecord").click(function(){
-                    let deleteidArr=[];
-                    let getTable = $("#tableWhole").DataTable();
-                    $("input:checkbox[class=check_delete]:checked").each(function(){
-                        deleteidArr.push($(this).val());
-                    })
-                    // mengecek ckeckbox tercheck atau tidak
-                    if(deleteidArr.length > 0){
-                        var confirmDelete = confirm("Do you really want to Delete records?");
-                        if(confirmDelete == true){
-                            $.ajax({
-                                url:"<?php echo site_url('transaksi1/wopos/deleteData');?>", //masukan url untuk delete
-                                type: "post",
-                                data:{deleteArr: deleteidArr},
-                                success:function(res) {
-                                    location.reload(true);
-                                    getTable.row($(this).closest("tr")).remove().draw();
-                                }
-                            });
-                        }
-                    }
-                });
-                // ini adalah function versi ES6
-                checkcheckbox = () => {
-                    
-                    const lengthcheck = $(".check_delete").length;
-                    
-                    let totalChecked = 0;
-                    $(".check_delete").each(function(){
-                        if($(this).is(":checked")){
-                            totalChecked += 1;
-                        }
-                    });
-                    if(totalChecked == lengthcheck){
-                        $("#checkall").prop('checked', true);
-                    }else{
-                        $("#checkall").prop('checked', false);
-                    }
-                }
-                deleteConfirm = (url)=>{
-                    $('#btn-delete').attr('href', url);
-	                $('#deleteModal').modal();
-                }
-        });
+            });
         
         </script>
 	</body>

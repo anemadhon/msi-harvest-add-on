@@ -86,7 +86,6 @@
 				<?php endif; ?>
 					<form action="#" method="POST">
 						<input type="hidden" name="status" id="status" value="<?=$disassembly_header['status']?>">
-						<input type="hidden" name="kode_paket" id="kode_paket" value="<?=$disassembly_header['kode_paket']?>">
 						<div class="card">
 							<div class="card-body">
 								<div class="row">
@@ -209,12 +208,12 @@
 					},
                     "ajax": {
                         "url":"<?php echo site_url('transaksi1/disassembly/showDetailEdit');?>",
+                        "type":"POST",
 						"data":{ 
 							id: id_wo_header, 
 							kodepaket:kode_paket,
 							qtypaket:qty_paket
-						},
-                        "type":"POST"
+						}
                     },
                     "columns": [
                         {"data":"no", "className":"dt-center"},
@@ -225,24 +224,6 @@
                         {"data":"OnHand", "className":"dt-center"}
                     ]
                 });
-
-				tbody = $("#table-manajemen tbody");
-				tbody.on('change','#descmat', function(){
-					tr = $(this).closest('tr');
-					no = tr[0].rowIndex;
-					const qty = $("option:selected", this).attr("matqty");
-					const matrial_no = $("option:selected", this).val();
-					const rel = $("option:selected", this).attr("rel");
-					const onHand = $("option:selected", this).attr("onhand");
-					const minStock = $("option:selected", this).attr("minstock");
-					const uOm = $("option:selected", this).attr("uOm");
-
-					table = document.getElementById("table-manajemen").rows[no].cells;
-					table[1].innerHTML = matrial_no;
-					table[3].innerHTML = qty;
-					table[4].innerHTML = uOm;
-					table[5].innerHTML = onHand;
-				});
             });
 
 			function addDatadb(id_approve = ''){
@@ -269,6 +250,7 @@
 					minStock.push(td.eq(6).text());	
 					outStandTot.push(td.eq(7).text());
 				});
+
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');
 

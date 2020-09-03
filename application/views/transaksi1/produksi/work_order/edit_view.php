@@ -282,7 +282,7 @@
 				}
 
 				tbody = $("#table-manajemen tbody");
-				tbody.on('change','#descmat', function(){
+				tbody.on('change','.descmat', function(){
 					tr = $(this).closest('tr');
 					no = tr[0].rowIndex;
 					const qty = $("option:selected", this).attr("matqty");
@@ -375,7 +375,7 @@
 				table.find('tr').each(function(i, el){
 					let td = $(this).find('td');
 					
-					if(parseInt(td.eq(4).find('input').val().trim(),10) > parseFloat(td.eq(6).text())){
+					if(parseFloat(td.eq(4).find('input').val().trim(),10) > parseFloat(td.eq(6).text())){
 						dataValidasi.push(td.eq(2).text());
 						validasiQty = false;
 					}
