@@ -414,19 +414,35 @@
 				let prc = [];
 				let uom = [];
 				let text = [];
+				let dataValidasi = [];
+				let errorMessages = [];
+				let validasi = true;
 				tbodyTable.find('tr').each(function(i, el){
 					let td = $(this).find('td');	
 					matrialNo.push(td.eq(2).find('select').val()); 
 					matrialDesc.push(td.eq(3).text());
 					qty.push(td.eq(4).find('input').val());
+					if(td.eq(4).find('input').val().trim() == ''){
+						dataValidasi.push(td.eq(2).find('select').val())
+						validasi = false;
+					}	
 					prc.push(td.eq(5).find('input').val());
 					uom.push(td.eq(7).text());
 					text.push(td.eq(8).find('input').val());
 				})
 
 				if(postDate.trim() == ''){
-					alert('Tanggal Posting harus di isi');
-					return false;
+					errorMessages.push('Tanggal Posting harus di isi. \n')
+				}
+				if(remark.trim() == ''){
+					errorMessages.push('Remark harus di isi. \n')
+				}
+				if(!validasi){
+					errorMessages.push('Quatity Tidak boleh Kosong, Harap isi Quantity. \n')
+				}
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join(''))
+					return false
 				}
 
 				$('#load').show();

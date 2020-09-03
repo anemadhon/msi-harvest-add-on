@@ -178,7 +178,7 @@
 												<div class="form-group row hide" id="after-submit">
 													<div class="col-lg-12 text-right">
 														<div class="text-right">
-															<button type="button" class="btn btn-primary" id="btn-update" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
+															<button type="button" class="btn btn-primary" id="btn-save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
 															<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
 															<button type="button" class="btn btn-success" id="btn-update" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
 															<?php endif;?>
@@ -424,15 +424,38 @@
 				let prc = [];
 				let uom = [];
 				let text = [];
+				let dataValidasi = [];
+				let errorMessages = [];
+				let validasi = true;
+				let validasiNoData = true;
 				tbodyTable.find('tr').each(function(i,el){
 					let td = $(this).find('td');
+					if (td.html() == 'No data available in table') {
+						validasiNoData = false;
+						return false
+					}
 					matrial_no.push(td.eq(2).text().trim());
 					matrialDesc.push(td.eq(3).text());
 					qty.push(td.eq(4).find('input').val());
+					if(td.eq(4).find('input').val().trim() == ''){
+						dataValidasi.push(td.eq(2).text())
+						validasi = false;
+					}
 					prc.push(td.eq(5).find('input').val());
 					uom.push(td.eq(7).text());
 					text.push(td.eq(8).find('input').val());
 				})
+
+				if(!validasiNoData){
+					errorMessages.push('Tidak ada Data pada Table List Item. Silahkan Tambahkan Min. 1 Data. \n')
+				}
+				if(!validasi){
+					errorMessages.push('Quatity Tidak boleh Kosong, Harap isi Quantity. \n')
+				}
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join(''))
+					return false
+				}
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');

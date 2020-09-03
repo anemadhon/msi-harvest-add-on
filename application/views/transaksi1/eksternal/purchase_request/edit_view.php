@@ -218,6 +218,7 @@
 		</div>
         <?php $this->load->view("_template/js.php")?>
 		<script>
+			let countRow = ''
 			$(document).ready(function(){
 				let id_pr_header = $('#id_pr_header').val();
 				let stts = $('#status').val();
@@ -255,6 +256,11 @@
 						$('.form-control-select2').select2();
 					}
 				});
+
+				table.on( 'xhr', function () {
+					let json = table.ajax.json();
+					countRow = json.data.length
+				} );
 
 				$("#deleteRecord").click(function(){
 					let deleteidArr = [];
@@ -343,7 +349,7 @@
 						optData = JSON.parse(res);
 						
 						optData.forEach((val)=>{						
-							$("<option />", {value:val.MATNR, text:val.MAKTX +' - '+ val.MATNR+' - '+((val.UNIT) ? val.UNIT : val.UNIT1)}).appendTo(select);
+							$("<option />", {value:val.MATNR, text:val.MAKTX +' - '+ val.MATNR+' - ('+ val.UNIT+'/'+val.UNIT1+')'}).appendTo(select);
 						})
 					}
 				});			
@@ -374,8 +380,9 @@
 
 			function setUOM(val, no, uomVal = '', defaultValue = ''){
 				table = document.getElementById("tblWhole").rows[no].cells;
+				let count = countRow+1
 				let conversi = uomVal == '' ? table[8].innerHTML.split(' ') : uomVal.split(' ');
-				table[8].innerHTML = defaultValue == '' ? (val*numConv[no-1]).toFixed(4)+' '+conversi[1] : (val*(conversi[0]/defaultValue)).toFixed(4)+' '+conversi[1];
+				table[8].innerHTML = defaultValue == '' ? (val*numConv[no-count]).toFixed(4)+' '+conversi[1] : (val*(conversi[0]/defaultValue)).toFixed(4)+' '+conversi[1];
 			}
 
 			function updateDataDB(){

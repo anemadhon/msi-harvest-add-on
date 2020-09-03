@@ -235,7 +235,6 @@
 											<th>Gr Qty</th>
 											<th>Uom</th>
 											<th>QC</th>
-											<th><?php if($grpo_header['status']=='1'): ?>Cancel<?php endif;?></th>
 										</tr>
 									</thead>
 									<tbody></tbody>
@@ -275,10 +274,6 @@
                         {"data":"uom", "className":"dt-center"},
 						{"data":"qc", "className":"dt-center", render:function(data, type, row, meta){
                             rr = `<input type="text" class="form-control" value="${data}" id="${row['id_grpo_detail']}">`;
-                            return rr;
-                        }},
-						{"data":"id_grpo_detail", "className":"dt-center", render:function(data, type, row, meta){
-                            rr = row['status'] == 2 ? '' :`<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();" hidden>`;
                             return rr;
                         }},
                     ]
@@ -524,41 +519,6 @@
 					}, 600);
 					
 				});
-
-				$("#cancelRecord").click(function(){
-					const idGrpoHeader = $('#id_grpo_header').val();
-                    let deleteidArr = [];
-                    $("input:checkbox[class=check_delete]:checked").each(function(){
-                        deleteidArr.push($(this).val());
-                    })
-
-                    // mengecek ckeckbox tercheck atau tidak
-                    if(deleteidArr.length > 0){
-                        var confirmDelete = confirm("Apa Kamu Yakin Akan Membatalkan PO ini?");
-                        if(confirmDelete == true){
-                            $.ajax({
-                                url:"<?php echo site_url('transaksi1/pofromvendor/cancelPoFromVendor');?>", //masukan url untuk delete
-                                type: "post",
-                                data:{deleteArr: deleteidArr, id_grpo_header:idGrpoHeader},
-                                success:function(res) {
-									location.reload(true);
-                                }
-                            });
-                        }
-                    }
-                });
-
-				checkcheckbox = () => {
-                    
-                    const lengthcheck = $(".check_delete").length;
-                    
-                    let totalChecked = 0;
-                    $(".check_delete").each(function(){
-                        if($(this).is(":checked")){
-                            totalChecked += 1;
-                        }
-                    });
-                }
 
 				const date = new Date();
 				const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());

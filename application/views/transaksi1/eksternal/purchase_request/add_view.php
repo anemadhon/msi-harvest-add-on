@@ -380,7 +380,7 @@
 						optData = JSON.parse(res);
 						if (optData) {
 							optData.forEach((val)=>{						
-								$("<option />", {value:val.MATNR, text:val.MAKTX +' - '+ val.MATNR+' - '+ ((val.UNIT) ? val.UNIT : val.UNIT1)}).appendTo(select);
+								$("<option />", {value:val.MATNR, text:val.MAKTX +' - '+ val.MATNR+' - ('+ val.UNIT+'/'+val.UNIT1+')'}).appendTo(select);
 							})
 						}
 					}
