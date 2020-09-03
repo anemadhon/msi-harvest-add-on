@@ -184,7 +184,7 @@ class Goodissue_model extends CI_Model {
     function gi_header_delete($id_issue_header){
         $data = $this->gi_header_select($id_issue_header);
         $back = $data['status'];
-        if($back != 2){
+        if($back == 1){
           if($this->gi_details_delete($id_issue_header)){
             $this->db->where('id_issue_header', $id_issue_header);
             if($this->db->delete('t_issue_header1'))

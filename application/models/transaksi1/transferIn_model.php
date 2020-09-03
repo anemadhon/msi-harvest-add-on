@@ -543,7 +543,7 @@ class TransferIn_model extends CI_Model {
   function t_grsto_header_delete($id_grsto_header){
     $data = $this->grsto_header_select($id_grsto_header);
     $back = $data['status'];
-    if($back != 2){
+    if($back == 1){
       if($this->t_grsto_details_delete($id_grsto_header)){
         $this->db->where('id_grsto_header', $id_grsto_header);
         if($this->db->delete('t_grsto_header'))

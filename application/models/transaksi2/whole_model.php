@@ -260,7 +260,7 @@ class whole_model extends CI_Model {
         $this->db->where('id_twtsnew_header', $id_twtsnew_header);
         $query = $this->db->get();
         $dataArr = $query->result_array();
-        if($dataArr[0]['status'] != 2){
+        if($dataArr[0]['status'] == 1){
             
             if($this->twtsnew_details_delete($id_twtsnew_header)){
                 $this->db->where('id_twtsnew_header', $id_twtsnew_header);

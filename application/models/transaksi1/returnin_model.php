@@ -243,7 +243,7 @@ class Returnin_model extends CI_Model {
     function t_retin_header_delete($id_retin_header){
         $data = $this->retin_header_select($id_retin_header);
         $status = $data['status'];
-        if ($status != 2) {
+        if ($status == 1) {
           if($this->t_retin_details_delete($id_retin_header)){
               $this->db->where('id_retin_header', $id_retin_header);
               if($this->db->delete('t_retin_header'))

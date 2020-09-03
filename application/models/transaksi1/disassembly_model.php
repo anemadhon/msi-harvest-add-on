@@ -64,7 +64,7 @@ class Disassembly_model extends CI_Model {
 	function disassembly_header_delete($id_wo_header){
 		$data = $this->disassembly_header_select($id_wo_header);
 		$status = $data['status'];
-		if ($status!=2) {
+		if ($status == 1) {
 			if($this->disassembly_details_delete($id_wo_header)){
 				$this->db->where('id_disassembly_header', $id_wo_header);
 				if($this->db->delete('t_disassembly_header'))

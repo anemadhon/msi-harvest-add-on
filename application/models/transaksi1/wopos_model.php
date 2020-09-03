@@ -95,7 +95,7 @@ class Wopos_model extends CI_Model {
   function wo_header_delete($id_wo_header){
 	$data = $this->wo_header_select($id_wo_header);
 	$status = $data['status'];
-	if ($status!=2) {
+	if ($status == 1) {
 		if($this->wo_details_delete($id_wo_header)){
 			$this->db->where('id_prodpos_header', $id_wo_header);
 			if($this->db->delete('t_prodpos_header'))

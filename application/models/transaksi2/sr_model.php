@@ -23,9 +23,8 @@ class Sr_model extends CI_Model {
         $SAP_MSI->from('OITB t0');
         $SAP_MSI->join('OITM t1','t0.ItmsGrpCod = t1.ItmsGrpCod','inner');
         $SAP_MSI->where('t1.validFor', 'Y');
-        $SAP_MSI->where('t1.U_CantRequest <>', 'Y');
-        $SAP_MSI->or_where('t1.U_CantRequest IS NULL', null, false);
         $SAP_MSI->where('t1.PrchseItem ', 'Y');
+        $SAP_MSI->where("ISNULL(t1.U_CantRequest,'') <> 'Y' ", null, false);
 
         $query = $SAP_MSI->get();
         $ret = $query->result_array();
@@ -71,9 +70,8 @@ class Sr_model extends CI_Model {
         $SAP_MSI->from('OITM  t0');
         $SAP_MSI->join('oitb t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
         $SAP_MSI->where('validFor', 'Y');
-        $SAP_MSI->where('t0.U_CantRequest <>', 'Y');
-        $SAP_MSI->or_where('t0.U_CantRequest IS NULL', null, false);
         $SAP_MSI->where('InvntItem', 'Y');
+        $SAP_MSI->where("ISNULL(t0.U_CantRequest,'') <> 'Y' ", null, false);
         
         if($item_group_code !='all'){
             $SAP_MSI->where('t1.ItmsGrpNam', $item_group_code);
@@ -96,12 +94,11 @@ class Sr_model extends CI_Model {
             
             $SAP_MSI->select('t0.ItemCode as MATNR,t0.ItemName as MAKTX,t0.ItmsGrpCod as DISPO,t0.InvntryUom as UNIT,t1.ItmsGrpNam as DSNAM');
             $SAP_MSI->from('OITM  t0');
-            $SAP_MSI->where('validFor', 'Y');
-            $SAP_MSI->where('t0.U_CantRequest <>', 'Y');
-            $SAP_MSI->or_where('t0.U_CantRequest IS NULL', null, false);
-            $SAP_MSI->where('InvntItem', 'Y'); 
-            $SAP_MSI->where('ItemCode', $itemSelect);
             $SAP_MSI->join('oitb t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
+            $SAP_MSI->where('ItemCode', $itemSelect);
+            $SAP_MSI->where('validFor', 'Y');
+            $SAP_MSI->where('InvntItem', 'Y'); 
+            $SAP_MSI->where("ISNULL(t0.U_CantRequest,'') <> 'Y' ", null, false);
 
             $query = $SAP_MSI->get();
             return $query->result_array();
@@ -291,7 +288,7 @@ class Sr_model extends CI_Model {
     function stdstock_details_delete($id_stdstock_header) {
         $data = $this->stdstock_header_select($id_stdstock_header);
         $status = $data['status'];
-        if ($status!=2) {
+        if ($status == 1) {
             $this->db->where('id_stdstock_header', $id_stdstock_header);
             if($this->db->delete('t_stdstock_detail'))
                 return TRUE;

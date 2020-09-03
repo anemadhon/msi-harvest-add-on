@@ -404,7 +404,7 @@ class Grnonpo_model extends CI_Model {
     function t_grnonpo_header_delete($id_grnonpo_header){
         $data = $this->grnonpo_header_select($id_grnonpo_header);
         $status = $data['status'];
-        if ($status != 2) {
+        if ($status == 1) {
             if($this->t_grnonpo_details_delete($id_grnonpo_header)){
                 $this->db->where('id_grnonpo_header', $id_grnonpo_header);
                 if($this->db->delete('t_grnonpo_header'))

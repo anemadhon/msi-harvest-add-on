@@ -255,7 +255,7 @@ class Purchase_model extends CI_Model {
   function t_prnew_header_delete($id_pr_header){
     $data = $this->prnew_header_select($id_pr_header);
     $status = $data['status'];
-    if ($status != 2) {
+    if ($status == 1) {
       if($this->t_pr_details_delete($id_pr_header)){
           $this->db->where('id_pr_header', $id_pr_header);
           if($this->db->delete('t_prnew_header'))

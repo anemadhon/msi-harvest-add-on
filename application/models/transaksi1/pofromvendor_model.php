@@ -276,7 +276,7 @@ class Pofromvendor_model extends CI_Model {
   function grpo_header_delete($id_grpo_header){
     $data = $this->grpo_header_select($id_grpo_header);
     $back = $data['status'];
-    if($back != 2){
+    if($back == 1){
       if($this->grpo_details_delete($id_grpo_header)){
         $this->db->where('id_grpo_header', $id_grpo_header);
         if($this->db->delete('t_grpo_header'))
