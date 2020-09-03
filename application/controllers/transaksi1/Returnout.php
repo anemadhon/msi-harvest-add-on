@@ -277,21 +277,22 @@ class Returnout extends CI_Controller {
     }
 
     public function deleteData(){
-        $id_gisto_dept_header = $this->input->post('deleteArr');
+        $id_waste_header = $this->input->post('deleteArr');
         $deleteData = false;
-        foreach($id_gisto_dept_header as $id){
-            $dataHeader = $this->retOut_model->gisto_dept_header_select($id);
-            if($dataHeader['status'] == '2'){
-                $deleteData = false;
-            }else{
-                if($this->retOut_model->gisto_dept_header_delete($id))
+        foreach($id_waste_header as $id){
+            $dataHeader = $this->spol_model->t_waste_header_select($id);
+            if($dataHeader['status'] == '1'){
+                if($this->spol_model->t_waste_header_delete($id))
                 $deleteData = true;
+            }else{
+                $deleteData = false;
             }
         }
+        
         if($deleteData){
-            return $this->session->set_flashdata('success', "Retur Out Berhasil dihapus");
+            return $this->session->set_flashdata('success', "Spoiled Berhasil dihapus");
         }else{
-            return $this->session->set_flashdata('failed', "Retur Out Approved, Gagal dihapus");
+            return $this->session->set_flashdata('failed', "Spoiled Approved, Gagal dihapus");
         }
     }
 

@@ -390,11 +390,11 @@ class Grfromkitchensentul extends CI_Controller {
         $deleteData = false;
         foreach($id_grpodlv_header as $id){
             $dataHeader = $this->dokitchen->grpodlv_header_select($id);
-            if($dataHeader['status'] == '2'){
-                $deleteData = false;
-            }else{
+            if($dataHeader['status'] == '1'){
                 if($this->dokitchen->grpodlv_header_delete($id))
                 $deleteData = true;
+            }else{
+                $deleteData = false;
             }
         }
         if($deleteData){
