@@ -118,30 +118,15 @@ class Wopos extends CI_Controller{
             return $this->session->set_flashdata('failed', "Work Order - POS Approved, Gagal dihapus");
         }
     }
-
-     public function add(){
-		$object['plant'] = $this->session->userdata['ADMIN']['plant']; 
-        $object['plant_name'] = $this->session->userdata['ADMIN']['plant_name'];
-		$data['wo_codes'] = $this->wovendor->sap_wo_headers_select_by_item();
-		
-        $object['wo_code']['-'] = '';
-        if($data['wo_codes'] != FALSE){
-            foreach($data['wo_codes'] as $wo_no){
-				$object['wo_code'][$wo_no['Code']] = $wo_no['Code'].' - '.$wo_no['ItemName'];
-            }
-		}
-
-        $this->load->view('transaksi1/produksi/work_order_pos/add_view',$object);
-     }
 	 
-	 public function wo_header_uom(){
+	public function wo_header_uom(){
 		$material_no = $this->input->post('material_no');
 		$data = $this->wovendor->sap_wo_headers_select_by_item($material_no);		
 		$json_data=array(
 			"data" => $data
 		);
 		echo json_encode($json_data);
-     }
+	}
 
     public function edit(){
         $id_wo_header = $this->uri->segment(4);
@@ -197,7 +182,7 @@ class Wopos extends CI_Controller{
 					$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.number_format($data['qty'],4,'.','').'" readonly>';
 				}
 				$querySAP2 = $this->wovendor->wo_detail_itemcodebom($kode_paket,$data['material_no']);
-				$select = '<select class="form-control form-control-select2" data-live-search="true" name="descmat" id="descmat" '.$disabled.'>
+				$select = '<select class="form-control form-control-select2 descmat" data-live-search="true" name="descmat" '.$disabled.'>
 								<option value="'.$data['material_no'].'" rel="'.$ucaneditqty[0]['CanEditQty'].'" matqty="'.number_format($data['qty'],4,'.','').'" onHand="'.number_format($data['OnHand'],4,'.','').'" minStock = "'.$data['MinStock'].'" uOm="'.$data['uom'].'" matdesc="'.$data['material_desc'].'">'.$data['material_desc'].'</option>';
 								if($querySAP2){
 									foreach($querySAP2 as $_querySAP2){
@@ -295,190 +280,6 @@ class Wopos extends CI_Controller{
 		echo json_encode($dt);
         
 	}
-	
-	public function showDetailInput(){
-		$kode_paket = $this->input->post('kode_paket');
-		$qty_header = $this->input->post('Qty');
-        $rs = $this->wovendor->wo_details_input_select($kode_paket);
-		
-		$dt = array();
-        $i = 1;
-        if($rs){
-            foreach($rs as $data){
-		
-				$querySAP = $this->wovendor->wo_detail_valid($data['material_no']);
-				$validFor = '';
-				$decreasAc = '';
-				if($querySAP != false){
-					$validFor = $querySAP[0]['validFor'];
-					$decreasAc = $querySAP[0]['DecreasAc'];
-				}
-				
-				$qty_paket = $data['quantity'];
-				
-				$getonhand = $this->wovendor->wo_detail_onhand($data['material_no']);
-				$onhand = '';
-				$minstock = '';
-				if($getonhand != false){
-					$onhand = (float)$getonhand[0]['OnHand'];
-					$minstock = (float)$getonhand[0]['MinStock'];
-				}
-				
-				$getopenqty = $this->wovendor->wo_detail_openqty($data['material_no']);
-				$openqty = '';
-				if($getopenqty != false){
-					$openqty = (float)$getopenqty[0]['OpenQty'];
-				}
-				
-				$ucaneditqty = $this->wovendor->wo_detail_ucaneditqty($kode_paket,$data['material_no']);
-				$getlocked = $this->wovendor->sap_wo_select_locked($kode_paket);
-
-				$getucaneditqty='';
-				
-				if($getlocked[0]['U_Locked'] == 'N' && $ucaneditqty[0]['CanEditQty'] == 'Y'){
-					$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.$data['quantity'] * (float)$qty_header.'">';
-				}else {
-					$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.$data['quantity'] * (float)$qty_header.'" readonly>';
-				}
-
-				$queryUOM = $this->wovendor->wo_detail_uom($data['material_no']);
-				if(count($queryUOM)>0){
-					$uom = $queryUOM[0]['UNIT'];
-				} else {
-					$uom = '';
-				}
-				
-				$querySAP2 = $this->wovendor->wo_detail_itemcodebom($kode_paket,$data['material_no']);
-				
-				$select = '<select class="form-control form-control-select2" data-live-search="true" name="descmat" id="descmat">
-								<option value="'.$data['material_no'].'" rel="'.$ucaneditqty[0]['CanEditQty'] .'" onHand="'.$onhand.'" minStock = "'.$minstock.'" uOm="'.$uom.'" matqty="'.$data['quantity'] * (float)$qty_header.'" matdesc="'.$data['material_desc'].'">'.$data['material_desc'].'</option>';
-								if($querySAP2){
-									foreach($querySAP2 as $_querySAP2){
-										$getonhandAlt = $this->wovendor->wo_detail_onhand($_querySAP2['U_SubsCode']);
-										$onhandAlt = '';
-										$minstockAlt = '';
-										if($getonhandAlt != false){
-											$onhandAlt = (float)$getonhandAlt[0]['OnHand'];
-											$minstockAlt = (float)$getonhandAlt[0]['MinStock'];
-										}
-										if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
-											$select .= '<option value="'.$_querySAP2['U_SubsCode'].'" 
-											rel="'.$ucaneditqty[0]['CanEditQty'].'" onHand="'.$onhandAlt.'" minStock = "'.$minstockAlt.'" uOm="'.$_querySAP2['U_SubsUOM'].'"
-											matqty="'.$_querySAP2['U_SubsQty'] * (float)$qty_header.'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>';
-										}
-									}
-								}
-				$select .= '</select>';
-				
-				$descolumn = '';
-				if($querySAP2){
-					foreach($querySAP2 as $_querySAP2){
-						if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
-							$descolumn = $select;
-						}else{
-							$descolumn = $data['material_no'];
-						}
-					}
-				}else{
-					$descolumn = $select;
-				}
-				
-				$openitem = $this->wovendor->wo_detail_item();
-				$qtyopen = '';
-				foreach($openitem as $_openqty){
-					if($_openqty['U_ItemCodeBOM'] = $data['material_no']){
-						$qtyopen = $select;
-					}else{
-						$qtyopen = $data['material_no'];
-					}
-				}
-
-				$nestedData=array();
-				$nestedData['no'] = $i;
-				$nestedData['id_mpaket_header'] = $data['id_mpaket_header'];
-				$nestedData['id_mpaket_h_detail'] = $data['id_mpaket_h_detail'];
-				$nestedData['material_no'] = $data['material_no'];
-				$nestedData['material_desc'] = $data['material_desc'];
-				$nestedData['qty'] = $getucaneditqty;
-				$nestedData['uom'] = $uom;
-				$nestedData['OnHand'] = $onhand; 
-				$nestedData['MinStock'] = $minstock; 
-				$nestedData['OpenQty'] = $openqty;
-				$nestedData['validFor'] = $validFor;
-				$nestedData['decreasAc'] = $decreasAc;
-				$nestedData['descolumn'] = $descolumn;
-				$dt[] = $nestedData;
-				$i++;
-			}
-        }
-        $json_data = array(
-			"data" => $dt
-		);
-		echo json_encode($json_data);
-
-	}
-	
-	public function addData(){
-		$produksi_header['plant'] = $this->session->userdata['ADMIN']['plant'];
-		$produksi_header['storage_location'] = $this->session->userdata['ADMIN']['storage_location'];
-		$produksi_header['posting_date'] = $this->l_general->str_to_date($this->input->post('postDate'));
-		$produksi_header['id_prodpos_plant'] = $this->wovendor->id_produksi_plant_new_select($this->session->userdata['ADMIN']['plant'],$this->input->post('postDate'));
-		$produksi_header['prodpos_no'] = '';
-
-		$produksi_header['status'] = $this->input->post('approve')? $this->input->post('approve') : '1';
-		$produksi_header['kode_paket'] = $this->input->post('woNumber');
-		$produksi_header['nama_paket'] = $this->input->post('woDesc');
-		$produksi_header['qty_paket'] = $this->input->post('qtyProd');
-		$produksi_header['uom_paket'] = $this->input->post('uomProd');
-		$produksi_header['id_user_input'] = $this->session->userdata['ADMIN']['admin_id'];
-		$produksi_header['id_user_approved'] = $this->input->post('approve')? $this->session->userdata['ADMIN']['admin_id'] : 0 ;
-		$produksi_header['created_date']=date('Y-m-d');
-		$produksi_header['back']=1;
-		
-		/*Batch Number */
-		$date=date('ym');
-		$batch = $this->wovendor->wo_header_batch($produksi_header['kode_paket'],$this->session->userdata['ADMIN']['plant']);
-		if(!empty($batch)){
-			$date=date('ym');
-			$count1=count($batch) + 1;
-			if ($count1 > 9 && $count1 < 100){
-				$dg="0";
-			}else {
-				$dg="00";
-			}
-			$num=$produksi_header['kode_paket'].$date.$dg.$count1;
-			$produksi_header['num'] = $num;
-		}else{
-			$produksi_header['num'] = '';
-		}
-		
-		$count = count($this->input->post('matrialNo'));
-		if($id_produksi_header = $this->wovendor->produksi_header_insert($produksi_header)) {
-			$input_detail_success = FALSE;
-			for($i = 0; $i < $count; $i++){
-				$produksi_detail['id_prodpos_header'] = $id_produksi_header;
-				$produksi_detail['qty'] = $this->input->post('qty')[$i];
-				$produksi_detail['id_prodpos_h_detail'] = $i+1;
-				$produksi_detail['material_no'] = $this->input->post('matrialNo')[$i];
-				$produksi_detail['num'] = '';
-				$produksi_detail['material_desc'] = trim($this->input->post('matrialDesc')[$i]);
-				$produksi_detail['uom'] = $this->input->post('uom')[$i];
-				$produksi_detail['qc'] = '';
-				$produksi_detail['OnHand'] = $this->input->post('onHand')[$i];
-				$produksi_detail['MinStock'] = $this->input->post('minStock')[$i];
-				$produksi_detail['OpenQty'] = $this->input->post('outStandTot')[$i];
-				if($this->wovendor->produksi_detail_insert($produksi_detail) ){
-					$input_detail_success = TRUE;
-				}
-			}
-		}
-        if($input_detail_success){
-            return $this->session->set_flashdata('success', "Work Order - POS Telah Terbentuk");
-        }else{
-            return $this->session->set_flashdata('failed', "Work Order - POS Gagal Terbentuk");
-        } 
-	}
-	
 
 	public function addUpdateData(){
 		$id_produksi_header = $this->input->post('id_wo_header');

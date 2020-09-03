@@ -241,50 +241,6 @@ class Disassembly extends CI_Controller{
 
 	}
 	
-	public function addItemRow(){
-		$rs = $this->diss_model->sap_item();
-		echo json_encode($rs);
-	}
-
-	function getdataDetailMaterialSelect(){
-        $itemSelect = $this->input->post('MATNR');
-        
-		$dataMatrialSelect = $this->diss_model->sap_item($itemSelect);
-		
-		$dt = array();
-		foreach ($dataMatrialSelect as $data) {
-			$getonhand = $this->diss_model->disassembly_detail_onhand($data['MATNR']);
-			$onhand = '';
-			$minstock = '';
-			if($getonhand != false){
-				$onhand = (float)$getonhand[0]['OnHand'];
-				$minstock = (float)$getonhand[0]['MinStock'];
-			}
-			$getopenqty = $this->diss_model->disassembly_detail_openqty($data['MATNR']);
-			$openqty = '';
-			if($getopenqty != false){
-				$openqty = (float)$getopenqty[0]['OpenQty'];
-			}
-			$uom = '';
-			if($data['UNIT'] != '' || !empty($data['UNIT'])){
-				$uom = $data['UNIT'];
-			}
-
-			$nestedData=array();
-			$nestedData['MATNR'] = $data['MATNR'];
-			$nestedData['MAKTX'] = $data['MAKTX'];
-			$nestedData['qty'] = 0;
-			$nestedData['UNIT'] = $uom;
-			$nestedData['OnHand'] = $onhand; 
-			$nestedData['MinStock'] = $minstock; 
-			$nestedData['OpenQty'] = $openqty;
-			$dt[] = $nestedData;
-		}
-		
-		echo json_encode($dt);
-        
-	}
-	
 	public function showDetailInput(){
 		$kode_paket = $this->input->post('kode_paket');
 		$qty_header = $this->input->post('Qty');

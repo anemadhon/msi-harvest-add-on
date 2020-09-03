@@ -197,7 +197,7 @@ class Wo extends CI_Controller{
 					$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.number_format($data['qty'],4,'.','').'" readonly>';
 				}
 				$querySAP2 = $this->wovendor->wo_detail_itemcodebom($kode_paket,$data['material_no']);
-				$select = '<select class="form-control form-control-select2" data-live-search="true" name="descmat" id="descmat" '.$disabled.'>
+				$select = '<select class="form-control form-control-select2 descmat" data-live-search="true" name="descmat" '.$disabled.'>
 								<option value="'.$data['material_no'].'" rel="'.$ucaneditqty[0]['CanEditQty'].'" matqty="'.number_format($data['qty'],4,'.','').'" onHand="'.number_format($data['OnHand'],4,'.','').'" minStock = "'.$data['MinStock'].'" uOm="'.$data['uom'].'" matdesc="'.$data['material_desc'].'">'.$data['material_desc'].'</option>';
 								if($querySAP2){
 									foreach($querySAP2 as $_querySAP2){
@@ -351,7 +351,7 @@ class Wo extends CI_Controller{
 				
 				$querySAP2 = $this->wovendor->wo_detail_itemcodebom($kode_paket,$data['material_no']);
 				
-				$select = '<select class="form-control form-control-select2" data-live-search="true" name="descmat" id="descmat">
+				$select = '<select class="form-control form-control-select2 descmat" data-live-search="true" name="descmat">
 								<option value="'.$data['material_no'].'" rel="'.$ucaneditqty[0]['CanEditQty'] .'" onHand="'.number_format($onhand,4,'.','').'" minStock = "'.$minstock.'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matdesc="'.$data['material_desc'].'">'.$data['material_desc'].'</option>'; 
 								if($querySAP2){
 									foreach($querySAP2 as $_querySAP2){
