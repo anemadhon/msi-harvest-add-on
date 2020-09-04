@@ -33,7 +33,7 @@ class ReturnOut_model extends CI_Model {
         $SAP_MSI->from('OITB t0');
         $SAP_MSI->join('OITM t1','t0.ItmsGrpCod = t1.ItmsGrpCod','inner');
         $SAP_MSI->where('t1.validFor', 'Y');
-        $SAP_MSI->where('t1.U_CantRequest <>', 'Y');
+        $SAP_MSI->where("ISNULL(U_CantRequest,'') <> 'Y' ", null, false);
         $SAP_MSI->where('t1.PrchseItem ', 'Y');
 
         $query = $SAP_MSI->get();
@@ -58,7 +58,7 @@ class ReturnOut_model extends CI_Model {
         $SAP_MSI->from('OITM  t0');
         $SAP_MSI->join('oitb t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
         $SAP_MSI->where('validFor', 'Y');
-        $SAP_MSI->where('t0.U_CantRequest <>', 'Y');
+        $SAP_MSI->where("ISNULL(U_CantRequest,'') <> 'Y' ", null, false);
         $SAP_MSI->where('t0.InvntItem', 'Y');
 
         if($item_group != 'all'){

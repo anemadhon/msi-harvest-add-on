@@ -91,7 +91,7 @@ class Workorder_model extends CI_Model {
 	function wo_header_delete($id_wo_header){
 		$data = $this->wo_header_select($id_wo_header);
 		$status = $data['status'];
-		if ($status == 1) {
+		if ($status!=2) {
 			if($this->wo_details_delete($id_wo_header)){
 				$this->db->where('id_produksi_header', $id_wo_header);
 				if($this->db->delete('t_produksi_header'))
@@ -152,7 +152,7 @@ class Workorder_model extends CI_Model {
 		if(($query)&&($query->num_rows() > 0)){
 			return $query->result_array();
 		}else{
-		return FALSE;
+			return FALSE;
 		}
 	}
 	
@@ -254,7 +254,8 @@ class Workorder_model extends CI_Model {
 		$SAP_MSI->select("T0.Code, T1.ItemName, T0.U_Locked, T1.InvntryUom, T0.Qauntity");
 		$SAP_MSI->from('OITT T0');
 		$SAP_MSI->join('OITM T1','T1.ItemCode = T0.Code');
-
+		$SAP_MSI->where("ISNULL(U_CantProduce,'') <> 'Y' ", null, false);
+		
 		if($material_no != ''){
 			$SAP_MSI->where('T0.Code',$material_no);
 		}

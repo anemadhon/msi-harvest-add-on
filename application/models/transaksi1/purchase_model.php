@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Purchase_model extends CI_Model {
-
+  
   function t_pr_headers($date_from2, $date_to2, $status){
     $kd_plant = $this->session->userdata['ADMIN']['plant'];
     $this->db->select('t_prnew_header.*,(select admin_realname from d_admin where admin_id = t_prnew_header.id_user_input) as user_input, (select admin_realname from d_admin where admin_id = t_prnew_header.id_user_approved) as user_approved ');
@@ -27,7 +27,7 @@ class Purchase_model extends CI_Model {
     return $ret;
 
   }
-  
+
   function tampil($id_pr_header){
     $this->db->select('a.pr_no, a.pr_no1, a.created_date, a.delivery_date,b.material_no,b.material_desc,b.uom,b.requirement_qty requirement_qty,b.price,a.plant, a.request_reason, (select admin_realname from d_admin where admin_id = a.id_user_approved) as user_approved');
     $this->db->from('t_prnew_header a');
@@ -46,7 +46,7 @@ class Purchase_model extends CI_Model {
     $SAP_MSI->from('OITB t0');
     $SAP_MSI->join('OITM t1','t0.ItmsGrpCod = t1.ItmsGrpCod','inner');
     $SAP_MSI->where('t1.validFor', 'Y');
-    $SAP_MSI->where('t1.U_PurcReq <>', 'Y');
+    $SAP_MSI->where("ISNULL(t1.U_PurcReq,'') <> 'Y' ", null, false);
     $SAP_MSI->where('t1.PrchseItem ', 'Y');
 
     $query = $SAP_MSI->get();
@@ -62,7 +62,7 @@ class Purchase_model extends CI_Model {
     $SAP_MSI->join('OITB t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
     $SAP_MSI->join('OITW t2','t2.ItemCode = t0.ItemCode','inner');
     $SAP_MSI->where('validFor', 'Y');
-    $SAP_MSI->where('U_PurcReq <>', 'Y');
+    $SAP_MSI->where("ISNULL(U_PurcReq,'') <> 'Y' ", null, false);
     $SAP_MSI->where('t0.PrchseItem ', 'Y');
     $SAP_MSI->where('WhsCode ', $kd_plant);
 
@@ -87,7 +87,7 @@ class Purchase_model extends CI_Model {
     $SAP_MSI->join('OITB t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
     $SAP_MSI->join('OITW t2','t2.ItemCode = t0.ItemCode','inner');
     $SAP_MSI->where('validFor', 'Y');
-    $SAP_MSI->where('U_PurcReq <>', 'Y');
+    $SAP_MSI->where("ISNULL(U_PurcReq,'') <> 'Y' ", null, false);
     $SAP_MSI->where('t0.PrchseItem ', 'Y');
     $SAP_MSI->where('WhsCode ', $kd_plant);
     $SAP_MSI->where('t0.ItemCode', $itemSelect);
@@ -147,7 +147,7 @@ class Purchase_model extends CI_Model {
     $SAP_MSI->from('OITM t0');
     $SAP_MSI->join('OITB t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
     $SAP_MSI->where('validFor', 'Y');
-    $SAP_MSI->where('U_PurcReq <>', 'Y');
+    $SAP_MSI->where("ISNULL(U_PurcReq,'') <> 'Y' ", null, false);
     $SAP_MSI->where('t0.PrchseItem ', 'Y');
     $SAP_MSI->where('t1.ItmsGrpNam ', $item_group);
     
@@ -255,7 +255,7 @@ class Purchase_model extends CI_Model {
   function t_prnew_header_delete($id_pr_header){
     $data = $this->prnew_header_select($id_pr_header);
     $status = $data['status'];
-    if ($status == 1) {
+    if ($status != 2) {
       if($this->t_pr_details_delete($id_pr_header)){
           $this->db->where('id_pr_header', $id_pr_header);
           if($this->db->delete('t_prnew_header'))
