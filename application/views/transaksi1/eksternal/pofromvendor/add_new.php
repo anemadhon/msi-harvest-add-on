@@ -314,7 +314,7 @@
 											<td>${val.MATNR}</td>
 											<td>${val.MAKTX}</td>
 											<td>${qtyOutstanding}</td>
-											<td><input type="text" class="form-control" name="grOutstanding" id="grOutstanding" required></td>
+											<td><input type="text" class="form-control" name="grOutstanding" id="grOutstanding_${val.no}" required></td>
 											<td>${val.BSTME}</td>
 											<td><input type="text" class="form-control" name="qc_${val.no}" id="qc_${val.no}"></td>
 										</tr>`);

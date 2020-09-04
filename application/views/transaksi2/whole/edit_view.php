@@ -256,7 +256,7 @@
 						{"data":"material_no", "className":"dt-center"},
 						{"data":"material_desc"},
 						{"data":"quantity", "className":"dt-center",render:function(data, type, row, meta){
-							rr=  `<input type="text" class="form-control qty" id="gr_qty_${data}" value="${data}" ${row['status']==1 ?'':'readonly'} onchange="setVolumeSisa(this.value,${row['no']+1},${row['var']})">`;
+							rr=  `<input type="text" class="form-control qty" id="gr_qty_${row['no']}" value="${data}" ${row['status']==1 ?'':'readonly'} onchange="setVolumeSisa(this.value,${row['no']+1},${row['var']})">`;
 							return rr;
 						}},
 						{"data":"uom", "className":"dt-center"},
@@ -441,7 +441,7 @@
 						matSelect.map((val)=>{
 							table[2].innerHTML = val.MATNR1;
 							table[3].innerHTML = val.MAKTX1;
-							table[4].innerHTML = `<input type="text" class="form-control qty" id="gr_qty_${val.qty}" value="${val.qty.slice(0,-2)}" style="width:100%" autocomplete="off" onchange="setVolumeSisa(this.value,${no},${val.VOL})">`;
+							table[4].innerHTML = `<input type="text" class="form-control qty" id="gr_qty_${no-1}" value="${val.qty.slice(0,-2)}" style="width:100%" autocomplete="off" onchange="setVolumeSisa(this.value,${no},${val.VOL})">`;
 							table[5].innerHTML = val.UOM;
 							table[6].innerHTML = val.VOL.slice(0,-2);
 						})

@@ -317,9 +317,11 @@
 					},
 					success:function(res) {
 						optData = JSON.parse(res);
-						optData.forEach((val)=>{						
-							$("<option />", {value:val.MATNR1, text:val.MATNR1 +' - '+ val.MAKTX1+' - '+val.UOM}).appendTo(select);
-						})
+						if (optData) {
+							optData.forEach((val)=>{						
+								$("<option />", {value:val.MATNR1, text:val.MATNR1 +' - '+ val.MAKTX1+' - '+val.UOM}).appendTo(select);
+							})	
+						}
 					}
 				});			
 			}
