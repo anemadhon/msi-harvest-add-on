@@ -237,7 +237,7 @@
 														<td></td>
 														<td><input type="text" class="form-control  qty" name="qty[]" id="qty" style="width:100%" autocomplete="off"></td>
 														<td></td>
-														<td><input type="text" class="form-control remark" name="remark[]" id="remark" style="width:100%" autocomplete="off"></td>
+														<td><input type="text" class="form-control remark" name="remark[]" id="remark_0" style="width:100%" autocomplete="off"></td>
 													</tr>
 												</tbody>
 											</table>
@@ -418,11 +418,11 @@
 			let errorMessages = [];
 			tbodyTable.find('tr').each(function(i, el){
 				let td = $(this).find('td');
-				if(td.eq(4).find('input').val().trim() == ''){
+				if(td.eq(5).find('input').val().trim() == ''){
 					dataValidasiEmptyQty.push(td.eq(2).find('select').val());
 					validasi = false;
 				}
-				if(parseInt(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
+				if(parseFloat(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
 					dataValidasi.push(td.eq(2).find('select').val());
 					validasiQty = false;
 				}	
@@ -433,15 +433,19 @@
 				uom.push(td.eq(6).text());
 				remark.push(td.eq(7).find('input').val());
 			})
-			if(pstDate.trim() == ''){
+			if(postDate.trim() == ''){
 				errorMessages.push('Posting Date harus di isi. \n');
+			}
+			
+			if(remarkHead.trim() == ''){
+				errorMessages.push('Remark Header harus di isi. \n');
 			}
 
 			if(!validasi){
 				errorMessages.push(`Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
 			}
 			if(!validasiQty){
-				errorMessages.push('Material Number '+dataValidasi.join()+' Quatity Tidak boleh Lebih Kecil dari In Whs Qty');
+				errorMessages.push('Quatity untuk Material Number '+dataValidasi.join()+' Tidak boleh Lebih Besar dari In Whs Qty');
 			}
 			if (errorMessages.length > 0) {
 				alert(errorMessages.join(''));

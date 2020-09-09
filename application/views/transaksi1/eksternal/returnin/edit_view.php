@@ -94,9 +94,9 @@
 						<?php echo $this->session->flashdata('failed'); ?>
 					</div>
 				<?php endif; ?>
-                    <div class="card">
-                        <div class="card-body">
-                            <form action="#" method="POST">
+                    <form action="#" method="POST">
+                    	<div class="card">
+                        	<div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <fieldset>
@@ -193,27 +193,29 @@
                                         </fieldset>
                                     </div>
                                 </div>
-								<div id="load" style="display:none"></div>  
-								<div class="row">
-									<div class="col-md-12" style="overflow: auto">
-										<table class="table table-striped" id="tblWhole">
-											<thead>
-												<tr>
-													<th>No</th>
-													<th>Material No</th>
-													<th>Material Desc</th>
-													<th>Outstanding Qty</th>
-													<th>GR Qty</th>
-													<th>UOM</th>
-													<th><?php if($retin_header['status'] =='1'): ?><?php endif; ?></th>
-												</tr>
-											</thead>
-										</table>
-									</div>
-								</div>
-                            </form>
-                        </div>
-                    </div>                    
+							</div>
+						</div>  
+						<div id="load" style="display:none"></div>  
+						<div class="card">
+							<div class="card-header">
+								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
+							</div>
+							<div class="card-body">
+								<table class="table table-striped" id="tblWhole">
+									<thead>
+										<tr>
+											<th>No</th>
+											<th>Material No</th>
+											<th>Material Desc</th>
+											<th>Outstanding Qty</th>
+											<th>GR Qty</th>
+											<th>UOM</th>
+										</tr>
+									</thead>
+								</table>	
+							</div>
+						</div>                  
+                	</form>
 				</div>
 				<?php $this->load->view("_template/footer.php")?>
 			</div>
@@ -254,73 +256,13 @@
 							rr = row['status'] == 1 ? `<input type="text" class="form-control" id="gr_qty_${data}" value="${data}">`: data;
                             return rr;
 						}},
-                        {"data":"uom", "className":"dt-center"},
-						{"data":"id_retin_detail", "className":"dt-center", render:function(data, type, row, meta){
-                            rr = row['status'] == 1 ? `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">` : '';
-                            return rr;
-                        }},
+                        {"data":"uom", "className":"dt-center"}
                     ],
 					drawCallback: function() {
 						$('.form-control-select2').select2();
 					}
 				});
-
-
-				$("#cancelRecord").click(function(){
-					const id_retin_header = $('#idreturn').val();
-                    let deleteidArr = [];
-                    $("input:checkbox[class=check_delete]:checked").each(function(){
-                        deleteidArr.push($(this).val());
-                    })
-
-                    // mengecek ckeckbox tercheck atau tidak
-                    if(deleteidArr.length > 0){
-                        var confirmDelete = confirm("Apa Kamu Yakin Akan Membatalkan Transfer In Inter Outlet ini?");
-                        if(confirmDelete == true){
-                            $.ajax({
-                                url:"<?php echo site_url('transaksi1/returnin/cancelReturnIn');?>", //masukan url untuk delete
-                                type: "post",
-                                data:{deleteArr: deleteidArr, id_retin_header:id_retin_header},
-                                success:function(res) {
-									location.reload(true);
-                                }
-                            });
-                        }
-                    }
-				});
-				
-				$("#deleteRecord").click(function(){
-					let deleteidArr = [];
-					let getTable = $("#table-manajemen").DataTable();
-					$("input:checkbox[class=check_delete]:checked").each(function(){
-						deleteidArr.push($(this).val());
-					})
-
-					// mengecek ckeckbox tercheck atau tidak
-					if(deleteidArr.length > 0){
-						var confirmDelete = confirm("Do you really want to Delete records?");
-						if(confirmDelete == true){
-							$("input:checked").each(function(){
-								getTable.row($(this).closest("tr")).remove().draw();
-							});
-						}
-					}
-					
-				});
-
 			});
-
-			checkcheckbox = () => {
-                    
-				const lengthcheck = $(".check_delete").length;
-				
-				let totalChecked = 0;
-				$(".check_delete").each(function(){
-					if($(this).is(":checked")){
-						totalChecked += 1;
-					}
-				});
-			}
 
 			function addDatadb(id_approve = ''){
 
@@ -329,6 +271,22 @@
 				delvDate 	= $('#delivDate').val();
 				remark 		= $('#remark').val();
 				approve		= id_approve;
+
+				let dataValidasiEmptyQty = [];
+				let errorMessages = [];
+
+				if(pstDate.trim() == ''){
+					errorMessages.push('Posting Date harus di isi. \n');
+				}
+
+				if(remark.trim() == ''){
+					errorMessages.push('Remark harus di isi. \n');
+				}
+
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join(''));
+					return false;
+				}
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');

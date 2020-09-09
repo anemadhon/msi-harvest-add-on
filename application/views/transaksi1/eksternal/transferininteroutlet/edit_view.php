@@ -182,9 +182,9 @@
 												<div class="form-group row hide" id="after-submit">
 													<div class="col-lg-12 text-right">
 														<div class="text-right">
-															<button type="button" class="btn btn-primary" id="btn-update" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
+															<button type="button" class="btn btn-primary" id="btn-save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
 															<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-															<button type="button" class="btn btn-success" id="btn-update" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
+															<button type="button" class="btn btn-success" id="btn-approve" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
 															<?php endif;?>
 														</div>
 													</div>
@@ -205,7 +205,6 @@
 								<table id="table-manajemen" class="table table-striped " style="width:100%">
 									<thead>
 										<tr>
-											<th>*</th>
 											<th>No</th>
 											<th>Material No</th>
 											<th>Material Desc</th>
@@ -253,10 +252,6 @@
 						},
 					"columns": [
 						
-						{"data":"id_gistonew_out_detail", "className":"dt-center", render:function(data, type, row, meta){
-							rr = row['status'] == 2 ? '' : `<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" >`;
-							return rr;
-						}},
 						{"data":"no", "className":"dt-center"},
 						{"data":"material_no", "className":"dt-center"},
 						{"data":"material_desc"},
@@ -272,117 +267,7 @@
 						$('.form-control-select2').select2();
 					}
 				});
-
-
-				$("#cancelRecord").click(function(){
-					const id_grsto_header = $('#id_grsto_header').val();
-                    let deleteidArr = [];
-                    $("input:checkbox[class=check_delete]:checked").each(function(){
-                        deleteidArr.push($(this).val());
-                    })
-
-                    // mengecek ckeckbox tercheck atau tidak
-                    if(deleteidArr.length > 0){
-                        var confirmDelete = confirm("Apa Kamu Yakin Akan Membatalkan Transfer In Inter Outlet ini?");
-                        if(confirmDelete == true){
-                            $.ajax({
-                                url:"<?php echo site_url('transaksi1/transferininteroutlet/cancelGistonewOut');?>", //masukan url untuk delete
-                                type: "post",
-                                data:{deleteArr: deleteidArr, id_grsto_header:id_grsto_header},
-                                success:function(res) {
-									location.reload(true);
-                                }
-                            });
-                        }
-                    }
-				});
-				
-				$("#deleteRecord").click(function(){
-					let deleteidArr = [];
-					let getTable = $("#table-manajemen").DataTable();
-					$("input:checkbox[class=check_delete]:checked").each(function(){
-						deleteidArr.push($(this).val());
-					})
-
-					// mengecek ckeckbox tercheck atau tidak
-					if(deleteidArr.length > 0){
-						var confirmDelete = confirm("Do you really want to Delete records?");
-						if(confirmDelete == true){
-							$("input:checked").each(function(){
-								getTable.row($(this).closest("tr")).remove().draw();
-							});
-						}
-					}
-					
-				});
-
 			});
-			
-			function onAddrow(){
-				let getTable = $("#table-manajemen").DataTable();
-				count = getTable.rows().count() + 1;
-				let elementSelect = document.getElementsByClassName(`dt_${count}`);
-				var doNo = $('#srEntry').val();
-				const matrialGroup = $('#MatrialGroup').val() ? $('#MatrialGroup').val() : 'all';
-				
-				getTable.row.add({
-					"no":count,
-					"material_no":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
-									<option value="">Select Item</option>
-									${showMatrialDetailData(matrialGroup, doNo, elementSelect)}
-								</select>`,
-					"material_desc":"",
-					"in_whs_qty":"",
-					"outstanding_qty":"",
-					"gr_quantity":"",
-					"uom_req":"",
-					"uom":""
-				}).draw();
-				count++;
-
-				tbody = $("#table-manajemen tbody");
-				tbody.on('change','.testSelect', function(){
-					tr = $(this).closest('tr');
-					no = tr[0].rowIndex;
-					id = $('.dt_'+no).val();
-					setValueTable(doNo,id,no);
-				});
-			}
-
-			function showMatrialDetailData(cboMatrialGroup = '',do_no = '', selectTable){
-				
-				const select = selectTable ? selectTable : $('#matrialGroupDetail');
-
-				$.post("<?php echo site_url('transaksi1/transferininteroutlet/getDetailsTransferOut');?>",{ cboMatrialGroup: cboMatrialGroup,doNo: do_no},(data)=>{
-					obj = JSON.parse(data);
-					for(let key in obj){
-						if(obj.hasOwnProperty(key)){
-							$("<option />",{value:obj[key].MATNR, text:obj[key].MATNR +' - '+ obj[key].MAKTX}).appendTo(select);
-						}
-					}
-				})		
-			}
-
-			function setValueTable(doNo = '', id, no){
-				doNo = doNo ? doNo : $('#srEntry').val();
-				table = document.getElementById("table-manajemen").rows[no].cells;
-				$.post(
-					"<?php echo site_url('transaksi1/transferininteroutlet/getdataDetailMaterialSelect')?>",{ MATNR:id, do_no:doNo },(res)=>{
-						matSelect = JSON.parse(res);
-
-						for(let i in matSelect){
-							if(matSelect.hasOwnProperty(i)){
-								table[2].innerHTML = `<td>${matSelect[i].MATNR}</td>`;
-								table[3].innerHTML = matSelect[i].MAKTX;
-								table[4].innerHTML = matSelect[i].In_Whs_Qty;
-								table[5].innerHTML = matSelect[i].LFIMG;
-								table[7].innerHTML = matSelect[i].VRKME
-								table[8].innerHTML = matSelect[i].VRKME
-							}
-						}
-					}
-				)
-			}
 
 			function addDatadb(id_approve = ''){
 				const id_grsto_header = $('#id_grsto_header').val();
@@ -423,33 +308,32 @@
 				let validasiEmptyQty = true;
 				tbodyTable.find('tr').each(function(i,el){
 					let td = $(this).find('td');
-					if(td.eq(6).find('input').val().trim() == ''){
-						dataValidasiEmptyQty.push(td.eq(2).text());
+					if(td.eq(5).find('input').val().trim() == ''){
+						dataValidasiEmptyQty.push(td.eq(1).text());
 						validasiEmptyQty = false;
 					}
-					if(parseFloat(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(5).text())){
-						dataValidasiQty.push(td.eq(2).text());
+					if(parseFloat(td.eq(5).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
+						dataValidasiQty.push(td.eq(1).text());
 						validasiQty = false;
-						td.eq(6).removeClass();
-						td.eq(6).addClass('bg-danger');
-					} else if (parseFloat(td.eq(6).find('input').val().trim(),10) < parseFloat(td.eq(5).text())){
-						dataValidasiLessQty.push(td.eq(2).text());
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-danger');
+					} else if (parseFloat(td.eq(5).find('input').val().trim(),10) < parseFloat(td.eq(4).text())){
+						dataValidasiLessQty.push(td.eq(1).text());
 						validasiLessQty = false;
-						td.eq(6).removeClass();
-						td.eq(6).addClass('bg-warning');
-					} else if (parseFloat(td.eq(6).find('input').val().trim(),10) === parseFloat(td.eq(5).text())){
-						td.eq(6).removeClass();
-						td.eq(6).addClass('bg-success');
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-warning');
+					} else if (parseFloat(td.eq(5).find('input').val().trim(),10) === parseFloat(td.eq(4).text())){
+						td.eq(5).removeClass();
+						td.eq(5).addClass('bg-success');
 					}
-					matrial_no.push(td.eq(2).text().trim());
-					matrialDesc.push(td.eq(3).text());
-					srQty.push(td.eq(4).text());
-					tfQty.push(td.eq(5).text());
-					grQty.push(td.eq(6).find('input').val());
-					uom.push(td.eq(7).text());
+					matrial_no.push(td.eq(1).text().trim());
+					matrialDesc.push(td.eq(2).text());
+					srQty.push(td.eq(3).text());
+					tfQty.push(td.eq(4).text());
+					grQty.push(td.eq(5).find('input').val());
+					uom.push(td.eq(6).text());
 				})
 				
-				// validasi
 				if(!validasiEmptyQty){
 					errorMessages.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
 				}
@@ -475,7 +359,6 @@
 						return false;
 					}
 				}
-				// validasi
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');

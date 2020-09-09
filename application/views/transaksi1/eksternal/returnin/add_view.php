@@ -131,12 +131,7 @@
 												<div class="form-group row">
 													<label class="col-lg-3 col-form-label">Delivery Date</label>
 													<div class="col-lg-9 input-group date">
-														<input type="text" class="form-control" id="delivDate">
-														<div class="input-group-prepend">
-															<span class="input-group-text" id="basic-addon1">
-																<i class="icon-calendar"></i>
-															</span>
-														</div>
+														<input type="text" class="form-control" id="delivDate" readonly>
 													</div>
 												</div>
 												
@@ -248,8 +243,6 @@
 					autoclose: true
 				};
 				$('#postingDate').datepicker(optSimple);
-
-				$('#delivDate').datepicker(optSimple);
 			});
 			
 			function getDataHeader(roNumber){
@@ -274,7 +267,7 @@
 						$('#MatrialGroup > option').remove();
 					}
 					var cboMatrialGroup = $('#MatrialGroup');
-					cboMatrialGroup.html('<option value="">-</option><option value="all">All</option>');
+					cboMatrialGroup.html('<option value="">Select Item</option><option value="all">All</option>');
 
 
 					$.each(value.dataOption,(val, text)=>{
@@ -346,6 +339,21 @@
 
 				table = $('#tableManajemen > tbody');
 
+				splitDate = pstDate.split('-');
+				dayPostingDate = splitDate[0];
+				monthPostingDate = splitDate[1];
+				yearPostingDate = splitDate[2];
+				posDate= `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+
+				splitdelvDate = delvDate.split('-');
+				dayDeliveryDate = splitdelvDate[0];
+				monthDeliveryDate = splitdelvDate[1];
+				yearDeliveryDate = splitdelvDate[2];
+				delDate= `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+
+				datePosting = new Date(posDate);
+				deliverDate = new Date(delDate);
+
 				let matrialNo =[];
 				let matrialDesc =[];
 				let outStdQty = [];
@@ -369,6 +377,14 @@
 
 				if(pstDate.trim() == ''){
 					errorMessages.push('Posting Date harus di isi. \n');
+				}
+
+				if(datePosting > deliverDate){
+					errorMessages.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
+				}
+
+				if(remark.trim() == ''){
+					errorMessages.push('Remark harus di isi. \n');
 				}
 
 				if(!validasiEmptyQty){

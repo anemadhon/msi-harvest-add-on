@@ -246,12 +246,12 @@
 					{"data":"material_desc"},
 					{"data":"stock", "className":"dt-center"},
 					{"data":"gr_quantity", "className":"dt-center", render:function(data, type, row, meta){
-						rr = stts == 1 ? `<input type="text" class="form-control qty" value="${data}">`: `${row['gr_quantity']}`;
+						rr = stts == 1 ? `<input type="text" class="form-control qty" value="${data == '.0000' ? '0.0000' : data}">`: data;
 						return rr;
 					}},
 					{"data":"uom", "className":"dt-center"},
 					{"data":"reason", "className":"dt-center", render:function(data, type, row, meta){
-						rr = stts == 1 ? `<input type="text" class="form-control remark" value="${data}">`: `${row['reason']}`;
+						rr = stts == 1 ? `<input type="text" class="form-control remark" value="${data}">`: data;
 						return rr;
 					}},
 					{"data":"id_gisto_dept_detail", "className":"dt-center", render:function(data, type, row, meta){
@@ -262,30 +262,7 @@
 				drawCallback: function() {
 					$('.form-control-select2').select2();
 				}
-			});				
-
-			$("#cancelRecord").click(function(){
-				const id_gisto_dept_header = $('#idreturnOut').val();
-				let deleteidArr = [];
-				$("input:checkbox[class=check_delete]:checked").each(function(){
-					deleteidArr.push($(this).val());
-				})
-
-				// mengecek ckeckbox tercheck atau tidak
-				if(deleteidArr.length > 0){
-					var confirmDelete = confirm("Apa Kamu Yakin Akan Membatalkan Return Out ini?");
-					if(confirmDelete == true){
-						$.ajax({
-							url:"<?php echo site_url('transaksi1/returnout/cancelReturnOut');?>", //masukan url untuk delete
-							type: "post",
-							data:{deleteArr: deleteidArr, id_gisto_dept_header:id_gisto_dept_header},
-							success:function(res) {
-								location.reload(true);
-							}
-						});
-					}
-				}
-			});
+			});	
 
 			checkcheckbox = () => {
                     
@@ -417,8 +394,21 @@
 			let qty =[];
 			let uom =[]; 
 			let remark =[];
+			let validasi = true;
+			let validasiQty = true;
+			let dataValidasi = [];
+			let dataValidasiEmptyQty = [];
+			let errorMessages = [];
 			tbodyTable.find('tr').each(function(i, el){
 				let td = $(this).find('td');
+				if(td.eq(4).find('input').val().trim() == ''){
+					dataValidasiEmptyQty.push(td.eq(1).text());
+					validasi = false;
+				}
+				if(parseFloat(td.eq(4).find('input').val().trim(),10) > parseFloat(td.eq(3).text())){
+					dataValidasi.push(td.eq(1).text());
+					validasiQty = false;
+				}
 				matrialNo.push(td.eq(1).text()); 
 				matrialDesc.push(td.eq(2).text());
 				whsQty.push(td.eq(3).text());
@@ -426,6 +416,25 @@
 				uom.push(td.eq(5).text());
 				remark.push(td.eq(6).find('input').val());
 			})
+
+			if(postDate.trim() == ''){
+				errorMessages.push('Posting Date harus di isi. \n');
+			}
+			
+			if(remarkHead.trim() == ''){
+				errorMessages.push('Remark Header harus di isi. \n');
+			}
+
+			if(!validasi){
+				errorMessages.push(`Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+			}
+			if(!validasiQty){
+				errorMessages.push('Quatity untuk Material Number '+dataValidasi.join()+' Tidak boleh Lebih Besar dari In Whs Qty');
+			}
+			if (errorMessages.length > 0) {
+				alert(errorMessages.join(''));
+				return false;
+			}
 
 			$('#load').show();
 			$("#after-submit").addClass('after-submit');

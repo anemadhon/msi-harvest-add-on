@@ -372,9 +372,26 @@
 				const status= document.getElementById('status').value;
 				const rto= document.getElementById('rto').value;
 				const postingDate= document.getElementById('postingDate').value;
+				const delivDate= document.getElementById('delivDate').value;
 				const remark= document.getElementById('remark').value;
 				const approve = id_approve;
 				const tbodyTable = $('#tblWhole > tbody');
+
+				splitDate = postingDate.split('-');
+				dayPostingDate = splitDate[0];
+				monthPostingDate = splitDate[1];
+				yearPostingDate = splitDate[2];
+				posDate = `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+
+				splitdelvDate = delivDate.split('-');
+				dayDeliveryDate = splitdelvDate[0];
+				monthDeliveryDate = splitdelvDate[1];
+				yearDeliveryDate = splitdelvDate[2];
+				delDate = `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+
+				postDate = new Date(posDate);
+				deliverDate = new Date(delDate);
+
 				let matrialNo =[];
 				let matrialDesc =[];
 				let whsQty = [];
@@ -390,13 +407,13 @@
 				tbodyTable.find('tr').each(function(i, el){
 					let td = $(this).find('td');
 
-					if(parseInt(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(5).text()) || parseInt(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(4).text())){
+					if(parseFloat(td.eq(6).find('input').val().trim(),10) > parseFloat(td.eq(5).text())){
 						dataValidasi.push(td.eq(2).text());
 						validasi = false;
 					}
 
 					if(td.eq(6).find('input').val().trim() == ''){
-						dataValidasiEmptyQty.push(td.eq(1).text());
+						dataValidasiEmptyQty.push(td.eq(2).text());
 						validasiEmptyQty = false;
 					}
 	
@@ -410,8 +427,16 @@
 					
 				})
 
+				if(postDate > deliverDate){
+					errorMessages.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
+				}
+
 				if(postingDate.trim() == ''){
 					errorMessages.push('Tanggal Posting harus di isi. \n');
+				}
+				
+				if(remark.trim() == ''){
+					errorMessages.push('Remark harus di isi. \n');
 				}
 
 				if(!validasiEmptyQty){
@@ -419,7 +444,7 @@
 				}
 
 				if(!validasi){
-					errorMessages.push('Quatity Untuk Material Number '+dataValidasi.join()+' Tidak boleh lebih besar dari Outstanding Quantity dan In Warehouse Quantity. \n');
+					errorMessages.push('Quatity Untuk Material Number '+dataValidasi.join()+' Tidak boleh lebih besar dari Outstanding Quantity. \n');
 				}
 				if (errorMessages.length > 0) {
 					alert(errorMessages.join(''));

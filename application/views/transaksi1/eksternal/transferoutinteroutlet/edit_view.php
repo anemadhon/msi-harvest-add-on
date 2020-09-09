@@ -172,9 +172,9 @@
 												<div class="form-group row hide" id="after-submit">
 													<div class="col-lg-12 text-right">
 														<div class="text-right">
-															<button type="button" class="btn btn-primary" id="btn-update" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
+															<button type="button" class="btn btn-primary" id="btn-save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
 															<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-															<button type="button" class="btn btn-success" id="btn-update" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
+															<button type="button" class="btn btn-success" id="btn-approve" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
 															<?php endif;?>
 														</div>
 													</div>
@@ -264,30 +264,6 @@
 						$('.form-control-select2').select2();
 					}
 				});
-
-
-				$("#cancelRecord").click(function(){
-					const id_gistonew_out_header = $('#id_gistonew_out_header').val();
-                    let deleteidArr = [];
-                    $("input:checkbox[class=check_delete]:checked").each(function(){
-                        deleteidArr.push($(this).val());
-                    })
-
-                    // mengecek ckeckbox tercheck atau tidak
-                    if(deleteidArr.length > 0){
-                        var confirmDelete = confirm("Apa Kamu Yakin Akan Membatalkan TO ini?");
-                        if(confirmDelete == true){
-                            $.ajax({
-                                url:"<?php echo site_url('transaksi1/transferoutinteroutlet/cancelGistonewOut');?>", //masukan url untuk delete
-                                type: "post",
-                                data:{deleteArr: deleteidArr, id_gistonew_out_header:id_gistonew_out_header},
-                                success:function(res) {
-									location.reload(true);
-                                }
-                            });
-                        }
-                    }
-				});
 				
 				$("#deleteRecord").click(function(){
 					let deleteidArr = [];
@@ -309,72 +285,6 @@
 				});
 
 			});
-			
-			function onAddrow(){
-				let getTable = $("#table-manajemen").DataTable();
-				count = getTable.rows().count() + 1;
-				let elementSelect = document.getElementsByClassName(`dt_${count}`);
-				var doNo = $('#srEntry').val();
-				const matrialGroup = $('#MatrialGroup').val() ? $('#MatrialGroup').val() : 'all';
-				
-				getTable.row.add({
-					"no":count,
-					"material_no":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
-									<option value="">Select Item</option>
-									${showMatrialDetailData(matrialGroup, doNo, elementSelect)}
-								</select>`,
-					"material_desc":"",
-					"in_whs_qty":"",
-					"outstanding_qty":"",
-					"gr_quantity":"",
-					"uom_req":"",
-					"uom":""
-				}).draw();
-				count++;
-
-				tbody = $("#table-manajemen tbody");
-				tbody.on('change','.testSelect', function(){
-					tr = $(this).closest('tr');
-					no = tr[0].rowIndex;
-					id = $('.dt_'+no).val();
-					setValueTable(doNo,id,no);
-				});
-			}
-
-			function showMatrialDetailData(cboMatrialGroup = '', do_no = '', selectTable){
-				
-				const select = selectTable ? selectTable : $('#matrialGroupDetail');
-
-				$.post("<?php echo site_url('transaksi1/Transferoutinteroutlet/getDetailsTransferOutEdit');?>",{ cboMatrialGroup: cboMatrialGroup,doNo: do_no},(data)=>{
-					obj = JSON.parse(data);
-					for(let key in obj){
-						if(obj.hasOwnProperty(key)){
-							$("<option />",{value:obj[key].MATNR, text:obj[key].MATNR +' - '+ obj[key].MAKTX}).appendTo(select);
-						}
-					}
-				})		
-			}
-
-			function setValueTable(doNo = '', id, no){
-				doNo = doNo ? doNo : $('#srEntry').val();
-				table = document.getElementById("table-manajemen").rows[no].cells;
-				$.post(
-					"<?php echo site_url('transaksi1/Transferoutinteroutlet/getdataDetailMaterialSelect')?>",{ MATNR:id, do_no:doNo },(res)=>{
-						matSelect = JSON.parse(res);
-
-						for(let i in matSelect){
-							if(matSelect.hasOwnProperty(i)){
-								table[2].innerHTML = `<td>${matSelect[i].MATNR}</td>`;
-								table[3].innerHTML = matSelect[i].MAKTX;
-								table[4].innerHTML = matSelect[i].In_Whs_Qty;
-								table[5].innerHTML = matSelect[i].LFIMG;
-								table[7].innerHTML = matSelect[i].VRKME
-								table[8].innerHTML = matSelect[i].VRKME
-							}
-						}
-					}
-				)
-			}
 
 			function addDatadb(id_approve = ''){
 
@@ -417,12 +327,16 @@
 					uom_reg.push(td.eq(8).text());
 				})
 
+				if(remark.trim() == ''){
+					errorMessages.push('Remark harus di isi. \n');
+				}
+
 				if(!validasiEmptyQty){
 					errorMessages.push(`Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
 				}
 
 				if(!validasi){
-					errorMessages.push('Quatity Untuk Material Number '+dataValidasi.join()+' Tidak boleh lebih besar dari Outstanding Quantity dan In Warehouse Quantity. \n');
+					errorMessages.push('Quatity Untuk Material Number '+dataValidasi.join()+' Tidak boleh lebih besar dari Outstanding Quantity. \n');
 				}
 				if (errorMessages.length > 0) {
 					alert(errorMessages.join(''));

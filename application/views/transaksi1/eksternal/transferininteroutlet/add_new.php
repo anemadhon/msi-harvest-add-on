@@ -254,27 +254,6 @@
 				};
 				$('#postingDate').datepicker(optSimple);
 				$('#postingDate').datepicker( 'setDate', today );
-
-				$("#deleteRecord").click(function(){
-					let deleteidArr = [];
-					let getTable = $("#tblWhole").DataTable();
-					$("input:checkbox[class=check_delete]:checked").each(function(){
-						deleteidArr.push($(this).val());
-					})
-
-					// mengecek ckeckbox tercheck atau tidak
-					if(deleteidArr.length > 0){
-						var confirmDelete = confirm("Do you really want to Delete records?");
-						if(confirmDelete == true){
-							$("input:checked").each(function(){
-								getTable.row($(this).closest("tr")).remove().draw();
-							});
-						}
-					}
-					
-				});
-
-				
 			});
 			
 			function getDataHeader(srNumber){
@@ -349,7 +328,7 @@
 						{data:"SRQUANTITY"},
 						{data:"TFQUANTITY"},
 						{data:"GRQUANTITY","className":"dt-center",render:function(data, type, row, meta){
-							rr = `<input type="text" class="form-control gr_qty" id="gr_qty_${data}" value="">`;
+							rr = `<input type="text" class="form-control gr_qty" id="gr_qty_${row['NO']}" value="">`;
 							return rr;
 						}},
 						{data:"UOM"}
