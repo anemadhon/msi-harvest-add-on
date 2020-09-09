@@ -2,7 +2,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<title> <?php echo SITE_NAME .": ". ucfirst($this->uri->segment(1)."-".ucfirst($this->uri->segment(2))) ?></title>
+<title><?php echo $this->uri->segment(1) == '' && $this->uri->segment(2) == '' ? SITE_NAME : SITE_NAME ." : ".ucfirst(str_replace('_','',$this->uri->segment(2))) ?></title>
 
 <!-- Global stylesheets -->
 <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
