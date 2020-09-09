@@ -427,13 +427,13 @@
 					errorMessages.push('Remark harus di isi. \n');
 				}
 				if(!validasi){
-					errorMessages.push('Quatity untuk '+dataValidasi.join()+' Tidak boleh Kosong, Harap isi Quantity. \n');
+					errorMessages.push('Quatity untuk '+dataValidasiEmptyQty.join()+' Tidak boleh Kosong, Harap isi Quantity. \n');
 				}
 				if(!validasiQty){
 					errorMessages.push('Quatity untuk Material Number '+dataValidasi.join()+' Tidak boleh Lebih Besar dari In Whs Quantity. \n');
 				}
 				if(!validasiReason){
-					errorMessages.push('Reason untuk Material No. '+dataValidasi.join()+' Tidak boleh Kosong, Harap isi Reason. \n');
+					errorMessages.push('Reason untuk Material No. '+dataValidasiReason.join()+' Tidak boleh Kosong, Harap isi Reason. \n');
 				}
 				if(errorMessages.length > 0){
 					alert(errorMessages.join(''));

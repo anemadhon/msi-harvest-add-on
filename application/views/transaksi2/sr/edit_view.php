@@ -429,20 +429,67 @@
 				const remark= $('#remark').val();
 				const approve = id_approve;
 				const tbodyTable = $("#tblWhole > tbody");
+
+				splitDate = createDate.split('-');
+				dayPostingDate = splitDate[0];
+				monthPostingDate = splitDate[1];
+				yearPostingDate = splitDate[2];
+				posDate = `${yearPostingDate}/${monthPostingDate}/${dayPostingDate}`;
+
+				splitdelvDate = delivDate.split('-');
+				dayDeliveryDate = splitdelvDate[0];
+				monthDeliveryDate = splitdelvDate[1];
+				yearDeliveryDate = splitdelvDate[2];
+				delDate = `${yearDeliveryDate}/${monthDeliveryDate}/${dayDeliveryDate}`;
+
+				postingDate = new Date(posDate);
+				deliverDate = new Date(delDate);
+
 				let matrial_no=[];
 				let detail_qty=[];
 				let matrialDesc =[];
 				let qty =[];
 				let uom =[];
 				let onhand =[];
+				let errorMessages = [];
+				let dataValidateQty = [];
+				let validateQty = true;
+				
 				tbodyTable.find('tr').each(function(i,el){
 					let td = $(this).find('td');
+					if(td.eq(4).find('input').val().trim() == '' || td.eq(4).find('input').val().trim() == null){
+						dataValidateQty.push(td.eq(2).text().trim())
+						validateQty = false
+					}
 					matrial_no.push(td.eq(2).text().trim());
 					matrialDesc.push(td.eq(3).text());
 					qty.push(td.eq(4).find('input').val());
 					uom.push(td.eq(5).text());
 					onhand.push(td.eq(6).text());
 				})
+
+				if(createDate.trim() ==''){
+					errorMessages.push('Tanggal Posting harus di isi. \n');
+				}
+
+				if(postingDate > deliverDate){
+					errorMessages.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
+				}
+
+				if(delivDate.trim() ==''){
+					errorMessages.push('Tanggal Delivery harus di isi. \n');
+				}
+
+				if(remark.trim() ==''){
+					errorMessages.push('Remark harus di isi. \n');
+				}
+				if(!validateQty){
+					errorMessages.push(`Quantity untuk Material No. ${dataValidateQty.join()} harus di isi. \n`);
+				}
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join(''))
+					return false
+				}
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');

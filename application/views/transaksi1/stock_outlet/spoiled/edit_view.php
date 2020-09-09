@@ -173,9 +173,9 @@
 
                                             <div class="text-right hide" id="after-submit">
 												<?php if($waste_header['status']=='1'): ?>	
-													<button type="button" class="btn btn-primary" id="btn-update" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
+													<button type="button" class="btn btn-primary" id="btn-save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
 													<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-													<button type="button" class="btn btn-success" id="btn-update" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
+													<button type="button" class="btn btn-success" id="btn-approve" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
 													<?php endif; ?>
 												<?php endif;?>
                                             </div>
@@ -389,8 +389,10 @@
 				let text = [];
 				let validasi = true;
 				let validasiQty = true;
-				let validasiReasson = true;
+				let validasiReason = true;
 				let dataValidasi = [];
+				let errorMessages = [];
+				let dataValidasiReason = [];
 				tbodyTable.find('tr').each(function(i, el){
 					let td = $(this).find('td');
 					if(td.eq(5).find('input').val().trim() == ''){
@@ -423,7 +425,7 @@
 					errorMessages.push('Quatity untuk Material Number '+dataValidasi.join()+' Tidak boleh Lebih Besar dari In Whs Quantity. \n');
 				}
 				if(!validasiReason){
-					errorMessages.push('Reason untuk Material No. '+dataValidasi.join()+' Tidak boleh Kosong, Harap isi Reason. \n');
+					errorMessages.push('Reason untuk Material No. '+dataValidasiReason.join()+' Tidak boleh Kosong, Harap Pilih Reason. \n');
 				}
 				if(errorMessages.length > 0){
 					alert(errorMessages.join(''));

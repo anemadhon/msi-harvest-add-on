@@ -175,9 +175,9 @@
 											<div class="form-group row hide" id="after-submit">
 												<div class="col-lg-12 text-right">
 													<div class="text-right">
-														<button type="button" class="btn btn-primary" id="btn-update" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
+														<button type="button" class="btn btn-primary" id="btn-save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
 														<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-														<button type="button" class="btn btn-success" id="btn-update" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
+														<button type="button" class="btn btn-success" id="btn-approve" onclick="addDatadb(2)">Approve <i class="icon-paperplane ml-2"></i></button>
 														<?php endif;?>
 													</div>
 												</div>
@@ -264,7 +264,7 @@
 						{"data":"material_desc"},
 						{"data":"stock"},
 						{"data":"gi_quantity", "className":"dt-center",render:function(data, type, row, meta){
-							rr = (stts == '2') ? data : `<input type="text" class="form-control cv" id="gi_qty_${row['no']}" value="${data}" onchange="checkValue(this.value,${row['no']})">`;
+							rr = (stts == '2') ? data : `<input type="text" class="form-control cv" id="gi_qty_${row['no']}" value="${data == '.0000' ? '0.0000' : data}" onchange="checkValue(this.value,${row['no']})">`;
 							return rr;
 						}},
 						{"data":"uom"},
@@ -354,7 +354,7 @@
 						matSelect.map((val)=>{
 							table[2].innerHTML = val.MATNR;
 							table[3].innerHTML = val.MAKTX;
-							table[4].innerHTML = val.QTYWH;
+							table[4].innerHTML = val.QTYWH == '.000000' ? '0.0000' : val.QTYWH.slice(0,-2);
 							table[5].innerHTML = `<input type="text" class="form-control cv qty_${no}" id="gi_qty_${no}" onchange="checkValue(this.value,${no})">`;
 							table[6].innerHTML = val.UNIT;
 						})
@@ -434,13 +434,13 @@
 					text.push(td.eq(7).find('input').val());
 				})
 				if(!validasiEmptyQty){
-					errorMessages.push('Quantity Untuk Material Number '+dataItemEmptyQty.join()+' Tidak boleh Kosong, Harap di isi');
+					errorMessages.push('Quantity Untuk Material Number '+dataItemEmptyQty.join()+' Tidak boleh Kosong, Harap di isi. \n');
 				}
 				if(!validasiReason){
-					errorMessages.push('Reasson Untuk Material Number '+dataItemReason.join()+' Tidak boleh Kosong, Harap di isi');
+					errorMessages.push('Reasson Untuk Material Number '+dataItemReason.join()+' Tidak boleh Kosong, Harap di isi. \n');
 				}
 				if(!validasi){
-					errorMessages.push('Quantity Untuk Material Number '+dataItem.join()+' Harus Lebih Kecil dari atau Sama Dengan WHS QTY');
+					errorMessages.push('Quantity Untuk Material Number '+dataItem.join()+' Harus Lebih Kecil dari atau Sama Dengan WHS QTY. \n');
 				}
 				if (errorMessages.length > 0) {
 					alert(errorMessages.join())

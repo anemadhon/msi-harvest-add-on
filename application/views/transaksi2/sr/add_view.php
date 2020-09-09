@@ -440,7 +440,7 @@
 				}
 
 				if(postingDate > deliverDate){
-					errorMesseges.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
+					errorMessages.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
 				}
 
 				if(delivDate.trim() ==''){

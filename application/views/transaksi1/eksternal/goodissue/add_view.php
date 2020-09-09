@@ -351,7 +351,7 @@
 						matSelect = JSON.parse(res);
 						matSelect.map((val)=>{
 							table[3].innerHTML = val.MAKTX;
-							table[4].innerHTML = val.QTYWH.slice(0,-2);
+							table[4].innerHTML = val.QTYWH == '.000000' ? '0.0000' : val.QTYWH.slice(0,-2);
 							table[5].innerHTML = `<input type="text" class="form-control cv qty_${no}" id="gi_qty_${no}" value="" style="width:100%" onchange="checkValue(this.value,${no})">`;
 							table[6].innerHTML = val.UNIT;
 						})
@@ -420,22 +420,22 @@
 					text.push(td.eq(7).find('input').val());
 				})
 				if(postDate.trim() ==''){
-					errorMessages.push('Tanggal Posting harus di isi');
+					errorMessages.push('Tanggal Posting harus di isi. \n');
 				}
 				if(note.trim() ==''){
-					errorMessages.push('Issue Note harus di isi');
+					errorMessages.push('Issue Note harus di isi. \n');
 				}
 				if(!validasiEmptyQty){
-					errorMessages.push('Quantity Untuk Material Number '+dataItemEmptyQty.join()+' Tidak boleh Kosong, Harap di isi');
+					errorMessages.push('Quantity Untuk Material Number '+dataItemEmptyQty.join()+' Tidak boleh Kosong, Harap di isi. \n');
 				}
 				if(!validasiReason){
-					errorMessages.push('Reasson Untuk Material Number '+dataItemReason.join()+' Tidak boleh Kosong, Harap di isi');
+					errorMessages.push('Reasson Untuk Material Number '+dataItemReason.join()+' Tidak boleh Kosong, Harap di isi. \n');
 				}
 				if(!validasi){
-					errorMessages.push('Quantity Untuk Material Number '+dataItem.join()+' Harus Lebih Kecil dari atau Sama Dengan WHS QTY');
+					errorMessages.push('Quantity Untuk Material Number '+dataItem.join()+' Harus Lebih Kecil dari atau Sama Dengan WHS QTY. \n');
 				}
 				if (errorMessages.length > 0) {
-					alert(errorMessages.join())
+					alert(errorMessages.join(''))
 					return false
 				}
 

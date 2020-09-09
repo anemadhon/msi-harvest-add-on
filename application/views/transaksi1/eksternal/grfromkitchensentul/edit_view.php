@@ -86,173 +86,171 @@
 						<?php echo $this->session->flashdata('failed'); ?>
 					</div>
 					<?php endif; ?>
-					<form action="#" method="POST">
-						<div class="card">
-							<div class="card-body">
-								<div class="row">
-									<div class="col-md-12">
-										<fieldset>
-											<legend class="font-weight-semibold"><i class="icon-reading mr-2"></i>Good Receipt From Kitchen</legend>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Data SAP per Tanggal/Jam</label>
-												<div class="col-lg-9">Data tidak ditemukan. 
-												</div>
+					<div class="card">
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<legend class="font-weight-semibold"><i class="icon-reading mr-2"></i>Good Receipt From Kitchen</legend>
+										
+										<div class="form-group row">
+											<label class="col-lg-3 col-form-label">Data SAP per Tanggal/Jam</label>
+											<div class="col-lg-9">Data tidak ditemukan. 
 											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">ID Transaksi</label>
-												<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['id_grpodlv_header']; ?>" class="form-control" readonly></div>
+										</div>
+										
+										<div class="form-group row">
+											<label class="col-lg-3 col-form-label">ID Transaksi</label>
+											<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['id_grpodlv_header']; ?>" class="form-control" readonly></div>
+										</div>
+										
+										<div class="form-group row">
+											<label class="col-lg-3 col-form-label">Transfer Slip Number</label>
+											<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['do_no1']; ?>" class="form-control" id="U_DocNum" readonly></div>
+											<input type="hidden" value="<?php echo $gr_list['do_no']; ?>" readonly>
+										</div>
+										
+										<div class="form-group row">
+											<label class="col-lg-3 col-form-label">Goods Receipt Number</label>
+											<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['grpodlv_no1']; ?>" class="form-control" readonly></div>
+											<input type="hidden" value="<?php echo $gr_list['grpodlv_no']; ?>" readonly>
+										</div>
+										
+										<div class="form-group row">
+											<label class="col-lg-3 col-form-label">Outlet</label>
+											<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['plant']; ?>" class="form-control" readonly></div>
+										</div>
+										
+										<div class="form-group row" hidden>
+											<label class="col-lg-3 col-form-label">Storage Transit Location</label>
+											<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['plant']; ?> - <?php echo $gr_list['storage_location']; ?>" class="form-control" readonly></div>
+										</div>
+										
+										<div class="form-group row">
+											<label class="col-lg-3 col-form-label">Status</label>
+											<div class="col-lg-9">
+												<?php 
+													if($gr_list['status'] == 1) {
+												?>
+													<input type="text" value="Not Approved" class="form-control" readonly>
+												<?php
+													} else {
+												?>
+													<input type="text" value="Approved" class="form-control" readonly>
+												<?php
+													}
+												?>
+												<input type="hidden" name="status" value="<?php echo $gr_list['status']?>" />
 											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Transfer Slip Number</label>
-												<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['do_no1']; ?>" class="form-control" id="U_DocNum" readonly></div>
-												<input type="hidden" value="<?php echo $gr_list['do_no']; ?>" readonly>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Goods Receipt Number</label>
-												<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['grpodlv_no1']; ?>" class="form-control" readonly></div>
-												<input type="hidden" value="<?php echo $gr_list['grpodlv_no']; ?>" readonly>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Outlet</label>
-												<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['plant']; ?>" class="form-control" readonly></div>
-											</div>
-											
-											<div class="form-group row" hidden>
-												<label class="col-lg-3 col-form-label">Storage Transit Location</label>
-												<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['plant']; ?> - <?php echo $gr_list['storage_location']; ?>" class="form-control" readonly></div>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Status</label>
-												<div class="col-lg-9">
-													<?php 
-														if($gr_list['status'] == 1) {
-													?>
-														<input type="text" value="Not Approved" class="form-control" readonly>
-													<?php
-														} else {
-													?>
-														<input type="text" value="Approved" class="form-control" readonly>
-													<?php
-														}
-													?>
-													<input type="hidden" name="status" value="<?php echo $gr_list['status']?>" />
-												</div>
-											</div>
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Material Group</label>
-												<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['item_group_code']; ?>" class="form-control" readonly></div>
-											</div>
-											
-											
-											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Posting Date</label>
-												<div class="col-lg-9"><input type="text" value="<?php echo date("d-m-Y", strtotime($gr_list['posting_date'])); ?>" class="form-control" readonly></div>
-											</div>
+										</div>
+										
+										<div class="form-group row">
+											<label class="col-lg-3 col-form-label">Material Group</label>
+											<div class="col-lg-9"><input type="text" value="<?php echo $gr_list['item_group_code']; ?>" class="form-control" readonly></div>
+										</div>
+										
+										
+										<div class="form-group row">
+											<label class="col-lg-3 col-form-label">Posting Date</label>
+											<div class="col-lg-9"><input type="text" value="<?php echo date("d-m-Y", strtotime($gr_list['posting_date'])); ?>" class="form-control" readonly></div>
+										</div>
 
-											<div class="form-group row">
-                                                <label class="col-lg-3 col-form-label">Remarks</label>
-                                                <div class="col-lg-9 input-group date">
-                                                    <textarea id="remark" cols="30" rows="3" class="form-control" <?php $gr_list['status']=='2' ? 'readonly' : ''; ?>><?php echo $gr_list['remark']; ?></textarea>
-                                                </div>
+										<div class="form-group row">
+											<label class="col-lg-3 col-form-label">Remarks</label>
+											<div class="col-lg-9 input-group date">
+												<textarea id="remark" cols="30" rows="3" class="form-control" <?php $gr_list['status']=='2' ? 'readonly' : ''; ?>><?php echo $gr_list['remark']; ?></textarea>
 											</div>
-											
-											<?php if($gr_list['status']=='1'): ?>
-											<div class="form-group row hide" id="after-submit">
-												<div class="col-lg-12 text-right">
-													<div class="text-right">
-														<button class="btn btn-primary" onclick="btnSave()">
-															Save <i class="icon-pencil5 ml-2"></i>
-														</button>
-														<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-														<button type="submit" class="btn btn-success" onclick="btnSave(2)">
-															Approve <i class="icon-paperplane ml-2"></i>
-														</button>
-														<?php endif;?>
-													</div>
+										</div>
+										
+										<?php if($gr_list['status']=='1'): ?>
+										<div class="form-group row hide" id="after-submit">
+											<div class="col-lg-12 text-right">
+												<div class="text-right">
+													<button class="btn btn-primary" onclick="btnSave()">
+														Save <i class="icon-pencil5 ml-2"></i>
+													</button>
+													<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
+													<button type="submit" class="btn btn-success" onclick="btnSave(2)">
+														Approve <i class="icon-paperplane ml-2"></i>
+													</button>
+													<?php endif;?>
 												</div>
 											</div>
-											<?php endif; ?>
-										</fieldset>
-									</div>
+										</div>
+										<?php endif; ?>
+									</fieldset>
 								</div>
-							</div>							
-						</div>							
-						<div id="load" style="display:none"></div>		
-						<div class="card">
-							<ul class="nav nav-tabs ">
-								<li class="nav-item">
-									<a href="#gr_list" class="nav-link font-size-sm text-uppercase active" data-toggle="tab" data-tab-remote="">
-										GR List
-									</a>
-								</li>
-
-								<li class="nav-item">
-									<a href="#sr_list" class="nav-link font-size-sm text-uppercase" data-toggle="tab" data-tab-remote="<?php echo base_url()?>transaksi1/grfromkitchensentul/showDataSr" data-tab="1">
-									Not Send
-									</a>
-								</li>
-
-								<li class="nav-item">
-									<a href="#sr_list_now" class="nav-link font-size-sm text-uppercase" data-toggle="tab" data-tab-remote="<?php echo base_url()?>transaksi1/grfromkitchensentul/showDataGrSend" data-tab="2">
-									Not In Request
-									</a>
-								</li>
-							</ul>
-							<div class="card-header">
-								<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Good Receipt From Kitchen</legend>
 							</div>
-							<div class="tab-content card-body">
-								<div class="tab-pane fade active show" id="gr_list">
-									<table id="tblWhole" class="table table-striped " style="width:100%">
-										<thead>
-											<tr>
-												<th>No</th>
-												<th>Material No</th>
-												<th>Material Desc</th>
-												<th>SR Qty</th>
-												<th>TF Qty</th>
-												<th>GR Qty</th>
-												<th>Uom</th>
-											</tr>
-										</thead>
-									</table>				
-								</div>
-								<div class="tab-pane" id="sr_list">
-									<table id="tblStore" class="table table-striped " style="width:100%">
-										<thead>
-											<tr>
-												<th>No</th>
-												<th>Material No</th>
-												<th>Material Desc</th>
-												<th>Quantity</th>
-												<th>Uom</th>
-											</tr>
-										</thead>
-									</table>				
-								</div>
-								<div class="tab-pane" id="sr_list_now">
-									<table id="tblStoreNow" class="table table-striped " style="width:100%">
-										<thead>
-											<tr>
-												<th>No</th>
-												<th>Material No</th>
-												<th>Material Desc</th>
-												<th>Quantity</th>
-												<th>Uom</th>
-											</tr>
-										</thead>
-									</table>				
-								</div>
+						</div>							
+					</div>							
+					<div id="load" style="display:none"></div>		
+					<div class="card">
+						<ul class="nav nav-tabs ">
+							<li class="nav-item">
+								<a href="#gr_list" class="nav-link font-size-sm text-uppercase active" data-toggle="tab" data-tab-remote="">
+									GR List
+								</a>
+							</li>
+
+							<li class="nav-item">
+								<a href="#sr_list" class="nav-link font-size-sm text-uppercase" data-toggle="tab" data-tab-remote="<?php echo base_url()?>transaksi1/grfromkitchensentul/showDataSr" data-tab="1">
+								Not Send
+								</a>
+							</li>
+
+							<li class="nav-item">
+								<a href="#sr_list_now" class="nav-link font-size-sm text-uppercase" data-toggle="tab" data-tab-remote="<?php echo base_url()?>transaksi1/grfromkitchensentul/showDataGrSend" data-tab="2">
+								Not In Request
+								</a>
+							</li>
+						</ul>
+						<div class="card-header">
+							<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Good Receipt From Kitchen</legend>
+						</div>
+						<div class="tab-content card-body">
+							<div class="tab-pane fade active show" id="gr_list">
+								<table id="tblWhole" class="table table-striped " style="width:100%">
+									<thead>
+										<tr>
+											<th>No</th>
+											<th>Material No</th>
+											<th>Material Desc</th>
+											<th>SR Qty</th>
+											<th>TF Qty</th>
+											<th>GR Qty</th>
+											<th>Uom</th>
+										</tr>
+									</thead>
+								</table>				
+							</div>
+							<div class="tab-pane" id="sr_list">
+								<table id="tblStore" class="table table-striped " style="width:100%">
+									<thead>
+										<tr>
+											<th>No</th>
+											<th>Material No</th>
+											<th>Material Desc</th>
+											<th>Quantity</th>
+											<th>Uom</th>
+										</tr>
+									</thead>
+								</table>				
+							</div>
+							<div class="tab-pane" id="sr_list_now">
+								<table id="tblStoreNow" class="table table-striped " style="width:100%">
+									<thead>
+										<tr>
+											<th>No</th>
+											<th>Material No</th>
+											<th>Material Desc</th>
+											<th>Quantity</th>
+											<th>Uom</th>
+										</tr>
+									</thead>
+								</table>				
 							</div>
 						</div>
-					</form>
+					</div>
 				</div>
 				<?php $this->load->view("_template/footer.php")?>
 			</div>
@@ -366,41 +364,6 @@
 						})
 					}
 				})
-
-				$("#cancelRecord").click(function(){
-					const idGrpoHeader = $('#id_grpo_header').val();
-                    let deleteidArr = [];
-                    $("input:checkbox[class=check_delete]:checked").each(function(){
-                        deleteidArr.push($(this).val());
-                    })
-
-                    // mengecek ckeckbox tercheck atau tidak
-                    if(deleteidArr.length > 0){
-                        var confirmDelete = confirm("Apa Kamu Yakin Akan Membatalkan Good Receipt from Kitchen ini?");
-                        if(confirmDelete == true){
-                            $.ajax({
-                                url:"<?php echo site_url('transaksi1/grfromkitchensentul/cancelPoFromVendor');?>", //masukan url untuk delete
-                                type: "post",
-                                data:{deleteArr: deleteidArr, id_grpo_header:idGrpoHeader},
-                                success:function(res) {
-									location.reload(true);
-                                }
-                            });
-                        }
-                    }
-                });
-
-				checkcheckbox = () => {
-                    
-                    const lengthcheck = $(".check_delete").length;
-                    
-                    let totalChecked = 0;
-                    $(".check_delete").each(function(){
-                        if($(this).is(":checked")){
-                            totalChecked += 1;
-                        }
-                    });
-                }
 			});
 			
 			function btnSave(id_approve = ''){ 
@@ -447,7 +410,6 @@
 					grDetail.push(det);
 				})
 
-				// validasi
 				if(remark.trim() ==''){
 					errorMesseges.push('Remark harus di isi. \n');
 				}
@@ -457,7 +419,7 @@
 				if(!validasiQty){
 					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiQty.join()} Tidak boleh lebih besar dari Tf Quantity. \n`);
 				}
-				if (errorMesseges.length > 0) {
+				if(errorMesseges.length > 0) {
 					alert(errorMesseges.join(''));
 					if(!validasiLessQty){
 						let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Tf Quantity, anda yakin ingin melanjutkan ?`);
@@ -473,7 +435,6 @@
 						return false;
 					}
 				}
-				// validasi
 
 				$('#load').show();
 				$("#after-submit").addClass('after-submit');
