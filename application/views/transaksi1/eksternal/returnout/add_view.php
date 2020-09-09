@@ -415,7 +415,7 @@
 			let validasiQty = true;
 			let dataValidasi = [];
 			let dataValidasiEmptyQty = [];
-			let errorMesseges = [];
+			let errorMessages = [];
 			tbodyTable.find('tr').each(function(i, el){
 				let td = $(this).find('td');
 				if(td.eq(4).find('input').val().trim() == ''){
@@ -434,17 +434,17 @@
 				remark.push(td.eq(7).find('input').val());
 			})
 			if(pstDate.trim() == ''){
-				errorMesseges.push('Posting Date harus di isi. \n');
+				errorMessages.push('Posting Date harus di isi. \n');
 			}
 
 			if(!validasi){
-				errorMesseges.push(`Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+				errorMessages.push(`Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
 			}
 			if(!validasiQty){
-				errorMesseges.push('Material Number '+dataValidasi.join()+' Quatity Tidak boleh Lebih Kecil dari In Whs Qty');
+				errorMessages.push('Material Number '+dataValidasi.join()+' Quatity Tidak boleh Lebih Kecil dari In Whs Qty');
 			}
-			if (errorMesseges.length > 0) {
-				alert(errorMesseges.join(''));
+			if (errorMessages.length > 0) {
+				alert(errorMessages.join(''));
 				return false;
 			}
 

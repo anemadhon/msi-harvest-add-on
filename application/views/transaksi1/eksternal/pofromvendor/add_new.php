@@ -370,7 +370,7 @@
 				let dataValidasiLessQty = [];
 				let dataValidasiEmptyQty = [];
 				let dataValidasiRemark = [];
-				let errorMesseges = [];
+				let errorMessages = [];
 				let validasiRemark = true;
 				let validasiQty = true;
 				let validasiLessQty = true;
@@ -405,25 +405,25 @@
 				})
 				// validasi
 				if(pstDate.trim() == ''){
-					errorMesseges.push('Posting Date harus di isi. \n');
+					errorMessages.push('Posting Date harus di isi. \n');
 				}
 				if(remarkHead.trim() == ''){
-					errorMesseges.push('Remark harus di isi. \n');
+					errorMessages.push('Remark harus di isi. \n');
 				}
 				if(!validasiEmptyQty){
-					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+					errorMessages.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
 				}
 				if(!validasiRemark){
-					errorMesseges.push(`Remark untuk Material No. : ${dataValidasiRemark.join()} Tidak boleh Kosong, Harap di isi. \n`);
+					errorMessages.push(`Remark untuk Material No. : ${dataValidasiRemark.join()} Tidak boleh Kosong, Harap di isi. \n`);
 				}
 				if(postingDate > deliverDate){
-					errorMesseges.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
+					errorMessages.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
 				}
 				if(!validasiQty){
-					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiQty.join()} Tidak boleh lebih besar dari Outstanding Quantity. \n`);
+					errorMessages.push(`Gr Quantity untuk Material No. : ${dataValidasiQty.join()} Tidak boleh lebih besar dari Outstanding Quantity. \n`);
 				}
-				if (errorMesseges.length > 0) {
-					alert(errorMesseges.join(''));
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join(''));
 					if(!validasiLessQty){
 						let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Outstanding Quantity, anda yakin ingin melanjutkan ?`);
 						if (!confirmNext) {

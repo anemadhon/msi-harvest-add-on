@@ -352,7 +352,7 @@
 				let qty =[];
 				let uom =[];
 				let dataValidasiEmptyQty = [];
-				let errorMesseges = [];
+				let errorMessages = [];
 				let validasiEmptyQty = true;
 				table.find('tr').each(function(i, el){
 					let td = $(this).find('td');
@@ -368,15 +368,15 @@
 				})
 
 				if(pstDate.trim() == ''){
-					errorMesseges.push('Posting Date harus di isi. \n');
+					errorMessages.push('Posting Date harus di isi. \n');
 				}
 
 				if(!validasiEmptyQty){
-					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+					errorMessages.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
 				}
 
-				if (errorMesseges.length > 0) {
-					alert(errorMesseges.join(''));
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join(''));
 					return false;
 				}
 

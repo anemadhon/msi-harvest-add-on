@@ -395,7 +395,7 @@
 				let validasi = true;
 				let dataValidasi = [];
 				let dataValidasiEmptyQty = [];
-				let errorMesseges = [];
+				let errorMessages = [];
 				let validasiEmptyQty = true;
 				tbodyTable.find('tr').each(function(i,el){
 					let td = $(this).find('td');
@@ -418,14 +418,14 @@
 				})
 
 				if(!validasiEmptyQty){
-					errorMesseges.push(`Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+					errorMessages.push(`Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
 				}
 
 				if(!validasi){
-					errorMesseges.push('Quatity Untuk Material Number '+dataValidasi.join()+' Tidak boleh lebih besar dari Outstanding Quantity dan In Warehouse Quantity. \n');
+					errorMessages.push('Quatity Untuk Material Number '+dataValidasi.join()+' Tidak boleh lebih besar dari Outstanding Quantity dan In Warehouse Quantity. \n');
 				}
-				if (errorMesseges.length > 0) {
-					alert(errorMesseges.join(''));
+				if (errorMessages.length > 0) {
+					alert(errorMessages.join(''));
 					return false;
 				}
 

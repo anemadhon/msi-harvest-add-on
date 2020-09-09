@@ -416,7 +416,7 @@
 					onHand.push(td.eq(9).text());
 				})
 				if(postDate.trim() == ''){
-					errorMessages.push('Tanggal Posting harus di isi. \n')
+					errorMessages.push('Tanggal Delivery harus di isi. \n')
 				}
 				if(remark.trim() == ''){
 					errorMessages.push('Remark harus di isi. \n')

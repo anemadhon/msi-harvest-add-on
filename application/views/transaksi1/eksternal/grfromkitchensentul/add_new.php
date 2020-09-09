@@ -344,7 +344,7 @@
 				let dataValidasiQty = [];
 				let dataValidasiLessQty = [];
 				let dataValidasiEmptyQty = [];
-				let errorMesseges = [];
+				let errorMessages = [];
 				let validasiQty = true;
 				let validasiLessQty = true;
 				let validasiEmptyQty = true;
@@ -387,22 +387,22 @@
 				})
 				
 				if(grHeader.posting_date.trim() == ''){
-					errorMesseges.push('Posting Date harus di isi. \n');
+					errorMessages.push('Posting Date harus di isi. \n');
 				}
 				if(grHeader.remark.trim() == ''){
-					errorMesseges.push('Remark harus di isi. \n');
+					errorMessages.push('Remark harus di isi. \n');
 				}
 				if(!validasiEmptyQty){
-					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
+					errorMessages.push(`Gr Quantity untuk Material No. : ${dataValidasiEmptyQty.join()} Tidak boleh Kosong, Harap di isi. \n`);
 				}
 				if(postingDate > deliverDate){
-					errorMesseges.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
+					errorMessages.push('Tanggal Posting tidak boleh lebih besar dari Tanggal Delivery. \n');
 				}
 				if(!validasiQty){
-					errorMesseges.push(`Gr Quantity untuk Material No. : ${dataValidasiQty.join()} Tidak boleh lebih besar dari Tf Quantity. \n`);
+					errorMessages.push(`Gr Quantity untuk Material No. : ${dataValidasiQty.join()} Tidak boleh lebih besar dari Tf Quantity. \n`);
 				}
-				if(errorMesseges.length > 0) {
-					alert(errorMesseges.join(''));
+				if(errorMessages.length > 0) {
+					alert(errorMessages.join(''));
 					if(!validasiLessQty){
 						let confirmNext = confirm(`Gr Quantity untuk Material No. : ${dataValidasiLessQty.join()} lebih kecil dari Tf Quantity, anda yakin ingin melanjutkan ?`);
 						if (!confirmNext) {
