@@ -61,7 +61,7 @@ class Sr_model extends CI_Model {
         return $ret;
     }
 
-    function getDataMaterialGroup($item_group_code ='all'){
+    function getDataMaterialGroup($item_group_code ='all', $flagCK){
         $kd_plant = $this->session->userdata['ADMIN']['plant'];
         $trans_type = 'stdstock';
         $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
@@ -76,6 +76,10 @@ class Sr_model extends CI_Model {
             $SAP_MSI->where('t1.ItmsGrpNam', $item_group_code);
         }
 
+        if ($flagCK == 'Y') {
+            $SAP_MSI->where('U_OrderCK', 'Y');
+        }
+        
         $SAP_MSI->order_by('t0.ItemCode', 'desc');
 
         $query = $SAP_MSI->get();
@@ -84,6 +88,16 @@ class Sr_model extends CI_Model {
             return $query->result_array();
 		else
 			return FALSE;
+    }
+
+    function checkCentralKitchenFlag($rto) {
+        $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+        $SAP_MSI->select('U_CentralKitchen');
+        $SAP_MSI->from('OWHS');
+        $SAP_MSI->where('WhsCode', $rto);
+        $query = $SAP_MSI->get();
+        
+        return $query->row_array();
     }
 
     function getDataMaterialGroupSelect($itemSelect){

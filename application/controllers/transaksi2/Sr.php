@@ -99,8 +99,10 @@ class Sr extends CI_Controller {
 
     function getdataDetailMaterial(){
         $item_group_code = $this->input->post('matGroup');
+        $rto = $this->input->post('reqToOutlet');
         
-        $data = $this->sr_model->getDataMaterialGroup($item_group_code);
+        $flagCK = $this->sr_model->checkCentralKitchenFlag($rto);
+        $data = $this->sr_model->getDataMaterialGroup($item_group_code,$flagCK['U_CentralKitchen']);
 
         echo json_encode($data);
     }

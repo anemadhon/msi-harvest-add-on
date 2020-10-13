@@ -321,7 +321,7 @@
 				let elementSelect = document.getElementsByClassName(`dt_${count}`);
 				const requestReason = $('#rr').val();
 				const matrialGroup = $('#materialGroup').val();
-				const requestToOutlet = $('#rto').val();
+				const requestToOutlet = $('#rto').val().split(' - ');
 				const tbodyTable = $('#tblWhole > tbody');
 				let id_stdstock_detail = tbodyTable.find('tr').find('td').eq(0).find('input').val();
 				
@@ -330,7 +330,7 @@
 					"no":count,
 					"material_no":`<select class="form-control form-control-select2 dt_${count} testSelect" data-live-search="true" id="selectDetailMatrial" data-count="${count}">
 									<option value="">Select Item</option>
-									${showMatrialDetailData(requestReason, matrialGroup, requestToOutlet, elementSelect)}
+									${showMatrialDetailData(requestReason, matrialGroup, requestToOutlet[0], elementSelect)}
 								</select>`,
 					"material_desc":"",
 					"requirement_qty": "",
