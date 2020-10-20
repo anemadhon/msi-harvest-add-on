@@ -174,7 +174,6 @@ class Sentulentry_model extends CI_Model {
         $SAP_MSI->select('t0.ItemCode as MATNR,t0.ItemName as MAKTX,t0.ItmsGrpCod as DISPO,t0.InvntryUom as UNIT,t1.ItmsGrpNam as DSNAM');
         $SAP_MSI->from('OITM t0');
         $SAP_MSI->join('OITB t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
-        $SAP_MSI->where("t1.ItmsGrpCod in (select ItmsGrpCod from oitm where U_GrNonPO = 'Y')");
         $SAP_MSI->where('validFor', 'Y');
         $SAP_MSI->where('InvntItem', 'Y');
 
