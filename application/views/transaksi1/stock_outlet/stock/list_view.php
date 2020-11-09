@@ -77,17 +77,15 @@
                             <legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List of Stock Opname</legend>
                             <?php 
                             if ($so_date) {
-                                foreach ($so_date as $value) {
-                                    if (date('Y-m-d 00:00:00.000') == $value['U_SODate']) {
-                                        if (($isFreeze == 0 && $isMgr == 0) || $isReject == 1):
+                                foreach ($so_date as $schedule) {
+                                    if ((date('Y-m-d 00:00:00.000') == $schedule['U_SODate']) && ($isFreeze == 0 || $isReject == 1)):
                             ?>
                                 <a href="<?php echo site_url('transaksi1/stock/add') ?>" class="btn btn-primary"> Add New</a>
                                 <input type="button" value="Delete" class="btn btn-danger" id="deleteRecord"> 
                             <?php 
-                                        endif;
-                                    } 
+                                    endif;
                                 }
-                            } 
+                            }
                             ?>
                         </div>
                         <div class="card-body">
@@ -102,7 +100,7 @@
                                                 <th style="text-align: center">Stock Opname No</th>
                                                 <th style="text-align: center">Created Date</th>
                                                 <th style="text-align: center">Created By</th>
-                                                <th style="text-align: center">Admin Status</th>
+                                                <th style="text-align: center">Outlet Status</th>
                                                 <th style="text-align: center">Area Manager Status</th>
                                                 <th style="text-align: center">Regional Manager Status</th>
                                                 <th style="text-align: center">Last Modified</th>
@@ -238,7 +236,7 @@
                             row['freeze'] = (row['am_status'] == 'Rejected' || row['rm_status'] == 'Rejected') ? 'No' : row['freeze'];
                             rr = `<div style="width:100px">
                                         ${(freeze == 0 && row['freeze'] == 'No') || (mgr && row['status']=='Approved') || (row['status'] == 'Approved' && row['am_status'] == 'Approved' && row['rm_status'] == 'Approved') || (row['status'] == 'Not Approved' && (row['am_status'] != 'Approved' || row['rm_status'] != 'Approved')) ? `<a href='<?php echo site_url('transaksi1/stock/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;` : ''}
-                                        ${row['rm_status'] == 'Approved' ? `<a href='<?php echo site_url('transaksi1/stock/printpdf/')?>${data}' target="_blank"><i class='icon-printer' title="Print"></i></a>&nbsp;` : ''}
+                                        ${row['freeze'] == 'No' ? `<a href='<?php echo site_url('transaksi1/stock/printBeritaAcara/')?>${data}' target="_blank"><i class='icon-printer' title="Print"></i></a>&nbsp;` : ''}
                                     </div>`;
                             return rr;
                         }},

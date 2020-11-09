@@ -73,6 +73,22 @@
 		</style>
 	</head>
 	<body>
+		<?php 
+		/* if ($so_date) {
+			$status = '';
+			foreach ($so_date as $schedule) {
+				if (date('Y-m-d 00:00:00.000') == $schedule['U_SODate']) {
+					$status = 1;
+		 			break;
+				}		
+			}
+		} else {
+			$status = '';
+		}
+		if ($status != 1) {
+			redirect('transaksi1/stock/');
+		} */
+		?>
 		<?php  $this->load->view("_template/nav.php")?>
 		<div class="page-content">
 			<?php  $this->load->view("_template/sidebar.php")?>
@@ -124,18 +140,6 @@
 												</div>
 											</div>
 
-                                            <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label">Posting Date</label>
-                                                <div class="col-lg-9 input-group date">
-                                                    <input type="text" class="form-control" id="postDate" autocomplete="off">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="basic-addon1">
-                                                            <i class="icon-calendar"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-											</div>
-
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">File upload</label>
 												<div class="col-lg-9">
@@ -145,11 +149,12 @@
 											</div>
 
 											<div class="text-right mb-3 after-upload after-upload-displayed" style="display:none">
+												<input type="hidden" class="form-control" id="postDate" value="<?php echo date('d-m-Y')?>" readOnly>
                                                 <button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
 												<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
 												<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve<i class="icon-paperplane ml-2"></i></button>
 												<?php endif; ?>
-                                            </div>
+											</div>
 											
                                         </fieldset>
                                     </div>
@@ -162,7 +167,7 @@
 						<div class="card after-upload" style="display:none">
 							<div class="card-body">
 								<p class="total_upload" style="display:none">Total Data yang di Upload : <span id="total_upload"></span></p>
-								<p class="total_default" style="display:none">Total Data Deafult : <span id="total_default"></span></p>
+								<p class="total_default" style="display:none">Total Data Default : <span id="total_default"></span></p>
 								<hr>
 								<p class="count" style="display:none">Total Variance : <span id="total_variance"></span></p>
 								<p class="count" style="display:none">Total Variance Value : <span id="total_variance_value"></span></p>
@@ -202,50 +207,7 @@
         <?php  $this->load->view("_template/js.php")?>
 		<script>
 		$(document).ready(function(){
-
-			$("#deleteRecord").click(function(){
-				let deleteidArr = [];
-				$("input:checkbox[class=check_delete]:checked").each(function(){
-					deleteidArr.push($(this).val());
-				})
-
-				// mengecek ckeckbox tercheck atau tidak
-				if(deleteidArr.length > 0){
-					var confirmDelete = confirm("Do you really want to Delete records?");
-					if(confirmDelete == true){
-						$("input:checked").each(function(){
-							table.row($(this).closest("tr")).remove().draw();;
-						});
-					}
-				}
-				
-			});
-
-			checkcheckbox = () => {
-				let totalChecked = 0;
-				$(".check_delete").each(function(){
-					if($(this).is(":checked")){
-						totalChecked += 1;
-					}
-				});
-			}
-
-			const date = new Date();
-			const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-			var optSimple = {
-				format: 'dd-mm-yyyy',
-				todayHighlight: true,
-				orientation: 'bottom right',
-				autoclose: true
-			};
 			let head = '<?php echo count($head); ?>';
-			let itmcode = ''
-			let var_qty = 0
-			let var_value = 0
-
-			$('#postDate').datepicker(optSimple);
-			$('#postDate').datepicker();
-			
 			$('#formfile').submit(function(e){
 				e.preventDefault();
 				$.ajax({
@@ -290,6 +252,7 @@
 							table = $("#tblWhole").DataTable({
 								"ordering":false,
 								"paging":false,
+								"searching": false,
 								"data":row.data,
 								"columns": columns,
 								drawCallback: function() {
@@ -350,8 +313,8 @@
 			const approve = id_approve;
 			const tbodyTable = $('#tblWhole > tbody');
 			let head = '<?php echo count($head); ?>';
-			let qr_row = [];
-			let qr_row_temp = [];
+			let qtyRoom = [];
+			let qtyRoom_row_temp = [];
 			let itmGrpName =[];
 			let matrialNo =[];
 			let matrialDesc =[];
@@ -370,31 +333,26 @@
 				matrialDesc.push(td.eq(3).text());
 				onhand.push(td.eq(4).text().replace(',','').replace(',',''));
 				uom.push(td.eq(5).text());
-				begin_balance.push(td.eq(14).text().replace(',','').replace(',',''));
-				data_in.push(td.eq(15).text().replace(',','').replace(',',''));
-				data_out.push(td.eq(16).text().replace(',','').replace(',',''));
-				qty.push(td.eq(17).text().replace(',','').replace(',',''));
-				variance.push(td.eq(18).text().replace(',','').replace(',',''));
-				variance_value.push(td.eq(19).text().replace(',','').replace(',',''));
+				begin_balance.push(td.eq(parseInt(head)+6).text().replace(',','').replace(',',''));
+				data_in.push(td.eq(parseInt(head)+7).text().replace(',','').replace(',',''));
+				data_out.push(td.eq(parseInt(head)+8).text().replace(',','').replace(',',''));
+				qty.push(td.eq(parseInt(head)+9).text().replace(',','').replace(',',''));
+				variance.push(td.eq(parseInt(head)+10).text().replace(',','').replace(',',''));
+				variance_value.push(td.eq(parseInt(head)+11).text().replace(',','').replace(',',''));
 
 				for (let idx = 1; idx <= head; idx++) {
-					qr_row_temp.push(idx+'|'+td.eq(idx+5).text().replace(',','').replace(',',''))
+					qtyRoom_row_temp.push(idx+'|'+td.eq(idx+5).text().replace(',','').replace(',',''))
 				}
 
-				let temp = qr_row_temp.map(() => qr_row_temp.splice(0,head));
-				qr_row.push(temp[0]);
+				let temp = qtyRoom_row_temp.map(() => qtyRoom_row_temp.splice(0,head));
+				qtyRoom.push(temp[0]);
 			})
-
-			if(postDate.trim() ==''){
-				alert('Tanggal Posting harus di isi');
-				return false;
-			}
 
 			$('#load').show();
 
 			setTimeout(() => {
 				$.post("<?php echo site_url('transaksi1/stock/addData')?>", {
-					appr: approve, stts: status, postDate: postDate, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detQty: qty, detUom: uom, OnHand:onhand, ItemGrp:itmGrpName, Qr:qr_row, beginBalance:begin_balance, dataIn:data_in, dataOut:data_out, variance:variance, varianceValue:variance_value
+					appr: approve, stts: status, postDate: postDate, detMatrialNo: matrialNo, detMatrialDesc: matrialDesc, detQty: qty, detUom: uom, OnHand:onhand, ItemGrp:itmGrpName, Qr:qtyRoom, beginBalance:begin_balance, dataIn:data_in, dataOut:data_out, variance:variance, varianceValue:variance_value
 				}, function(){
 					$('#load').hide();
 				})

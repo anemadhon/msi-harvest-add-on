@@ -15,12 +15,12 @@
 ?>
 <html lang="en">
 	<head>
-		<?php $this->load->view("_template/head.php")?>
+		<?php  $this->load->view("_template/head.php")?>
 	</head>
 	<body>
-	<?php $this->load->view("_template/nav.php")?>
+	<?php  $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php $this->load->view("_template/sidebar.php")?>
+			<?php  $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 
@@ -57,7 +57,7 @@
 											<?php for($i=101; $i<=104; $i++):?>
 											<tr>
 												<td>
-												<?php if (($isFreeze == 0 && $isMgr == 0) || $isReject == 1):?>
+												<?php if ($isFreeze == 0 || $isReject == 1):?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url($link[$i])?>" class="font-size-sm mr-1"><?=$nama[$i]?> </a> 
 												<?php else: ?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><span><?=$nama[$i]?> </span> 
@@ -71,7 +71,7 @@
 											<?php endfor;?>
 											<tr>
 												<td>
-												<?php if (($isFreeze == 0 && $isMgr == 0) || $isReject == 1):?>
+												<?php if ($isFreeze == 0 || $isReject == 1):?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url($link[105])?>" class="font-size-sm mr-1"><?=$nama[105]?> </a> 
 												<?php else: ?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><span><?=$nama[105]?> </span>
@@ -87,6 +87,74 @@
 											<?php endif;?>
 								</div>
 							</div>
+							<!-- SO table info -->
+							<div class="card">
+								<div class="table-responsive">
+									<table class="table text-nowrap">
+										<thead>
+											<tr>
+												<th class="w-100">Stock Opname Status</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>
+												<?php
+												if ($so_date) {
+													if ($so_status['posting_date'] != '') {
+														if ($so_status['status'] == 1 && $so_status['am_approved'] == 0 && $so_status['rm_approved'] == 0 && $so_status['freeze'] == 'Y') {
+												?>
+															<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/stock/')?>" class="font-size-sm mr-1">Menunggu Approval dari Outlet  </a>
+												<?php
+														} elseif ($so_status['status'] == 2 && $so_status['am_approved'] == 0 && $so_status['rm_approved'] == 0 && $so_status['freeze'] == 'Y') {
+												?>
+															<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/stock/')?>" class="font-size-sm mr-1">Menunggu Approval dari Area Manager  </a>
+												<?php
+														} elseif ($so_status['status'] == 2 && $so_status['am_approved'] == 2 && $so_status['rm_approved'] == 0 && $so_status['freeze'] == 'Y') {
+												?>
+															<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/stock/')?>" class="font-size-sm mr-1">Menunggu Approval dari Regional Manager </a>
+												<?php
+														} elseif ($so_status['status'] == 2 && $so_status['am_approved'] == 2 && $so_status['rm_approved'] == 2 && $so_status['freeze'] == 'Y') {
+												?>
+															<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/stock/')?>" class="font-size-sm mr-1">Menunggu Posting dari Cost Controll </a>
+												<?php
+														} elseif ($so_status['status'] == 2 && $so_status['am_approved'] == 1 && $so_status['rm_approved'] == 0 && $so_status['freeze'] == 'Y') {
+												?>
+															<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/stock/')?>" class="font-size-sm mr-1">Data Ditolak oleh Area Manager </a>
+												<?php
+														} elseif ($so_status['status'] == 2 && $so_status['am_approved'] == 2 && $so_status['rm_approved'] == 1 && $so_status['freeze'] == 'Y') {
+												?>
+															<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/stock/')?>" class="font-size-sm mr-1">Data Ditolak oleh Regional Manager </a>
+												<?php
+														}
+													} else {
+														if ($so_last['posting_date'] != '') {
+												?>
+															<p><i class="icon-checkmark3 font-size-sm mr-1"></i><span><?php echo 'Stock Opname Terakhir Selesai pada : '.date_format(date_create(substr($so_last['posting_date'],0,-9)), "d-m-Y") ?></span></p>
+												<?php
+														}
+														if (date('Y-m-d 00:00:00.000') > $so_next['U_SODate']) {
+												?>
+															<p><i class="icon-checkmark3 font-size-sm mr-1"></i><span><?php echo 'Jadwal Stock Opname Telah Terlewat ('.date_format(date_create(substr($so_next['U_SODate'],0,-13)), "d-m-Y").')'?> </span></p>
+												<?php
+														} else {
+												?>
+															<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/stock/')?>" class="font-size-sm mr-1"><?php echo 'Stock Opname Selanjutnya pada : '.date_format(date_create(substr($so_next['U_SODate'],0,-13)), "d-m-Y") ?> </a>
+												<?php
+														}
+													}
+												} else {
+												?>
+													<p><i class="icon-checkmark3 font-size-sm mr-1"></i><span>Tanggal Stock Opname belum Diatur</span></p>
+												<?php
+												}
+												?>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
 							<!-- /daily sales -->
 
 						</div>
@@ -97,6 +165,6 @@
 				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-		<?php $this->load->view("_template/js.php")?>
+		<?php  $this->load->view("_template/js.php")?>
 	</body>
 </html>

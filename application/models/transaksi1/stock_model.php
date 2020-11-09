@@ -280,7 +280,7 @@ class Stock_model extends CI_Model {
 
     $where = ($parameter ? " ".$whereItemCode." " : "");
     
-    $query = $SAP_MSI->query("SELECT t0.ItemCode, t2.ItmsGrpNam, t0.ItemName, t0.InvntryUom as UNIT, t1.OnHand FROM OITM t0 INNER JOIN OITW t1 ON t0.ItemCode = t1.ItemCode INNER JOIN OITB t2 ON t2.ItmsGrpCod = t0.ItmsGrpCod where t1.WhsCode = '$kd_plant' AND ItemType = 'I' AND InvntItem= 'Y' AND t0.validFor = 'Y' ".$where." ");
+    $query = $SAP_MSI->query("SELECT t0.ItemCode, t2.ItmsGrpNam, t0.ItemName, t0.InvntryUom as UNIT, t1.OnHand FROM OITM t0 INNER JOIN OITW t1 ON t0.ItemCode = t1.ItemCode INNER JOIN OITB t2 ON t2.ItmsGrpCod = t0.ItmsGrpCod where t1.WhsCode = '$kd_plant' AND ItemType = 'I' AND InvntItem= 'Y' AND t0.validFor = 'Y' ".$where." ORDER BY t2.ItmsGrpNam ASC");
 
     $ret = $query->result_array();
     return $ret;
@@ -361,5 +361,41 @@ class Stock_model extends CI_Model {
     $query = $SAP_MSI->get();
     $onHand = $query->row_array();
     return $onHand;
-}
+  }
+
+  function getLastSOOutlet($last = ''){
+    $kd_plant = $this->session->userdata['ADMIN']['plant'];
+    $this->db->distinct();
+    $this->db->select('a.id_opname_header, status, freeze, am_approved, rm_approved, posting_date');
+    $this->db->from('t_opname_header a');
+    $this->db->join('t_opname_detail b','a.id_opname_header = b.id_opname_header');
+    $this->db->where('plant',$kd_plant);
+    if ($last == 'last') {
+      $this->db->where('back',0);
+    }
+    $this->db->order_by('a.id_opname_header','DESC');
+    $this->db->limit(1);
+    
+    $query = $this->db->get();
+
+    if(($query)&&($query->num_rows() > 0)){
+      return $query->row_array();
+    }else{
+      return FALSE;
+    }
+  }
+
+  function getNextSODate() {
+    $kd_plant = $this->session->userdata['ADMIN']['plant'];
+    $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+    
+    $query = $SAP_MSI->query("SELECT MAX(U_SODate) as U_SODate FROM [@YBC_STK_WHS] a INNER JOIN [@YBC_STK_DATE] b ON a.Code = b.Code WHERE a.Code = '$kd_plant' ");
+
+    if(($query)&&($query->num_rows() > 0)){
+      $soDate = $query->row_array();
+      return $soDate;
+    }else{
+      return FALSE;
+    }
+  }
 }

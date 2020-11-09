@@ -113,7 +113,8 @@ class Stock extends CI_Controller {
 
     public function add(){
 		$object['head'] = $this->st_model->headTemplate();
-		$object['plant'] = $this->session->userdata['ADMIN']['plant'].' - '.$this->session->userdata['ADMIN']['plant_name'];
+        $object['plant'] = $this->session->userdata['ADMIN']['plant'].' - '.$this->session->userdata['ADMIN']['plant_name'];
+        $object['so_date'] = $this->st_model->getSODate();
     
         $this->load->view('transaksi1/stock_outlet/stock/add_view', $object);
     }
@@ -184,7 +185,7 @@ class Stock extends CI_Controller {
         }
 
         if($input_detail_success){
-            return $this->session->set_flashdata('success', "Stock Opname Telah Terbentuk");
+            return $this->session->set_flashdata('success', "Stock Opname Berhasil Terbentuk");
         }else{
             return $this->session->set_flashdata('failed', "Stock Opname Gagal Terbentuk");
         }
@@ -287,6 +288,7 @@ class Stock extends CI_Controller {
     }
     
     public function addDataUpdate(){
+
         $admin_id = $this->session->userdata['ADMIN']['admin_id'];
 
         $opname_header['id_opname_header'] = $this->input->post('idHead');
@@ -436,8 +438,8 @@ class Stock extends CI_Controller {
                     $object['validate'] = $this->st_model->checkTemplate($row['C']);
                     if ($object['validate']) {
                         $akm = 0;
-                        $abjadBegin = 'F';
-                        $abjadBeginDouble = 'F';
+                        $abjadBegin = 'E';
+                        $abjadBeginDouble = 'E';
                         $dataUpdateData = $this->st_model->getUpdateData($row['C']);
                         $dataForSO = $this->st_model->getBeginBalanceInOut($row['C']);
                         $dataForSOPrice = $this->st_model->getLastPrice($row['C']);
@@ -477,7 +479,7 @@ class Stock extends CI_Controller {
                         $dataExcel["out"] = number_format($OutQty,4,'.',','); 
                         $dataExcel["akm"] = number_format($akm,4,'.',',');
                         $dataExcel["variance"] = number_format((float)($akm - ($BeginBalance + ($InQty - $OutQty))),4,'.',',');
-                        $dataExcel["variance_value"] = number_format((float)$dataExcel["variance"] * $dataForSOPrice["Avgprice"],4,'.',',');
+                        $dataExcel["variance_value"] = number_format((float)(($akm - ($BeginBalance + ($InQty - $OutQty))) * $dataForSOPrice["Avgprice"]),4,'.',',');
                         $lastItem = $row['C'];
                         array_push($data, $dataExcel);
                     } else {
@@ -505,11 +507,19 @@ class Stock extends CI_Controller {
 
     function readFileForDefaultData(){
         $head = $this->st_model->headTemplate();
-        $dataDefault = $this->st_model->template($this->input->post('dataItemCode'));
-
+        $dataDefaultRow = $this->st_model->template();
+        $no = count($this->input->post('dataItemCode'));
         $defaultData = array();
 
-        $no = count($this->input->post('dataItemCode'));
+        if ($no == count($dataDefaultRow)) {
+            $json_data = array(
+                "data"  => $defaultData
+            );
+            echo json_encode($json_data);
+            exit();
+        }
+
+        $dataDefault = $this->st_model->template($this->input->post('dataItemCode'));
         foreach ($dataDefault as $key => $default) {
             $dataFromDefault = array(
                 'no' => ($no+1),
@@ -520,27 +530,27 @@ class Stock extends CI_Controller {
                 'onhand' => number_format((float)$default['OnHand'],4,'.',','),
                 'uom' => $default['UNIT']
             );
-            $abjadBegin = 'F';
+            $abjadBegin = 'E';
             for ($i=1; $i <= count($head); $i++) {
                 $dataFromDefault["qr$i"] = number_format(0,4,'.',',');
             }
             $dataForDefault = $this->st_model->getBeginBalanceInOut($default['ItemCode']);
             $dataForDefaultPrice = $this->st_model->getLastPrice($default['ItemCode']);
             if ($dataForDefault == 0) {
-                $BeginBalance = 0;
-                $InQty = 0;
-                $OutQty = 0;
+                $BeginBalanceDefault = 0;
+                $InQtyDefault = 0;
+                $OutQtyDefault = 0;
             } else {
-                $BeginBalance = $dataForDefault['BeginBalance'];
-                $InQty = $dataForDefault['InQty'];
-                $OutQty = $dataForDefault['OutQty'];
+                $BeginBalanceDefault = $dataForDefault['BeginBalance'];
+                $InQtyDefault = $dataForDefault['InQty'];
+                $OutQtyDefault = $dataForDefault['OutQty'];
             }
-            $dataFromDefault["begin_balance"] = number_format($BeginBalance,4,'.',','); 
-            $dataFromDefault["in"] = number_format($InQty,4,'.',','); 
-            $dataFromDefault["out"] = number_format($OutQty,4,'.',','); 
+            $dataFromDefault["begin_balance"] = number_format($BeginBalanceDefault,4,'.',','); 
+            $dataFromDefault["in"] = number_format($InQtyDefault,4,'.',','); 
+            $dataFromDefault["out"] = number_format($OutQtyDefault,4,'.',','); 
             $dataFromDefault["akm"] = number_format(0,4,'.',',');
-            $dataFromDefault["variance"] = number_format((float)($BeginBalance + ($InQty - $OutQty)),4,'.',',');
-            $dataFromDefault["variance_value"] = number_format((float)$dataFromDefault["variance"] * $dataForDefaultPrice["Avgprice"],4,'.',',');
+            $dataFromDefault["variance"] = number_format((float)($BeginBalanceDefault + ($InQtyDefault - $OutQtyDefault)),4,'.',',');
+            $dataFromDefault["variance_value"] = number_format((float)(($BeginBalanceDefault + ($InQtyDefault - $OutQtyDefault) * $dataForDefaultPrice["Avgprice"])),4,'.',',');
             array_push($defaultData, $dataFromDefault);
             $no++;
         }
@@ -552,7 +562,8 @@ class Stock extends CI_Controller {
     
     function printpdf(){
 		$id_opname_header = $this->uri->segment(4);
-		$data['data'] = $this->st_model->tampil($id_opname_header);
+        $data['data'] = $this->st_model->tampil($id_opname_header);
+        $data['head'] = $this->st_model->headTemplate();
 		
 		ob_start();
 		$content = $this->load->view('transaksi1/stock_outlet/stock/printpdf_view',$data);
@@ -570,7 +581,29 @@ class Stock extends CI_Controller {
 			echo $e;
 			exit;
 		}
+    }
+    
+    function printBeritaAcara(){
+		$id_opname_header = $this->uri->segment(4);
+        $data['data'] = $this->st_model->tampil($id_opname_header);
+        $data['head'] = $this->st_model->headTemplate();
 		
+		ob_start();
+		$content = $this->load->view('transaksi1/stock_outlet/stock/printBA_view',$data);
+		$content = ob_get_clean();		
+		require_once(APPPATH.'libraries/html2pdf/html2pdf.class.php');
+		try
+		{
+			$html2pdf = new HTML2PDF('P', 'A4', 'en');
+			$html2pdf->setTestTdInOnePage(false);
+			$html2pdf->pdf->SetDisplayMode('fullpage');
+			$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+			$html2pdf->Output('print.pdf');
+		}
+		catch(HTML2PDF_exception $e) {
+			echo $e;
+			exit;
+		}
     }
 
     function downloadExcel(){
@@ -593,19 +626,19 @@ class Stock extends CI_Controller {
 
         //set config for column width
         $excel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
-        $excel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
+        $excel->getActiveSheet()->getColumnDimension('B')->setWidth(25);
         $excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
-        $excel->getActiveSheet()->getColumnDimension('D')->setWidth(50);
+        $excel->getActiveSheet()->getColumnDimension('D')->setWidth(80);
+        // $excel->getActiveSheet()->getColumnDimension('E')->setWidth(9);
         $excel->getActiveSheet()->getColumnDimension('E')->setWidth(9);
         $excel->getActiveSheet()->getColumnDimension('F')->setWidth(9);
         $excel->getActiveSheet()->getColumnDimension('G')->setWidth(9);
         $excel->getActiveSheet()->getColumnDimension('H')->setWidth(9);
         $excel->getActiveSheet()->getColumnDimension('I')->setWidth(9);
-        $excel->getActiveSheet()->getColumnDimension('J')->setWidth(9);
-        $excel->getActiveSheet()->getColumnDimension('K')->setWidth(13);
-        $excel->getActiveSheet()->getColumnDimension('L')->setWidth(12);
-        $excel->getActiveSheet()->getColumnDimension('M')->setWidth(9);
-        $excel->getActiveSheet()->getColumnDimension('N')->setWidth(10);
+        $excel->getActiveSheet()->getColumnDimension('J')->setWidth(13);
+        $excel->getActiveSheet()->getColumnDimension('K')->setWidth(12);
+        $excel->getActiveSheet()->getColumnDimension('L')->setWidth(9);
+        $excel->getActiveSheet()->getColumnDimension('M')->setWidth(10);
 
         // set config for title header file
         $excel->getActiveSheet()->getStyle('A5')->getAlignment()
@@ -616,9 +649,9 @@ class Stock extends CI_Controller {
         $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(true);
         $excel->getActiveSheet()->getStyle('A6')->getFont()->setBold(true);
 
-        $excel->getActiveSheet()->mergeCells('A5:N5');
+        $excel->getActiveSheet()->mergeCells('A5:M5');
         $excel->setActiveSheetIndex(0)->setCellValue('A5', 'Template Stock Opname'); 
-        $excel->getActiveSheet()->mergeCells('A6:N6');
+        $excel->getActiveSheet()->mergeCells('A6:M6');
         $excel->setActiveSheetIndex(0)->setCellValue('A6', 'Outlet '.$kd_plant.' '.$plant_name); 
 
         //style of border
@@ -631,16 +664,16 @@ class Stock extends CI_Controller {
             ),
         );
         
-        $excel->getActiveSheet()->getStyle('A9:N9')->applyFromArray($styleArray);
+        $excel->getActiveSheet()->getStyle('A9:M9')->applyFromArray($styleArray);
 
         // set config for title header table 
-        $excel->getActiveSheet()->getStyle('A9:N9')->getAlignment()
+        $excel->getActiveSheet()->getStyle('A9:M9')->getAlignment()
               ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-        $excel->getActiveSheet()->getStyle('A9:N9')->getAlignment()
+        $excel->getActiveSheet()->getStyle('A9:M9')->getAlignment()
               ->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
-        $excel->getActiveSheet()->getStyle('A9:N9')->getFont()->setBold(true);
+        $excel->getActiveSheet()->getStyle('A9:M9')->getFont()->setBold(true);
         
         $excel->getActiveSheet()->getRowDimension('9')->setRowHeight(20);
 
@@ -648,9 +681,9 @@ class Stock extends CI_Controller {
         $excel->setActiveSheetIndex(0)->setCellValue('B9', "Item Group"); 
         $excel->setActiveSheetIndex(0)->setCellValue('C9', "Item Code"); 
         $excel->setActiveSheetIndex(0)->setCellValue('D9', "Item Name"); 
-        $excel->setActiveSheetIndex(0)->setCellValue('E9', "On Hand");
-        $excel->setActiveSheetIndex(0)->setCellValue('F9', "UOM"); 
-        $abjadBegin = 'F';
+        // $excel->setActiveSheetIndex(0)->setCellValue('E9', "On Hand");
+        $excel->setActiveSheetIndex(0)->setCellValue('E9', "UOM"); 
+        $abjadBegin = 'E';
         for ($i=1; $i <= count($object['head']); $i++) {
             $excel->setActiveSheetIndex(0)->setCellValue(++$abjadBegin.'9', $object['head'][$i-1]['Name']);
         }
@@ -658,23 +691,23 @@ class Stock extends CI_Controller {
         $numrow = 10;
         foreach($object['dataOnHand'] as $key=>$r){ 
             // applying border style
-            $excel->getActiveSheet()->getStyle('A'.$numrow.':N'.$numrow)->applyFromArray($styleArray);
+            $excel->getActiveSheet()->getStyle('A'.$numrow.':M'.$numrow)->applyFromArray($styleArray);
 
             // set config alignment body table
             $excel->getActiveSheet()->getStyle('A'.$numrow.':B'.$numrow)->getAlignment()
               ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-            $excel->getActiveSheet()->getStyle('E'.$numrow.':F'.$numrow)->getAlignment()
+            $excel->getActiveSheet()->getStyle('E'.$numrow)->getAlignment()
               ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
             $excel->setActiveSheetIndex(0)->setCellValue('A'.$numrow, $kd_plant);
             $excel->setActiveSheetIndex(0)->setCellValue('B'.$numrow, $r['ItmsGrpNam']);
             $excel->setActiveSheetIndex(0)->setCellValue('C'.$numrow, $r['ItemCode']);
             $excel->setActiveSheetIndex(0)->setCellValue('D'.$numrow, $r['ItemName']);
-            $excel->setActiveSheetIndex(0)->setCellValue('E'.$numrow, (float)$r['OnHand']);
-            $excel->setActiveSheetIndex(0)->setCellValue('F'.$numrow, $r['UNIT']);
+            // $excel->setActiveSheetIndex(0)->setCellValue('E'.$numrow, (float)$r['OnHand']);
+            $excel->setActiveSheetIndex(0)->setCellValue('E'.$numrow, $r['UNIT']);
 
-            $abjadBegin = 'F';
+            $abjadBegin = 'E';
             for ($i=1; $i <= count($object['head']); $i++) {
                 $excel->setActiveSheetIndex(0)->setCellValue(++$abjadBegin.$numrow, '');
             }
@@ -686,11 +719,11 @@ class Stock extends CI_Controller {
         // Set orientasi kertas jadi LANDSCAPE
         $excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
         // Set judul file excel nya
-        $excel->getActiveSheet(0)->setTitle("Laporan Stock Opname");
+        $excel->getActiveSheet(0)->setTitle("Template Stock Opname");
         $excel->setActiveSheetIndex(0);
         // Proses file excel
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="Stock Opname.xlsx"'); // Set nama file excel nya
+        header('Content-Disposition: attachment; filename="Template Stock Opname.xlsx"'); // Set nama file excel nya
         header('Cache-Control: max-age=0');
         $write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
         $write->save('php://output');

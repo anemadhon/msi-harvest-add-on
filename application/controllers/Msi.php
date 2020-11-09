@@ -14,6 +14,8 @@ class Msi extends CI_Controller {
         
 		// load model
 		$this->load->model('dashboard_model', 'dash_model');
+        $this->load->model('transaksi1/stock_model', 'st_model');
+
 	}
 
 	public function dashboard(){
@@ -40,7 +42,26 @@ class Msi extends CI_Controller {
 		$object['data'][105] = $this->dash_model->getCountIntLog();
 		$object['link'][105] = "/master/integration";
 
+		$object['so_date'] = $this->st_model->getSODate();
+		$object['so_status'] = $this->st_model->getLastSOOutlet();
+		$object['so_last'] = $this->st_model->getLastSOOutlet('last');
+		$object['so_next'] = $this->st_model->getNextSODate();
+
 		$this->load->view('index', $object);
+	}
+	
+	public function inpofromvendor(){
+		
+		$this->load->view('template/header');
+		$this->load->view('transaksi1/eksternal/po_from_vendor');
+		$this->load->view('template/footer');
+	}
+	
+	public function purchaserequest(){
+		
+		$this->load->view('template/header');
+		$this->load->view('transaksi1/eksternal/purchase_request');
+		$this->load->view('template/footer');
 	}
 	
 }
