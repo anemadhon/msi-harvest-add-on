@@ -166,7 +166,7 @@
         </div>
         </td>
         <td align="center"><?php echo $row1['uom'];?></td>
-        <td align="right"><?php echo number_format($pos['Quantity'],2,'.','');?></td>
+        <td align="right"><?php echo number_format($row1['outstanding_qty'],2,'.','');?></td>
         <td align="right"><?php echo number_format($qty_grpo,2,'.','');?></td>
         <td align="right"><?php echo $prc;?></td>
     </tr>
