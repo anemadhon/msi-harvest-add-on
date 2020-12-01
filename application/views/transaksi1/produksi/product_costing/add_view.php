@@ -804,7 +804,7 @@
 				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
 				let percentage = (totProdCost / pricePB1) * 100;
 
-				$('#percentageCosting').text(`${percentage.toFixed(4)} %`);
+				$('#percentageCosting').text(`${percentage ? percentage.toFixed(4) : 0} %`);
 				setPercentageColor();
 			}
 
