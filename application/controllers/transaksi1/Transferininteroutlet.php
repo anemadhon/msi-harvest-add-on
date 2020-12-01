@@ -313,7 +313,7 @@ class Transferininteroutlet extends CI_Controller {
         if($this->tIn_model->grsto_header_update($grsto_header)){
             $update_detail_success = false;
             if($this->tIn_model->grsto_details_delete($grsto_header['id_grsto_header'])){
-                if($count > 1){
+                if($count > 0){
                     for($i =0; $i < $count; $i++){
                         $grsto_details['id_grsto_header'] = $grsto_header['id_grsto_header'];
                         $grsto_details['id_grsto_h_detail'] = $i+1;
