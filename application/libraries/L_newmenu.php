@@ -191,6 +191,44 @@ class L_newmenu {
                                 ),
                         ),
 
+                    10210 =>	array
+                        (
+                            'text'		=> 	'Sentul Entry In ',
+                            'mnclass'	=> 	'mn_trans',
+                            'link'		=> 	site_url('transaksi1/sentulentry_in'),
+                            'show'		=>	TRUE,
+                            'parent'	=>	102,
+                            'perms'		=>	array
+                                (
+                                    'inv_sentulin',
+                                ),
+                        ),
+
+                    10211 =>	array
+                        (
+                            'text'		=> 	'Sentul Entry Out ',
+                            'mnclass'	=> 	'mn_trans',
+                            'link'		=> 	site_url('transaksi1/sentulentry_out'),
+                            'show'		=>	TRUE,
+                            'parent'	=>	102,
+                            'perms'		=>	array
+                                (
+                                    'inv_sentulout',
+                                ),
+                        ),
+                    10212 =>    array
+                        (
+                            'text'      =>  'Product Costing',
+                            'mnclass'   =>  'mn_trans',
+                            'link'      =>  site_url('transaksi1/productcosting'),
+                            'show'      =>  TRUE,
+                            'parent'    =>  102,
+                            'perms'     =>  array
+                                (
+                                    'inv_productcosting',
+                                ),
+                        ),
+
             103 =>	array
                     (
                         'text'		=> 	'Production',
@@ -255,6 +293,7 @@ class L_newmenu {
                                     'prod_twopos',
                                 ),
                         ),
+                    
 
             104 =>	array
                     (
@@ -292,6 +331,19 @@ class L_newmenu {
                             'perms'		=>	array
                                 (
                                     'masterdata_perm_group',
+                                ),
+                        ),
+                    
+                    10405 =>	array
+                        (
+                            'text'		=> 	'Set Up Head Department',  
+                            'mnclass'	=> 	'mn_master',
+                            'link'		=> 	site_url('master/hdsetup'),
+                            'show'		=>	TRUE,
+                            'parent'	=>	104,
+                            'perms'		=>	array
+                                (
+                                    'masterdata_head_department',
                                 ),
                         ),
 

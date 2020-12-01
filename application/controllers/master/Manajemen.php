@@ -25,6 +25,7 @@ class Manajemen extends CI_Controller {
     function add(){
         $data['outlets'] = $this->manajemen_model->showOutlet();
         $data['permGroups'] = $this->manajemen_model->perm_group();
+        $data['dept'] = $this->manajemen_model->getAllDataDivisi();
         $this->load->view('master/manajemen_pengguna/add_form', $data);
     }
 
@@ -62,6 +63,7 @@ class Manajemen extends CI_Controller {
         $data['admin'] = $manajemen->getAdminbyId($admin_id);
         $data['outlets'] = $this->manajemen_model->showOutlet();
         $data['permGroups'] = $this->manajemen_model->perm_group();
+        $data['dept'] = $this->manajemen_model->getAllDataDivisi();
         
         $this->load->view('master/manajemen_pengguna/edit_form', $data);
     }

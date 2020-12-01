@@ -175,6 +175,11 @@
 													<button type="button" class="btn btn-danger" name="reject" id="reject" data-toggle="modal" data-target="#exampleModal" data-backdrop="static">Reject<i class="icon-paperplane ml-2"></i></button>
 													<button type="button" class="btn btn-success" name="approve" id="approve" onclick="regMgrAction('rm',2)">Approve<i class="icon-paperplane ml-2"></i></button>
 												</div>
+												<?php elseif(($opname_header['status']==2 && $opname_header['ganda']==1410064 && $opname_header['am_approved']==0) || ($opname_header['ganda']==1410064 && $opname_header['am_approved']==2 && $opname_header['rm_approved']==0)): ?>
+												<div class="text-right after-displayed" style="display:none">
+													<button type="button" class="btn btn-danger" name="reject" id="reject" data-toggle="modal" data-target="#exampleModal" data-backdrop="static">Reject<i class="icon-paperplane ml-2"></i></button>
+													<button type="button" class="btn btn-success" name="approve" id="approve" onclick="areaRegMgrAction('amrm',2)">Approve<i class="icon-paperplane ml-2"></i></button>
+												</div>
 												<?php endif; ?>
 											<?php else: ?>
 												<?php if($opname_header['status']==1 || $opname_header['am_approved']==1 || $opname_header['rm_approved']==1):?>
@@ -234,21 +239,21 @@
 				<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Reject Reason</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<div class="form-group">
-								<label for="message-text" class="col-form-label">Reason</label>
-								<textarea class="form-control" id="reason"></textarea>
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Reject Reason</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+								</button>
 							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-danger" onclick="<?= ($opname_header['ids']==14) ? 'areaMgrAction(\'am\',1)' : 'regMgrAction(\'rm\',1)'?>">Send</button>
-						</div>
+							<div class="modal-body">
+								<div class="form-group">
+									<label for="message-text" class="col-form-label">Reason</label>
+									<textarea class="form-control" id="reason"></textarea>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" onclick="<?= $opname_header['ids']==14 ? 'areaMgrAction(\'am\',1)' : ($opname_header['ganda']==1410064 ? 'areaRegMgrAction(\'amrm\',1)' : 'regMgrAction(\'rm\',1)')?>">Send</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -524,6 +529,25 @@
 			}
 
 			$.post("<?php echo site_url('transaksi1/stock/actionRegMgr')?>", {
+				idHead:idopname_header, idMgr:id_mgr, action:status_mgr, Reason:reason
+			}, function(res){
+				location.reload(true);
+			}
+			);
+		}
+		
+		function areaRegMgrAction(ids, status){
+			const idopname_header = document.getElementById('id_opname_header').value;
+			const reason = document.getElementById('reason').value;
+			const id_mgr = ids;
+			const status_mgr = status;
+
+			if (status_mgr==1 && reason.trim()=='') {
+				alert('Alasan Tidak Boleh Kosong')
+				return false;
+			}
+
+			$.post("<?php echo site_url('transaksi1/stock/actionAreaRegMgr')?>", {
 				idHead:idopname_header, idMgr:id_mgr, action:status_mgr, Reason:reason
 			}, function(res){
 				location.reload(true);

@@ -38,7 +38,11 @@ class Manajemen_model extends CI_Model{
 
             ['field' => 'admin_password_confirm',
             'label' => 'Konfirmasi Password',
-            'rules' => 'matches[admin_password]']
+            'rules' => 'matches[admin_password]'],
+
+            ['field' => 'dept_manager',
+            'label' => 'Departemen',
+            'rules' => 'required'],
         ];
     }
 
@@ -61,6 +65,7 @@ class Manajemen_model extends CI_Model{
         $this->admin_username = $post['admin_username'];
         $this->admin_realname = $post['admin_realname'];
         $this->admin_email = $post['admin_email'];
+        $this->dept_manager = $post['dept_manager'];
         $this->add_time = date("Y-m-d H:i:s");
         $this->edit_time = date("Y-m-d H:i:s");
         $data_nik = $post['data_nik'];
@@ -97,7 +102,8 @@ class Manajemen_model extends CI_Model{
         $update = array(
             'plants' => implode(",",$post['plants']),
             'admin_perm_grup_ids' => " ".implode(", ",$post['perm_group_id']).",",
-            'edit_time' => date("Y-m-d H:i:s")
+            'edit_time' => date("Y-m-d H:i:s"),
+            'dept_manager' => $post['dept_manager']
         );
         
 
@@ -246,5 +252,14 @@ class Manajemen_model extends CI_Model{
 
     public function hapus($admin_id){
         return $this->db->delete($this->_table, array("admin_id" => $admin_id));
+    }
+
+    function getAllDataDivisi(){
+        $this->db->select('id_dept, dept_code, dept_name, dept_head_id, (SELECT admin_realname FROM d_admin WHERE admin_id = a.dept_head_id) as dept_head_name');
+        $this->db->from('t_department a');
+
+        $query = $this->db->get();
+        $ret = $query->result_array();
+        return $ret;
     }
 }

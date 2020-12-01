@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php $this->load->view("_template/head.php")?>
+		<?php  $this->load->view("_template/head.php")?>
 	</head>
 	<body>
-	<?php $this->load->view("_template/nav.php")?>
+	<?php  $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php $this->load->view("_template/sidebar.php")?>
+			<?php  $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 				<?php if ($this->session->flashdata('success')): ?>
@@ -95,6 +95,18 @@
 												</div>
 											</div>
 
+											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">Departemen:</label>
+												<div class="col-lg-9">
+                                                    <select class="form-control form-control-select2" name="dept_manager" id="deptManager" required>
+														<option value="">Select Department</option>
+														<?php foreach($dept as $value){?>
+															<option value="<?=$value['dept_head_id']?>" desc="<?=$value['dept_name']?>"><?=$value['dept_code'].' - '.$value['dept_name']?></option>
+														<?php } ?>
+                                                    </select>
+												</div>
+											</div>
+
                                             <div class="text-right">
                                                 <button type="submit" class="btn btn-primary">Save<i class="icon-paperplane ml-2"></i></button>
                                             </div>
@@ -105,9 +117,9 @@
                         </div>
                     </div>                    
 				</div>
-				<?php $this->load->view("_template/footer.php")?>
+				<?php  $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php $this->load->view("_template/js.php")?>
+        <?php  $this->load->view("_template/js.php")?>
 	</body>
 </html>

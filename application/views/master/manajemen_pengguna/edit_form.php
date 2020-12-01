@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php $this->load->view("_template/head.php")?>
+		<?php  $this->load->view("_template/head.php")?>
 	</head>
 	<body>
-	<?php $this->load->view("_template/nav.php")?>
+	<?php  $this->load->view("_template/nav.php")?>
 		<div class="page-content">
-			<?php $this->load->view("_template/sidebar.php")?>
+			<?php  $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
 				<?php if ($this->session->flashdata('success')): ?>
@@ -60,7 +60,7 @@
                                             <div class="form-group row">
 												<label class="col-lg-3 col-form-label">Email:</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control <?php echo validation_errors('admin_email') ? 'is-invalid':'' ?>" name="admin_email" autocomplete="off" required value="<?=$admin->admin_email?>" readOnly>
+													<input type="text" class="form-control <?php echo validation_errors('admin_email') ? 'is-invalid':'' ?>" name="admin_email" autocomplete="off" required value="<?=$admin->admin_email ? $admin->admin_email : 'default@gmail.com'?>" readOnly>
 													<div class="invalid-feedback">
 														<?php echo validation_errors('admin_email') ?>
 													</div>
@@ -110,6 +110,18 @@
 												</div>
 											</div>
 
+											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">Departemen:</label>
+												<div class="col-lg-9">
+                                                    <select class="form-control form-control-select2" name="dept_manager" id="deptManager" required>
+														<option value="">Select Department</option>
+														<?php foreach($dept as $value){?>
+															<option value="<?=$value['dept_head_id']?>" desc="<?=$value['dept_name']?>" <?=$value['dept_head_id'] == $admin->dept_manager ? 'selected' : ''?>><?=$value['dept_code'].' - '.$value['dept_name']?></option>
+														<?php } ?>
+                                                    </select>
+												</div>
+											</div>
+
                                             <div class="text-right">
                                                 <button type="submit" class="btn btn-primary">Ubah<i class="icon-paperplane ml-2"></i></button>
                                             </div>
@@ -120,9 +132,9 @@
                         </div>
                     </div>                    
 				</div>
-				<?php $this->load->view("_template/footer.php")?>
+				<?php  $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
-        <?php $this->load->view("_template/js.php")?>
+        <?php  $this->load->view("_template/js.php")?>
 	</body>
 </html>

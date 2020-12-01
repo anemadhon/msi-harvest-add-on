@@ -129,6 +129,9 @@ $lang['perm_opt_inv_retin'] = "Retur In";
 $lang['perm_opt_inv_issue'] = "Good Issue";
 $lang['perm_opt_inv_waste'] = "Spoiled / Breakage / Lost";
 $lang['perm_opt_inv_stockopname'] = "Stock Opname";
+$lang['perm_opt_inv_sentulin'] = "Sentul Entry In";
+$lang['perm_opt_inv_sentulout'] = "Sentul Entry Out";
+$lang['perm_opt_inv_productcosting'] = "Product Costing";
 
 //Master Data
 $lang['perm_opt_category_masterdata']	=	"Master Data";

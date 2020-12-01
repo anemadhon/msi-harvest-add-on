@@ -236,14 +236,18 @@ class Stock extends CI_Controller {
 
         $arr_ids = explode(", ",$this->session->userdata['ADMIN']['admin_perm_grup_ids']);
         $ids = '';
+        $ganda = '';
         foreach($arr_ids as $val){
             if($val == 14){
                 $ids = $val;
+                $ganda .= $val;
             }elseif($val == 10064){
                 $ids = $val;
+                $ganda .= $val;
             }
         }
         $object['opname_header']['ids'] = $ids;
+        $object['opname_header']['ganda'] = $ganda;
 
         $this->load->view('transaksi1/stock_outlet/stock/edit_view', $object);
     }
@@ -350,15 +354,25 @@ class Stock extends CI_Controller {
         }
     }
 
-    public function actionAreaMgr(){
+    public function actionAreaRegMgr(){
+        $isAM = $this->st_model->opname_header_select($this->input->post('idHead'));
+        if ($isAM['am_approved'] == 0) {
+            $this->actionAreaMgr('am');
+        } else {
+            $this->actionRegMgr('rm');
+        }
+    }
+
+    public function actionAreaMgr($am = ''){
         $admin_id = $this->session->userdata['ADMIN']['admin_id'];
 
         $opname_header['id_opname_header'] = $this->input->post('idHead');
         if ($this->input->post('action')==1) {
             $opname_header['request_reason'] = $this->input->post('Reason');
         }
-        $opname_header['id_am'] = $this->input->post('idMgr')=='am' ? $admin_id : 0;
-        $opname_header['am_approved'] = $this->input->post('idMgr')=='am' ? $this->input->post('action') : 0;
+        $isAM = $am ? $am : 'am';
+        $opname_header['id_am'] = $isAM=='am' ? $admin_id : 0;
+        $opname_header['am_approved'] = $isAM=='am' ? $this->input->post('action') : 0;
 
         $succes_update_detail = false;
         if($this->st_model->opname_header_update_area_mgr($opname_header))
@@ -371,15 +385,16 @@ class Stock extends CI_Controller {
         }
     }
 
-    public function actionRegMgr(){
+    public function actionRegMgr($rm = ''){
         $admin_id = $this->session->userdata['ADMIN']['admin_id'];
 
         $opname_header['id_opname_header'] = $this->input->post('idHead');
         if ($this->input->post('action')==1) {
             $opname_header['request_reason'] = $this->input->post('Reason');
         }
-        $opname_header['id_rm'] = $this->input->post('idMgr')=='rm' ? $admin_id : 0;
-        $opname_header['rm_approved'] = $this->input->post('idMgr')=='rm' ? $this->input->post('action') : 0;
+        $isRM = $rm ? $rm : 'rm';
+        $opname_header['id_rm'] = $isRM=='rm' ? $admin_id : 0;
+        $opname_header['rm_approved'] = $isRM=='rm' ? $this->input->post('action') : 0;
 
         $succes_update_detail = false;
         if($this->st_model->opname_header_update_reg_mgr($opname_header))
