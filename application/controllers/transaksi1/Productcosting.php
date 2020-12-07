@@ -5,6 +5,7 @@ require('./application/third_party/PHPExcel/PHPExcel.php');
 class Productcosting extends CI_Controller{
      public function __construct(){
 		parent::__construct();
+		date_default_timezone_set('Asia/Jakarta');
 		$this->load->library('auth');  
 		if(!$this->auth->is_logged_in()) {
 			redirect(base_url());
@@ -374,7 +375,9 @@ class Productcosting extends CI_Controller{
 		$prod_cost_header['status_head'] = $approve == 3 ? 2 : 1;
 		$prod_cost_header['id_user_approved'] = $approve == 2 || $approve == 3 ? $this->session->userdata['ADMIN']['admin_id'] : 0;
 		$prod_cost_header['lastmodified'] = date('Y-m-d H:i:s');
-		$prod_cost_header['approved_user_date'] = $approve == 2 ? date('Y-m-d H:i:s') : '';
+		if ($approve == 2) {
+			$prod_cost_header['approved_user_date'] = date('Y-m-d H:i:s');
+		}
 		$prod_cost_header['approved_head_dept_date'] = $approve == 3 ? date('Y-m-d H:i:s') : '';
 		$max = count($this->input->post('matrialNo'));
 
@@ -409,6 +412,7 @@ class Productcosting extends CI_Controller{
 		$reject['status_head'] = 0;
 		$reject['reject_reason'] = $this->input->post('reason');
 		$reject['id_user_approved'] = $this->session->userdata['ADMIN']['admin_id'];
+		$reject['rejected_head_dept_date'] = date('Y-m-d H:i:s');
 
 		if($this->pc->reject($reject)){
 			return $this->session->set_flashdata('failed', "Product Costing Rejected");

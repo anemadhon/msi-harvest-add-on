@@ -5,7 +5,7 @@ require('./application/third_party/PHPExcel/PHPExcel.php');
 class Stock extends CI_Controller {
     public function __construct(){
         parent::__construct();
-
+        date_default_timezone_set('Asia/Jakarta');
         $this->load->library('auth');  
 		if(!$this->auth->is_logged_in()) {
 			redirect(base_url());
@@ -126,7 +126,11 @@ class Stock extends CI_Controller {
         $storage_location_name = $this->session->userdata['ADMIN']['storage_location_name'];
         $admin_id = $this->session->userdata['ADMIN']['admin_id'];
 
-        $opname_header['posting_date'] = $this->l_general->str_to_date($this->input->post('postDate'));
+        $opname_header['posting_date'] = $this->input->post('postDate');
+        $validasiTgl = $this->st_model->cekTgl($opname_header['posting_date'].' 00:00:00');
+        if ($validasiTgl && $validasiTgl > 0) {
+            return $this->session->set_flashdata('failed', "Stock Opname Gagal Terbentuk, Tidak Bisa melakukan lebih dari 1 SO dalam 1 Posting Date yang sama");
+        } 
         $opname_header['status'] = $this->input->post('appr')? $this->input->post('appr') : '1';
         $opname_header['item_group_code'] = $this->input->post('matGroup');
         $opname_header['created_date'] = date('Y-m-d');
@@ -297,7 +301,6 @@ class Stock extends CI_Controller {
         $admin_id = $this->session->userdata['ADMIN']['admin_id'];
 
         $opname_header['id_opname_header'] = $this->input->post('idHead');
-        $opname_header['posting_date'] = $this->l_general->str_to_date($this->input->post('postDate'));
         $opname_header['status'] = $this->input->post('appr')? $this->input->post('appr') : '1';
         $opname_header['id_user_approved'] = $this->input->post('appr')? $admin_id : 0;
         $opname_header['admin_approved_date'] = $this->input->post('appr')? date('Y-m-d H:i:s') : '';
@@ -371,6 +374,7 @@ class Stock extends CI_Controller {
         $opname_header['id_opname_header'] = $this->input->post('idHead');
         if ($this->input->post('action')==1) {
             $opname_header['request_reason'] = $this->input->post('Reason');
+            $opname_header['am_rejected_date'] = date('Y-m-d H:i:s');
         }
         $isAM = $am ? $am : 'am';
         $opname_header['id_am'] = $isAM=='am' ? $admin_id : 0;
@@ -394,6 +398,7 @@ class Stock extends CI_Controller {
         $opname_header['id_opname_header'] = $this->input->post('idHead');
         if ($this->input->post('action')==1) {
             $opname_header['request_reason'] = $this->input->post('Reason');
+            $opname_header['rm_rejected_date'] = date('Y-m-d H:i:s');
         }
         $isRM = $rm ? $rm : 'rm';
         $opname_header['id_rm'] = $isRM=='rm' ? $admin_id : 0;
@@ -643,7 +648,7 @@ class Stock extends CI_Controller {
         $imgHead->setOffsetX(220);
         $imgHead->setWorksheet($excel->getActiveSheet());
 
-        //$excel->getActiveSheet()->getProtection()->setSheet(true);
+        $excel->getActiveSheet()->getProtection()->setSheet(true);
 
         //set config for column width
         $excel->getActiveSheet()->getColumnDimension('A')->setWidth(15);

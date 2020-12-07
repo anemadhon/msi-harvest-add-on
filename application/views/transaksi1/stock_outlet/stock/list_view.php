@@ -78,7 +78,7 @@
                             <?php 
                             if ($so_date) {
                                 foreach ($so_date as $schedule) {
-                                    if ((date('Y-m-d 00:00:00.000') == $schedule['U_SODate']) && ($isFreeze == 0 || $isReject == 1)):
+                                    if (date('Y-m-d 00:00:00.000') == $schedule['U_SODate']) :
                             ?>
                                 <a href="<?php echo site_url('transaksi1/stock/add') ?>" class="btn btn-primary"> Add New</a>
                                 <input type="button" value="Delete" class="btn btn-danger" id="deleteRecord"> 

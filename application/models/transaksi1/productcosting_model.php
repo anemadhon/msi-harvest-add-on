@@ -22,7 +22,7 @@ class Productcosting_model extends CI_Model {
 			}
 		}
 
-		$this->db->order('a.id_prod_cost_header','desc');
+		$this->db->order_by('a.id_prod_cost_header','desc');
 
 		if((!empty($status))){
 			$this->db->where('status', $status);
@@ -319,26 +319,49 @@ class Productcosting_model extends CI_Model {
 	}
 
 	function updateDataProdCostHeader($prod_cost_header){
-		$update = array(
-			'category_code' => $prod_cost_header['category_code'],
-			'category_name' => $prod_cost_header['category_name'],
-			'category_q_factor' => $prod_cost_header['category_q_factor'],
-			'category_min' => $prod_cost_header['category_min'],
-			'category_max' => $prod_cost_header['category_max'],
-			'product_name' => $prod_cost_header['product_name'],
-			'product_qty' => $prod_cost_header['product_qty'],
-			'product_uom' => $prod_cost_header['product_uom'],
-			'product_selling_price' => $prod_cost_header['product_selling_price'],
-			'product_q_factor' => $prod_cost_header['product_q_factor'],
-			'product_percentage' => $prod_cost_header['product_percentage'],
-			'product_result' => $prod_cost_header['product_result'],
-			'status' => $prod_cost_header['status'],
-			'status_head' => $prod_cost_header['status_head'],
-			'id_user_approved' => $prod_cost_header['id_user_approved'],
-			'lastmodified' => $prod_cost_header['lastmodified'],
-			'approved_user_date' => $prod_cost_header['approved_user_date'],
-			'approved_head_dept_date' => $prod_cost_header['approved_head_dept_date']
-		);
+		if ($prod_cost_header['approved_user_date']) {
+			$update = array(
+				'category_code' => $prod_cost_header['category_code'],
+				'category_name' => $prod_cost_header['category_name'],
+				'category_q_factor' => $prod_cost_header['category_q_factor'],
+				'category_min' => $prod_cost_header['category_min'],
+				'category_max' => $prod_cost_header['category_max'],
+				'product_name' => $prod_cost_header['product_name'],
+				'product_qty' => $prod_cost_header['product_qty'],
+				'product_uom' => $prod_cost_header['product_uom'],
+				'product_selling_price' => $prod_cost_header['product_selling_price'],
+				'product_q_factor' => $prod_cost_header['product_q_factor'],
+				'product_percentage' => $prod_cost_header['product_percentage'],
+				'product_result' => $prod_cost_header['product_result'],
+				'status' => $prod_cost_header['status'],
+				'status_head' => $prod_cost_header['status_head'],
+				'id_user_approved' => $prod_cost_header['id_user_approved'],
+				'lastmodified' => $prod_cost_header['lastmodified'],
+				'approved_user_date' => $prod_cost_header['approved_user_date'],
+				'approved_head_dept_date' => $prod_cost_header['approved_head_dept_date']
+			);
+		} else {
+			$update = array(
+				'category_code' => $prod_cost_header['category_code'],
+				'category_name' => $prod_cost_header['category_name'],
+				'category_q_factor' => $prod_cost_header['category_q_factor'],
+				'category_min' => $prod_cost_header['category_min'],
+				'category_max' => $prod_cost_header['category_max'],
+				'product_name' => $prod_cost_header['product_name'],
+				'product_qty' => $prod_cost_header['product_qty'],
+				'product_uom' => $prod_cost_header['product_uom'],
+				'product_selling_price' => $prod_cost_header['product_selling_price'],
+				'product_q_factor' => $prod_cost_header['product_q_factor'],
+				'product_percentage' => $prod_cost_header['product_percentage'],
+				'product_result' => $prod_cost_header['product_result'],
+				'status' => $prod_cost_header['status'],
+				'status_head' => $prod_cost_header['status_head'],
+				'id_user_approved' => $prod_cost_header['id_user_approved'],
+				'lastmodified' => $prod_cost_header['lastmodified'],
+				'approved_head_dept_date' => $prod_cost_header['approved_head_dept_date']
+			);
+		}
+		
 		$this->db->where('id_prod_cost_header', $prod_cost_header['id_prod_cost_header']);
         if($this->db->update('t_prod_cost_header', $update))
 			return TRUE;
@@ -350,7 +373,8 @@ class Productcosting_model extends CI_Model {
 		$update = array(
 			'status_head' => $reject['status_head'],
 			'reject_reason' => $reject['reject_reason'],
-			'id_user_approved' => $reject['id_user_approved']
+			'id_user_approved' => $reject['id_user_approved'],
+			'rejected_head_dept_date' => $reject['rejected_head_dept_date']
 		);
 		$this->db->where('id_prod_cost_header', $reject['id_prod_cost_header']);
         if($this->db->update('t_prod_cost_header', $update))

@@ -149,7 +149,7 @@
 											</div>
 
 											<div class="text-right mb-3 after-upload after-upload-displayed" style="display:none">
-												<input type="hidden" class="form-control" id="postDate" value="<?php echo date('d-m-Y')?>" readOnly>
+												<input type="hidden" class="form-control" id="postDate" value="<?php echo date('Y-m-d')?>" readOnly>
                                                 <button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb()">Save <i class="icon-pencil5 ml-2"></i></button>
 												<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
 												<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)">Approve<i class="icon-paperplane ml-2"></i></button>

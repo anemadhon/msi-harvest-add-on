@@ -362,7 +362,7 @@
 				});
 
 				$('#productSellPrice').change(function () {
-					$(this).val(parseFloat($(this).val()).toLocaleString());
+					$(this).val($(this).val() ? parseFloat($(this).val()).toLocaleString() : 0);
 				});
 
 				$("#tblItemIngredients").DataTable({
@@ -542,6 +542,7 @@
 						
 						getTableIng.row(0).remove().draw();
 						getTableIng.rows.add(row.data).draw();
+						$('#firstRowPack').show();
 						/* getTablePack.row(0).remove().draw();
 						getTablePack.rows.add(row.data).draw(); */
 						addClassesIntoTable();
@@ -574,18 +575,18 @@
 					let tablePack = $("#tblItemPackaging tbody");
 					tableIng.find('tr').each(function(i, el){
 						let tdIng = $(this).find('td');
-						let costIng = parseFloat(tdIng.eq(5).text());
-						tdIng.eq(6).find('input:text').val(parseFloat(productQty) * parseFloat(tdIng.eq(6).find('input:text').val()));
-						tdIng.eq(7).text(parseFloat(tdIng.eq(6).find('input:text').val()) * costIng);
+						let costIng = parseFloat(tdIng.eq(5).text() ? tdIng.eq(5).text() : 0);
+						tdIng.eq(6).find('input:text').val(parseFloat(productQty) * parseFloat(tdIng.eq(6).find('input:text').val() ? tdIng.eq(6).find('input:text').val() : 0));
+						tdIng.eq(7).text(parseFloat(tdIng.eq(6).find('input:text').val() ? tdIng.eq(6).find('input:text').val() : 0) * costIng);
 					});
-					tablePack.find('tr').each(function(i, el){
+					/* tablePack.find('tr').each(function(i, el){
 						let tdPack = $(this).find('td');
 						let costPack = parseFloat(tdPack.eq(5).text());
 						tdPack.eq(6).find('input:text').val(parseFloat(productQty) * parseFloat(tdPack.eq(6).find('input:text').val()));
 						tdPack.eq(7).text(parseFloat(tdPack.eq(6).find('input:text').val()) * costPack);
-					});
+					}); */
 					setTotalFoodCost();
-					setTotalMaterialCost();
+					//setTotalMaterialCost();
 					setProdCostPercentage($('#productSellPrice').val());
 				}
 			}
@@ -804,7 +805,7 @@
 			}
 
 			function setProdCostPercentage(price){
-				let pricePB1 = parseFloat(price ? price.text().replace(',','').replace(',','') : 0) / (110/100);
+				let pricePB1 = parseFloat(price ? price.replace(',','').replace(',','') : 0) / (110/100);
 				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
 				let percentage = (totProdCost / pricePB1) * 100;
 
@@ -880,19 +881,23 @@
 					itemQty.push(tdIng.eq(6).find('input:text').val());
 					itemType.push(tdIng.eq(6).find('input:hidden').val());
 					if(tdIng.eq(6).find('input:text').val() == ''){
-						dataValidasi.push(tdIng.eq(2).find('select option:selected').val());
+						dataValidasi.push(tdIng.eq(2).has('select').length > 0 ? tdIng.eq(2).find('select option:selected').val() : tdIng.eq(2).text());
 						validasi = false;
 					}
 				});
 				tblItemPackaging.find('tr').each(function(i, el){
 					let tdPack = $(this).find('td');
-					if (i+1 > 0) {
+					if (tdPack.eq(2).find('select option:selected').val()) {
 						matrialNo.push(tdPack.eq(2).has('select').length > 0 ? tdPack.eq(2).find('select option:selected').val() : tdPack.eq(2).text());
 						matrialDesc.push(tdPack.eq(3).children().length == 0 ? tdPack.eq(3).text() : tdPack.eq(3).children(0).val()); 
 						itemUom.push(tdPack.eq(4).has('input:text').length > 0 ? tdPack.eq(4).find('input').val() : tdPack.eq(4).text());	
 						itemCost.push(tdPack.eq(5).has('input:text').length > 0 ? tdPack.eq(5).find('input').val() : tdPack.eq(5).text());
 						itemQty.push(tdPack.eq(6).find('input:text').val());
 						itemType.push(tdPack.eq(6).find('input:hidden').val());
+						if(tdPack.eq(6).find('input:text').val() == ''){
+							dataValidasi.push(tdPack.eq(2).has('select').length > 0 ? tdPack.eq(2).find('select option:selected').val() : tdPack.eq(2).text());
+							validasi = false;
+						}
 					}
 				});
 				if(docStatus == ''){

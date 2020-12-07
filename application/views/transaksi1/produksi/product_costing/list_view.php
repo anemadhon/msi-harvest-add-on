@@ -67,18 +67,11 @@
                         </form>
                         </div>                        
                     </div> 
-                    <?php
-                    $isFreeze = $this->auth->is_freeze()['is_freeze'];
-                    $isReject = $this->auth->is_freeze()['is_reject'];
-                    $isMgr = $this->auth->is_freeze()['is_mgr'];
-                    ?>
                     <div class="card">
                         <div class="card-header">
                             <legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List of Product Costing</legend>
-                            <?php if (($isFreeze == 0 && $isMgr == 0) || $isReject == 1):?>
                             <a href="<?php echo site_url('transaksi1/productcosting/add') ?>" class="btn btn-primary"> Add New</a>
-                            <input type="button" value="Delete" class="btn btn-danger" id="deleteRecord">  
-                            <?php endif; ?>
+                            <input type="button" value="Delete" class="btn btn-danger" id="deleteRecord">
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -135,10 +128,7 @@
                  
                 const fromDate = $('#fromDate').val();
                 const toDate = $('#toDate').val();
-                const status = $('#status').val();   
-
-                let freeze = '<?php echo $isFreeze; ?>';
-                let reject = '<?php echo $isReject; ?>';         
+                const status = $('#status').val();           
 
                 dataTable = $('#tableWhole').DataTable({
                     "ordering":true, "paging": true, "searching":true,
@@ -155,11 +145,10 @@
                         {"data":"id_prod_cost_header", "className":"dt-center"},
                         {"data":"id_prod_cost_header", "className":"dt-center", render:function(data, type, row, meta){
                             rr = `<div style="width:100px">
-                                    ${freeze == 0 || reject == 1 ? `<a href='<?php echo site_url('transaksi1/productcosting/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;` : ''}
-                                    
+                                    <a href='<?php echo site_url('transaksi1/productcosting/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;
+                                    <a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp;
                                 </div>`;
                             return rr;
-                            //<a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp;
                         }},
                         {"data":"product_name", "className":"dt-center"},
                         {"data":"existing_bom", "className":"dt-center"},

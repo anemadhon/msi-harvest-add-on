@@ -204,7 +204,6 @@ class Stock_model extends CI_Model {
   function opname_header_update($data){
     $update = array(
       'status' => $data['status'],
-      'posting_date' => $data['posting_date'],
       'am_approved' => $data['am_approved'],
       'rm_approved' => $data['rm_approved'],
       'id_user_approved' => $data['id_user_approved'],
@@ -222,7 +221,8 @@ class Stock_model extends CI_Model {
       $update = array(
         'id_am' => $data['id_am'],
         'am_approved' => $data['am_approved'],
-        'request_reason' => $data['request_reason']
+        'request_reason' => $data['request_reason'],
+        'am_rejected_date' => $data['am_rejected_date']
       );
     } else {
       $update = array(
@@ -244,7 +244,8 @@ class Stock_model extends CI_Model {
       $update = array(
         'id_rm' => $data['id_rm'],
         'rm_approved' => $data['rm_approved'],
-        'request_reason' => $data['request_reason']
+        'request_reason' => $data['request_reason'],
+        'rm_rejected_date' => $data['rm_rejected_date']
       );
     } else {
       $update = array(
@@ -283,7 +284,7 @@ class Stock_model extends CI_Model {
 
     $where = ($parameter ? " ".$whereItemCode." " : "");
     
-    $query = $SAP_MSI->query("SELECT t0.ItemCode, t2.ItmsGrpNam, t0.ItemName, t0.InvntryUom as UNIT, t1.OnHand FROM OITM t0 INNER JOIN OITW t1 ON t0.ItemCode = t1.ItemCode INNER JOIN OITB t2 ON t2.ItmsGrpCod = t0.ItmsGrpCod where t1.WhsCode = '$kd_plant' AND ItemType = 'I' AND InvntItem= 'Y' AND t0.validFor = 'Y' ".$where." ORDER BY t2.ItmsGrpNam ASC");
+    $query = $SAP_MSI->query("SELECT t0.ItemCode, t2.ItmsGrpNam, t0.ItemName, t0.InvntryUom as UNIT, t1.OnHand FROM OITM t0 INNER JOIN OITW t1 ON t0.ItemCode = t1.ItemCode INNER JOIN OITB t2 ON t2.ItmsGrpCod = t0.ItmsGrpCod where t1.WhsCode = '$kd_plant' AND t2.u_soaddons = 'Y' AND ItemType = 'I' AND InvntItem= 'Y' AND t0.validFor = 'Y' ".$where." ORDER BY t2.ItmsGrpNam ASC");
 
     $ret = $query->result_array();
     return $ret;
@@ -293,7 +294,7 @@ class Stock_model extends CI_Model {
     $kd_plant = $this->session->userdata['ADMIN']['plant'];
     $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
     
-    $query = $SAP_MSI->query("SELECT t0.ItemCode FROM OITM t0 INNER JOIN OITW t1 ON t0.ItemCode = t1.ItemCode INNER JOIN OITB t2 ON t2.ItmsGrpCod = t0.ItmsGrpCod where t1.WhsCode ='$kd_plant' AND ItemType = 'I' AND InvntItem= 'Y' AND t0.validFor = 'Y' AND t0.ItemCode = '$code' ");
+    $query = $SAP_MSI->query("SELECT t0.ItemCode FROM OITM t0 INNER JOIN OITW t1 ON t0.ItemCode = t1.ItemCode INNER JOIN OITB t2 ON t2.ItmsGrpCod = t0.ItmsGrpCod where t1.WhsCode ='$kd_plant' AND t2.u_soaddons = 'Y' AND ItemType = 'I' AND InvntItem= 'Y' AND t0.validFor = 'Y' AND t0.ItemCode = '$code' ");
 
     $valid = $query->row_array();
     return $valid;
@@ -399,6 +400,24 @@ class Stock_model extends CI_Model {
       return $soDate;
     }else{
       return FALSE;
+    }
+  }
+
+  function cekTgl($tgl){
+    $kd_plant = $this->session->userdata['ADMIN']['plant'];
+    $this->db->distinct();
+    $this->db->select('a.id_opname_header');
+    $this->db->from('t_opname_header a');
+    $this->db->join('t_opname_detail b','a.id_opname_header = b.id_opname_header');
+    $this->db->where('plant',$kd_plant);
+    $this->db->where('posting_date',$tgl);
+    
+    $query = $this->db->get();
+
+    if(($query)&&($query->num_rows() > 0)){
+      return $query->num_rows();
+    }else{
+      return 0;
     }
   }
 }
