@@ -126,6 +126,10 @@
 												?>
 															<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/stock/')?>" class="font-size-sm mr-1">Data Ditolak oleh Regional Manager </a>
 												<?php
+														} elseif ($so_status['posting_date'] < date('Y-m-d 00:00:00.000')) {
+												?>
+															<p><i class="icon-checkmark3 font-size-sm mr-1"></i><span><?php echo 'Stock Opname pada : '.date_format(date_create(substr($so_status['posting_date'],0,-9)), "d-m-Y").' belum selesai' ?></span></p>
+												<?php
 														}
 													} else {
 														if ($so_last['posting_date'] != '') {

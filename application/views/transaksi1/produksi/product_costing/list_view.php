@@ -87,8 +87,8 @@
                                         <thead>
                                             <tr>
                                                 <th style="text-align: left"><input type="checkbox" name="checkall" id="checkall"></th>
-                                                <th style="text-align: center">Action</th>
                                                 <th style="text-align: center">ID</th>
+                                                <th style="text-align: center">Action</th>
                                                 <th style="text-align: center">Name</th>
                                                 <th style="text-align: center">Existing BOM</th>
                                                 <th style="text-align: right">Qty</th>
@@ -152,14 +152,15 @@
                             rr=`<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">`;
                             return rr;
                         }},
+                        {"data":"id_prod_cost_header", "className":"dt-center"},
                         {"data":"id_prod_cost_header", "className":"dt-center", render:function(data, type, row, meta){
                             rr = `<div style="width:100px">
                                     ${freeze == 0 || reject == 1 ? `<a href='<?php echo site_url('transaksi1/productcosting/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;` : ''}
-                                    <a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp;
+                                    
                                 </div>`;
                             return rr;
+                            //<a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp;
                         }},
-                        {"data":"id_prod_cost_header", "className":"dt-center"},
                         {"data":"product_name", "className":"dt-center"},
                         {"data":"existing_bom", "className":"dt-center"},
                         {"data":"product_qty"},

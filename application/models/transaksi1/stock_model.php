@@ -207,7 +207,8 @@ class Stock_model extends CI_Model {
       'posting_date' => $data['posting_date'],
       'am_approved' => $data['am_approved'],
       'rm_approved' => $data['rm_approved'],
-      'id_user_approved' => $data['id_user_approved']
+      'id_user_approved' => $data['id_user_approved'],
+      'admin_approved_date' => $data['admin_approved_date']
     );
     $this->db->where('id_opname_header', $data['id_opname_header']);
     if($this->db->update('t_opname_header', $update))
@@ -226,7 +227,8 @@ class Stock_model extends CI_Model {
     } else {
       $update = array(
         'id_am' => $data['id_am'],
-        'am_approved' => $data['am_approved']
+        'am_approved' => $data['am_approved'],
+        'am_approved_date' => $data['am_approved_date']
       );
     }
     
@@ -247,7 +249,8 @@ class Stock_model extends CI_Model {
     } else {
       $update = array(
         'id_rm' => $data['id_rm'],
-        'rm_approved' => $data['rm_approved']
+        'rm_approved' => $data['rm_approved'],
+        'rm_approved_date' => $data['rm_approved_date']
       );
     }
     

@@ -202,9 +202,9 @@
 							<div class="card-body">
 								<p class="total_upload" style="display:none">Total Data yang di Upload : <span id="total_upload"></span></p>
 								<p class="total_default" style="display:none">Total Data Default : <span id="total_default"></span></p>
-								<hr>
+								<!-- <hr>
 								<p class="count" style="display:none">Total Variance : <span id="total_variance"></span></p>
-								<p class="count" style="display:none">Total Variance Value : <span id="total_variance_value"></span></p>
+								<p class="count" style="display:none">Total Variance Value : <span id="total_variance_value"></span></p> -->
 								<div class="row">
 									<legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Item</legend>
 									<div class="col-md-12" style="overflow: auto">

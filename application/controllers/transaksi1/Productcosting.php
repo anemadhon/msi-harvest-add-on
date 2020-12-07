@@ -1,5 +1,6 @@
 <?php 
 defined('BASEPATH') OR exit('No direct script access allowed');
+require('./application/third_party/PHPExcel/PHPExcel.php');
 
 class Productcosting extends CI_Controller{
      public function __construct(){
@@ -248,10 +249,11 @@ class Productcosting extends CI_Controller{
 		$product_cost_header['status'] = $this->input->post('approve');
 		$product_cost_header['status_head'] = 1;
 		$product_cost_header['posting_date'] = $this->l_general->str_to_date($this->input->post('postDate'));
-		$product_cost_header['created_date'] = date('Y-m-d');
+		$product_cost_header['created_date'] = date('Y-m-d H:i:s');
 		$product_cost_header['lastmodified'] = date('Y-m-d H:i:s');
 		$product_cost_header['id_user_input'] = $this->session->userdata['ADMIN']['admin_id'];
 		$product_cost_header['id_user_approved'] = $this->input->post('approve') == 2 ? $this->session->userdata['ADMIN']['admin_id'] : 0 ;
+		$product_cost_header['approved_user_date'] = $this->input->post('approve') == 2 ? date('Y-m-d H:i:s') : '';
 		
 		$count = count($this->input->post('matrialNo'));
 		if($id_product_cost_header = $this->pc->insertHeaderProdCost($product_cost_header)) {
@@ -371,6 +373,9 @@ class Productcosting extends CI_Controller{
 		$prod_cost_header['status'] = $approve == 2 || $approve == 3 ? 2 : 1;
 		$prod_cost_header['status_head'] = $approve == 3 ? 2 : 1;
 		$prod_cost_header['id_user_approved'] = $approve == 2 || $approve == 3 ? $this->session->userdata['ADMIN']['admin_id'] : 0;
+		$prod_cost_header['lastmodified'] = date('Y-m-d H:i:s');
+		$prod_cost_header['approved_user_date'] = $approve == 2 ? date('Y-m-d H:i:s') : '';
+		$prod_cost_header['approved_head_dept_date'] = $approve == 3 ? date('Y-m-d H:i:s') : '';
 		$max = count($this->input->post('matrialNo'));
 
 		$prod_cost_header_update = $this->pc->updateDataProdCostHeader($prod_cost_header);
@@ -410,6 +415,228 @@ class Productcosting extends CI_Controller{
 		} else {
 			return $this->session->set_flashdata('failed', "Product Costing Gagal di Reject");
 		}
+	}
+
+	public function printXls($id){
+		$kd_plant = $this->session->userdata['ADMIN']['plant'];
+		$plant_name = $this->session->userdata['ADMIN']['plant_name'];
+
+		$object['data'] = $this->pc->selectProdCostHeader($id);
+
+		$object['ing'] = $this->pc->selectDataDetail($id,1);
+		$object['pack'] = $this->pc->selectDataDetail($id,2);
+
+        $excel = new PHPExcel();
+
+        //set config for column width
+        $excel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
+        $excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+        $excel->getActiveSheet()->getColumnDimension('C')->setWidth(30);
+        $excel->getActiveSheet()->getColumnDimension('D')->setWidth(70);
+        $excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+        $excel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+        $excel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
+        $excel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
+
+        // set config for title header file
+        $excel->getActiveSheet()->getStyle('B2')->getAlignment()
+              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $excel->getActiveSheet()->getStyle('B3')->getAlignment()
+              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+        $excel->getActiveSheet()->getStyle('B2')->getFont()->setBold(true);
+        $excel->getActiveSheet()->getStyle('B3')->getFont()->setBold(true);
+
+        $excel->getActiveSheet()->mergeCells('B2:H2');
+        $excel->setActiveSheetIndex(0)->setCellValue('B2', 'Print Out Product Costing'); 
+        $excel->getActiveSheet()->mergeCells('B3:H3');
+		$excel->setActiveSheetIndex(0)->setCellValue('B3', 'Outlet '.$kd_plant.' '.$plant_name); 
+		
+		// set config for title header
+        $excel->getActiveSheet()->getStyle('B6:B16')->getFont()->setBold(true);
+
+        $excel->setActiveSheetIndex(0)->setCellValue('B6', "Document"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B7', "Category"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B8', "Existing Bom"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B9', "Name"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B10', "Qty Produksi"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B11', "UOM"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B12', "Posting Date"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B13', "Status"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B14', "Head of Department"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B15', "Selling Price"); 
+		
+		// set config for value header
+		$excel->setActiveSheetIndex(0)->setCellValue('C6', $object['data']['existing_bom_code'] ? 'Existing' : 'New'); 
+        $excel->setActiveSheetIndex(0)->setCellValue('C7', $object['data']['category_name']); 
+        $excel->setActiveSheetIndex(0)->setCellValue('C8', $object['data']['existing_bom_code'] ? $object['data']['existing_bom_code'].' - '.$object['data']['existing_bom_name'] : ''); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C9', $object['data']['product_name']); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C10', $object['data']['product_qty']); 
+        $excel->setActiveSheetIndex(0)->setCellValue('C11', $object['data']['product_uom']); 
+        $excel->setActiveSheetIndex(0)->setCellValue('C12', date('d-m-Y', strtotime($object['data']['posting_date']))); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C13', ($object['data']['status'] == 1 || $object['data']['status_head'] == 0) ? 'Not Approved' : 'Approved'); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C14', $object['data']['status'] == 2 && $object['data']['status_head'] == 2 ? 'Approved' : ($object['data']['status_head'] == 0 ? 'Rejected' : 'Not Approved')); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C15', number_format($object['data']['product_selling_price'],4)); 
+
+		//style of border
+        $styleArray = array(
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => array('argb' => '00000000'),
+                ),
+            ),
+        );
+        
+        $excel->getActiveSheet()->getStyle('B19:H19')->applyFromArray($styleArray);
+
+        // set config for title header table 
+        $excel->getActiveSheet()->getStyle('B19:H19')->getAlignment()
+              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+        $excel->getActiveSheet()->getStyle('B19:H19')->getAlignment()
+              ->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+
+        $excel->getActiveSheet()->getStyle('B19:H19')->getFont()->setBold(true);
+
+        $excel->setActiveSheetIndex(0)->setCellValue('B18', "List of Ingredients"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B19', "No"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('C19', "Item Code"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('D19', "Item Desc"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('E19', "UOM"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('F19', "Unit Cost"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('G19', "Quantity"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('H19', "Total Cost"); 
+        
+		$numrowIng = 20;
+		$totIngCost = 0;
+        foreach($object['ing'] as $keyIng => $rIng){ 
+
+			$excel->getActiveSheet()->getStyle('B'.$numrowIng)->getAlignment()
+			  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$excel->getActiveSheet()->getStyle('E'.$numrowIng)->getAlignment()
+			  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			
+            // applying border style
+            $excel->getActiveSheet()->getStyle('B'.$numrowIng.':H'.$numrowIng)->applyFromArray($styleArray);
+
+            $excel->setActiveSheetIndex(0)->setCellValue('B'.$numrowIng, ($keyIng+1));
+            $excel->setActiveSheetIndex(0)->setCellValue('C'.$numrowIng, $rIng['material_no']);
+            $excel->setActiveSheetIndex(0)->setCellValue('D'.$numrowIng, $rIng['material_desc']);
+			$excel->setActiveSheetIndex(0)->setCellValue('E'.$numrowIng, $rIng['item_uom']);
+			$excel->setActiveSheetIndex(0)->setCellValue('F'.$numrowIng, $rIng['item_cost']);
+			$excel->setActiveSheetIndex(0)->setCellValue('G'.$numrowIng, $rIng['item_qty']);
+			$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowIng, (float)($rIng['item_qty'] * $rIng['item_cost']));
+
+			$totIngCost += (float)($rIng['item_qty'] * $rIng['item_cost']);
+            $numrowIng++;
+		}
+
+		$excel->getActiveSheet()->getStyle('B'.$numrowIng.':H'.$numrowIng)->applyFromArray($styleArray);
+
+		$excel->getActiveSheet()->getStyle('B'.$numrowIng)->getAlignment()
+			  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+			  
+		$excel->getActiveSheet()->mergeCells('B'.$numrowIng.':G'.$numrowIng);
+
+		$excel->setActiveSheetIndex(0)->setCellValue('B'.$numrowIng, 'Total Ingredients Cost'); 
+		$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowIng, number_format($totIngCost,4));
+
+		$numrowPackThead = $numrowIng + 2;
+
+		$excel->getActiveSheet()->getStyle('B'.($numrowPackThead+1).':H'.($numrowPackThead+1))->applyFromArray($styleArray);
+
+		// set config for title header table 
+        $excel->getActiveSheet()->getStyle('B'.($numrowPackThead+1).':H'.($numrowPackThead+1))->getAlignment()
+              ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+        $excel->getActiveSheet()->getStyle('B'.($numrowPackThead+1).':H'.($numrowPackThead+1))->getAlignment()
+              ->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+
+        $excel->getActiveSheet()->getStyle('B'.($numrowPackThead+1).':H'.($numrowPackThead+1))->getFont()->setBold(true);
+
+		$excel->setActiveSheetIndex(0)->setCellValue('B'.$numrowPackThead, "List of Packaging"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPackThead+1), "No"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPackThead+1), "Item Code"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('D'.($numrowPackThead+1), "Item Desc"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('E'.($numrowPackThead+1), "UOM"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('F'.($numrowPackThead+1), "Unit Cost"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('G'.($numrowPackThead+1), "Quantity"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('H'.($numrowPackThead+1), "Total Cost"); 
+		
+		$numrowPack = $numrowIng + 4;
+		$totPackCost = 0;
+		foreach($object['pack'] as $keyPack => $rPack){ 
+
+			$excel->getActiveSheet()->getStyle('B'.$numrowPack)->getAlignment()
+			  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$excel->getActiveSheet()->getStyle('E'.$numrowPack)->getAlignment()
+			  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			
+            // applying border style
+            $excel->getActiveSheet()->getStyle('B'.$numrowPack.':H'.$numrowPack)->applyFromArray($styleArray);
+
+            $excel->setActiveSheetIndex(0)->setCellValue('B'.$numrowPack, ($keyPack+1));
+            $excel->setActiveSheetIndex(0)->setCellValue('C'.$numrowPack, $rPack['material_no']);
+            $excel->setActiveSheetIndex(0)->setCellValue('D'.$numrowPack, $rPack['material_desc']);
+			$excel->setActiveSheetIndex(0)->setCellValue('E'.$numrowPack, $rPack['item_uom']);
+			$excel->setActiveSheetIndex(0)->setCellValue('F'.$numrowPack, $rPack['item_cost']);
+			$excel->setActiveSheetIndex(0)->setCellValue('G'.$numrowPack, $rPack['item_qty']);
+			$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowPack, (float)($rPack['item_qty'] * $rPack['item_cost']));
+			
+			$totPackCost += (float)($rPack['item_qty'] * $rPack['item_cost']);
+            $numrowPack++;
+		}
+
+		$excel->getActiveSheet()->getStyle('B'.$numrowPack.':H'.$numrowPack)->applyFromArray($styleArray);
+
+		$excel->getActiveSheet()->getStyle('B'.$numrowPack)->getAlignment()
+			  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+		$excel->getActiveSheet()->mergeCells('B'.$numrowPack.':G'.$numrowPack);
+
+		$excel->setActiveSheetIndex(0)->setCellValue('B'.$numrowPack, 'Total Packaging Cost'); 
+		$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowPack, number_format($totPackCost,4));
+
+		$excel->getActiveSheet()->getStyle('B'.($numrowPack+3).':B'.($numrowPack+5))->getFont()->setBold(true);
+
+		$excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPack+3), "Q Factor"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPack+4), "Total Product Cost"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPack+5), "Product Costing"); 
+		
+		$excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPack+3), number_format($object['data']['product_q_factor'],4)); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPack+4), number_format($object['data']['product_result'],4)); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPack+5), $object['data']['product_percentage'].' %');
+
+		if ($object['data']['product_percentage'] > $object['data']['category_max']) {
+			$ket = 'Product Cost above Threshold';
+			$color = 'FF0000';
+		} elseif ($object['data']['product_percentage'] < $object['data']['category_min']) {
+			$ket = 'Product Cost below Threshold';
+			$color = 'FFFF00';
+		} else {
+			$ket = 'Product Cost within Threshold, Ok to continue';
+			$color = '008000';
+		}
+
+		$excel->getActiveSheet()->getStyle('D'.($numrowPack+5))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+			->getStartColor()->setARGB($color);
+
+		$excel->setActiveSheetIndex(0)->setCellValue('D'.($numrowPack+5), $ket); 
+    
+        // Set height semua kolom menjadi auto (mengikuti height isi dari kolommnya, jadi otomatis)
+        $excel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
+        // Set orientasi kertas jadi LANDSCAPE
+        $excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+        // Set judul file excel nya
+        $excel->getActiveSheet(0)->setTitle("Product Costing");
+        $excel->setActiveSheetIndex(0);
+        // Proses file excel
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="Product Costing.xlsx"'); // Set nama file excel nya
+        header('Cache-Control: max-age=0');
+        $write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $write->save('php://output');
 	}
 	
 	//

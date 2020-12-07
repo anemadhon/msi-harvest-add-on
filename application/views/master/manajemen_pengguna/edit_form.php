@@ -110,15 +110,32 @@
 												</div>
 											</div>
 
+											<?php 
+												$isSame = 0;
+												$name = '';
+												foreach($dept as $value){ 
+													if ($value['dept_head_id'] == $admin->admin_id) {
+														$isSame = $value['dept_head_id'];
+														$name = $value['dept_code'].' - '.$value['dept_name'];
+														break;
+													}
+												}
+											?>
+
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Departemen:</label>
 												<div class="col-lg-9">
-                                                    <select class="form-control form-control-select2" name="dept_manager" id="deptManager" required>
-														<option value="">Select Department</option>
-														<?php foreach($dept as $value){?>
-															<option value="<?=$value['dept_head_id']?>" desc="<?=$value['dept_name']?>" <?=$value['dept_head_id'] == $admin->dept_manager ? 'selected' : ''?>><?=$value['dept_code'].' - '.$value['dept_name']?></option>
-														<?php } ?>
-                                                    </select>
+													<?php if($isSame == $admin->admin_id){?>
+														<input type="text" class="form-control" value="<?=$name?>" readOnly>
+														<input type="hidden" class="form-control" name="dept_manager" id="deptManager" value="<?=$isSame?>" readOnly>
+													<?php } else {?>
+														<select class="form-control form-control-select2" name="dept_manager" id="deptManager" required> 
+															<option value="">Select Department</option>
+															<?php foreach($dept as $value){ ?>
+																<option value="<?=$value['dept_head_id']?>" desc="<?=$value['dept_name']?>" <?=$value['dept_head_id'] == $admin->dept_manager ? 'selected' : ''?>><?=$value['dept_code'].' - '.$value['dept_name']?></option>
+															<?php } ?>
+														</select>
+													<?php } ?>
 												</div>
 											</div>
 

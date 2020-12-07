@@ -22,6 +22,8 @@ class Productcosting_model extends CI_Model {
 			}
 		}
 
+		$this->db->order('a.id_prod_cost_header','desc');
+
 		if((!empty($status))){
 			$this->db->where('status', $status);
 		}
@@ -332,7 +334,10 @@ class Productcosting_model extends CI_Model {
 			'product_result' => $prod_cost_header['product_result'],
 			'status' => $prod_cost_header['status'],
 			'status_head' => $prod_cost_header['status_head'],
-			'id_user_approved' => $prod_cost_header['id_user_approved']
+			'id_user_approved' => $prod_cost_header['id_user_approved'],
+			'lastmodified' => $prod_cost_header['lastmodified'],
+			'approved_user_date' => $prod_cost_header['approved_user_date'],
+			'approved_head_dept_date' => $prod_cost_header['approved_head_dept_date']
 		);
 		$this->db->where('id_prod_cost_header', $prod_cost_header['id_prod_cost_header']);
         if($this->db->update('t_prod_cost_header', $update))

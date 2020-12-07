@@ -361,6 +361,10 @@
 					$('.after-doc').show();
 				});
 
+				$('#productSellPrice').change(function () {
+					$(this).val(parseFloat($(this).val()).toLocaleString());
+				});
+
 				$("#tblItemIngredients").DataTable({
 					"ordering":false,
 					"paging":false,
@@ -534,12 +538,12 @@
 					success:function(res) {
 						row = JSON.parse(res);
 						let getTableIng = $("#tblItemIngredients").DataTable();
-						let getTablePack = $("#tblItemPackaging").DataTable();
+						//let getTablePack = $("#tblItemPackaging").DataTable();
 						
 						getTableIng.row(0).remove().draw();
 						getTableIng.rows.add(row.data).draw();
-						getTablePack.row(0).remove().draw();
-						getTablePack.rows.add(row.data).draw();
+						/* getTablePack.row(0).remove().draw();
+						getTablePack.rows.add(row.data).draw(); */
 						addClassesIntoTable();
 					},
 				});
@@ -800,11 +804,11 @@
 			}
 
 			function setProdCostPercentage(price){
-				let pricePB1 = parseFloat(price ? price : 0) / (110/100);
+				let pricePB1 = parseFloat(price ? price.text().replace(',','').replace(',','') : 0) / (110/100);
 				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
 				let percentage = (totProdCost / pricePB1) * 100;
 
-				$('#percentageCosting').text(`${percentage ? percentage.toFixed(4) : 0} %`);
+				$('#percentageCosting').text(`${percentage ? percentage.toFixed(4) : '0.0000'} %`);
 				setPercentageColor();
 			}
 
@@ -822,15 +826,15 @@
 				}
 				
 				if (parseFloat(percentageCost[0] / 100) > max) {
-					$('#indicatorCosting').text('Merah');
+					$('#indicatorCosting').text('Product Cost above Threshold');
 					$('#indicatorCosting').css('background-color','red');
 					$('#indicatorCosting').css('color','black');
 				} else if (parseFloat(percentageCost[0] / 100) < min) {
-					$('#indicatorCosting').text('Kuning');
+					$('#indicatorCosting').text('Product Cost below Threshold');
 					$('#indicatorCosting').css('background-color','yellow');
 					$('#indicatorCosting').css('color','black');
 				} else {
-					$('#indicatorCosting').text('Hijau');
+					$('#indicatorCosting').text('Product Cost within Threshold, Ok to continue');
 					$('#indicatorCosting').css('background-color','green');
 					$('#indicatorCosting').css('color','white');
 				}
@@ -849,7 +853,7 @@
 				let productName = $('#productName').val();
 				let productQty = $('#productQty').val();
 				let productUom = $('#productUom').val();
-				let productSellPrice = $('#productSellPrice').val();
+				let productSellPrice = $('#productSellPrice').val().replace(',','').replace(',','');
 				let productQFactor = $('#qFactorResult').text().replace(',','').replace(',','');
 				let productResult = $('#totProdCost').text().replace(',','').replace(',','');
 				let productPercentage = $('#percentageCosting').text().split(' ');

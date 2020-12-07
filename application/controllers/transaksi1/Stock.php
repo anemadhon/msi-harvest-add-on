@@ -138,6 +138,7 @@ class Stock extends CI_Controller {
         $opname_header['id_user_input'] = $admin_id;
         $opname_header['opname_no'] = '';
         $opname_header['id_user_approved'] = $this->input->post('appr')? $admin_id : 0;
+        $opname_header['admin_approved_date'] = $this->input->post('appr')? date('Y-m-d H:i:s') : '';
         $opname_header['id_am'] = 0;
         $opname_header['id_rm'] = 0;
         $opname_header['am_approved'] = 0;
@@ -299,6 +300,7 @@ class Stock extends CI_Controller {
         $opname_header['posting_date'] = $this->l_general->str_to_date($this->input->post('postDate'));
         $opname_header['status'] = $this->input->post('appr')? $this->input->post('appr') : '1';
         $opname_header['id_user_approved'] = $this->input->post('appr')? $admin_id : 0;
+        $opname_header['admin_approved_date'] = $this->input->post('appr')? date('Y-m-d H:i:s') : '';
         $opname_header['am_approved'] = 0;
         $opname_header['rm_approved'] = 0;
 
@@ -373,6 +375,7 @@ class Stock extends CI_Controller {
         $isAM = $am ? $am : 'am';
         $opname_header['id_am'] = $isAM=='am' ? $admin_id : 0;
         $opname_header['am_approved'] = $isAM=='am' ? $this->input->post('action') : 0;
+        $opname_header['am_approved_date'] = $this->input->post('action')==2 ? date('Y-m-d H:i:s') : '';
 
         $succes_update_detail = false;
         if($this->st_model->opname_header_update_area_mgr($opname_header))
@@ -395,6 +398,7 @@ class Stock extends CI_Controller {
         $isRM = $rm ? $rm : 'rm';
         $opname_header['id_rm'] = $isRM=='rm' ? $admin_id : 0;
         $opname_header['rm_approved'] = $isRM=='rm' ? $this->input->post('action') : 0;
+        $opname_header['rm_approved_date'] = $this->input->post('action')==2 ? date('Y-m-d H:i:s') : '';
 
         $succes_update_detail = false;
         if($this->st_model->opname_header_update_reg_mgr($opname_header))
@@ -639,6 +643,8 @@ class Stock extends CI_Controller {
         $imgHead->setOffsetX(220);
         $imgHead->setWorksheet($excel->getActiveSheet());
 
+        //$excel->getActiveSheet()->getProtection()->setSheet(true);
+
         //set config for column width
         $excel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
         $excel->getActiveSheet()->getColumnDimension('B')->setWidth(25);
@@ -678,6 +684,8 @@ class Stock extends CI_Controller {
                 ),
             ),
         );
+
+        $excel->getActiveSheet()->protectCells('A9:M9', 'MSI_SO');
         
         $excel->getActiveSheet()->getStyle('A9:M9')->applyFromArray($styleArray);
 
@@ -705,6 +713,9 @@ class Stock extends CI_Controller {
 
         $numrow = 10;
         foreach($object['dataOnHand'] as $key=>$r){ 
+
+            $excel->getActiveSheet()->protectCells('A'.$numrow.':M'.$numrow, 'MSI_SO');
+
             // applying border style
             $excel->getActiveSheet()->getStyle('A'.$numrow.':M'.$numrow)->applyFromArray($styleArray);
 
@@ -724,7 +735,10 @@ class Stock extends CI_Controller {
 
             $abjadBegin = 'E';
             for ($i=1; $i <= count($object['head']); $i++) {
-                $excel->setActiveSheetIndex(0)->setCellValue(++$abjadBegin.$numrow, '');
+                $abjad = ++$abjadBegin;
+                $excel->getActiveSheet()->getStyle($abjad.$numrow)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+
+                $excel->setActiveSheetIndex(0)->setCellValue($abjad.$numrow, '');
             }
             $numrow++;
         }

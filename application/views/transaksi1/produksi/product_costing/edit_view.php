@@ -179,7 +179,7 @@
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Status</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" id="status" value="<?php echo $pc['status'] == 1 || $pc['status_head'] == 0 ? 'Not Approved' : 'Approved' ?>" readOnly>
+													<input type="text" class="form-control" id="status" value="<?php echo ($pc['status'] == 1 || $pc['status_head'] == 0) ? 'Not Approved' : 'Approved' ?>" readOnly>
 												</div>
 											</div>
 											
@@ -424,6 +424,10 @@
 					autoclose: true
 				};
 				//$('#postDate').datepicker(optSimple);
+
+				$('#productSellPrice').change(function () {
+					$(this).val(parseFloat($(this).val()).toLocaleString());
+				});
 
 				$('#tblItemIngredients').DataTable({
 					"ordering":false, "paging": false, "searching":true,
@@ -926,11 +930,11 @@
 			}
 
 			function setProdCostPercentage(price){
-				let pricePB1 = parseFloat(price) / (110/100);
+				let pricePB1 = parseFloat(price ? price.text().replace(',','').replace(',','') : 0) / (110/100);
 				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
 				let percentage = (totProdCost / pricePB1) * 100;
 
-				$('#percentageCosting').text(`${percentage.toFixed(4)} %`);
+				$('#percentageCosting').text(`${percentage ? percentage.toFixed(4) : '0.0000'} %`);
 				setPercentageColor();
 			}
 
@@ -946,15 +950,15 @@
 				}
 				
 				if (parseFloat(percentageCost[0] / 100) > max) {
-					$('#indicatorCosting').text('Merah');
+					$('#indicatorCosting').text('Product Cost above Threshold');
 					$('#indicatorCosting').css('background-color','red');
 					$('#indicatorCosting').css('color','black');
 				} else if (parseFloat(percentageCost[0] / 100) < min) {
-					$('#indicatorCosting').text('Kuning');
+					$('#indicatorCosting').text('Product Cost below Threshold');
 					$('#indicatorCosting').css('background-color','yellow');
 					$('#indicatorCosting').css('color','black');
 				} else {
-					$('#indicatorCosting').text('Hijau');
+					$('#indicatorCosting').text('Product Cost within Threshold, Ok to continue');
 					$('#indicatorCosting').css('background-color','green');
 					$('#indicatorCosting').css('color','white');
 				}
@@ -974,7 +978,7 @@
 				let productName = $('#productName').val();
 				let productQty = $('#productQty').val();
 				let productUom = $('#productUom').val();
-				let productSellPrice = $('#productSellPrice').val();
+				let productSellPrice = $('#productSellPrice').val().replace(',','').replace(',','');
 				let productQFactor = $('#qFactorResult').text().replace(',','').replace(',','');
 				let productResult = $('#totProdCost').text().replace(',','').replace(',','');
 				let productPercentage = $('#percentageCosting').text().split(' ');
