@@ -104,10 +104,24 @@
 										<fieldset>
 											<legend class="font-weight-semibold"><i class="icon-reading mr-2"></i>Edit Product Costing</legend>
 											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">No. Document</label>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" value="<?php echo $pc['prod_cost_no'] ?>" readOnly>
+												</div>
+											</div>
+
+											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Document</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" name="doc_status" id="docStatus" value="<?php echo $pc['existing_bom_code'] ? 'Existing' : 'New' ?>" readOnly>
 													<input type="hidden" id="idProdCost" value="<?php echo $pc['id_prod_cost_header'] ?>">
+												</div>
+											</div>
+
+											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">Costing Type</label>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" id="productType" value="<?php echo $pc['product_type'] == 1 ? 'WP' : 'Selling' ?>" readOnly>
 												</div>
 											</div>
 
@@ -131,13 +145,6 @@
 												<label class="col-lg-3 col-form-label">Existing Bom</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" name="existing_bom" id="existingBom" value="<?php echo $pc['existing_bom_code'].' - '.$pc['existing_bom_name'] ?>" readOnly>
-													<!-- <select class="form-control form-control-select2" data-live-search="true" id="existingBom" name="existing_bom" onchange="getExistingBomData(this.value)">
-														<option value="">Select Item</option>
-														<?php //foreach($existing_bom as $key=>$value){?>
-															<option value="<?=$key?>" desc="<?=$value?>"><?=$value?></option>
-														<?php //} ?>
-													</select> -->
-													<!-- <p id="txtProductQtyDefault"></p> -->
 												</div>
 											</div>
 											<?php } ?>
@@ -153,7 +160,6 @@
 												<label class="col-lg-3 col-form-label">Qty Produksi</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" name="product_qty" id="productQty" value="<?php echo $pc['product_qty'] ?>" onchange="multiplyingQtyItems_setTotalCost(this.value)">
-													<!-- <input type="hidden" id="productQtyDefault" value="0"> -->
 												</div>
 											</div>	
 
@@ -201,14 +207,14 @@
 											</div>
 											<?php } ?>
 											
-											<div class="form-group row">
+											<div class="form-group row wp">
 												<label class="col-lg-3 col-form-label">Selling Price (include Tax)</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" name="product_sell_price" id="productSellPrice" value="<?php echo $pc['product_selling_price'] ?>" onchange="setProdCostPercentage(this.value)">
 												</div>
 											</div>
 											
-											<div class="form-group row">
+											<div class="form-group row wp">
 												<label class="col-lg-3 col-form-label">Product Costing</label>
 												<div class="col-lg-9">
 													<p class="mt-1"><span id="percentageCosting"></span> <span id="indicatorCosting"></span></p>
@@ -239,16 +245,6 @@
 														<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(3)" >Approve <i class="icon-paperplane ml-2" ></input></i>
 													<?php endif; ?>
 												<?php endif; ?>
-
-												<?php //if ($pc['status'] == 1) : ?>
-													<!-- <button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb(1)">Save <i class="icon-pencil5 ml-2"></i></button> -->
-												<?php //endif; ?>
-												<?php //if ($this->auth->is_have_perm('auth_approve') && $this->auth->is_head_dept()['head_dept'] == $pc['user_login']) : ?>
-													<?php //if ($pc['status'] == 2) : ?>
-														<!-- <button type="button" class="btn btn-danger" name="reject" id="reject" data-toggle="modal" data-target="#exampleModal" data-backdrop="static">Reject<i class="icon-paperplane ml-2"></i></button>	 -->
-													<?php //endif; ?>
-													<!-- <button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)" >Approve <i class="icon-paperplane ml-2" ></input></i> -->
-												<?php //endif; ?>
 											</div>
 											
 										</fieldset>
@@ -258,7 +254,7 @@
 						</div> 
 						<div id="load" style="display:none"></div>  
 
-						<div class="card">
+						<div class="card wp">
 							<div class="card-body">
 								<div class="row">
 									<div class="col-md-12">
@@ -267,6 +263,7 @@
 											<p>Total Packaging Cost : <span id="totAllPackCost">0</span></p>
 											<p>Q Factor : <span id="qFactorResult">0</span></p>
 											<p>Total Product Cost : <span id="totProdCost">0</span></p>
+											<p>Total Product Cost / Qty Produksi: <span id="totProdCostDivQtyProd">0</span></p>
 										</div>
 									</div>
 								</div>
@@ -280,10 +277,12 @@
 									<div class="col-md-8 mb-2 after-doc" style="display: none;">
 										<div class="text-left">
 											<select name="item_group_ing" id="itemGroupIng" class="form-control form-control-select2" data-live-search="true">
-											<option value="">Select Item Group</option>
+												<option value="">Select Item Group</option>
 												<?php foreach($matrialGroup as $key=>$value){?>
 													<option value="<?=$value['ItmsGrpNam']?>" desc="<?=$value['ItmsGrpNam']?>"><?=$value['ItmsGrpNam']?></option>
 												<?php };?>
+												<option value="1" desc="Costing WP">Costing WP</option>
+												<option value="2" desc="Costing Selling">Costing Selling</option>
 											</select>
 										</div>
 									</div>
@@ -307,22 +306,7 @@
 													<th>Total Cost</th>
 												</tr>
 											</thead>
-											<tbody>
-												<!-- <tr id="firstRowIng" style="display: none;">
-													<td><input type="checkbox" class="check_delete_ing" id="recordIng"/></td>
-													<td>1</td>
-													<td width="35%">
-														<select class="form-control form-control-select2 dt_1" data-live-search="true" id="matrialGroupIngredients" onchange="setValueTableIngredients(this.value,1)">
-															<option value="">Select Item</option>
-														</select>
-													</td>
-													<td width="35%"></td>
-													<td><input type="text" class="form-control uom-ing" name="uom_costing" id="uomCostingIng_1" style="width:90px" autocomplete="off"></td>
-													<td><input type="text" class="form-control cost-ing" name="cost_costing" id="costCostingIng_1" style="width:90px" autocomplete="off"></td>
-													<td><input type="hidden" class="form-control ing" name="ing" id="ing_1" value="1"><input type="text" class="form-control" name="qty_costing" id="qtyCostingIng_1" style="width:90px" autocomplete="off" onchange="setTotalCostIng(this.value,1)"></td>
-													<td></td>
-												</tr> -->
-											</tbody>
+											<tbody></tbody>
 										</table>
 									</div>
 								</div>
@@ -336,10 +320,12 @@
 									<div class="col-md-8 mb-2 after-doc" style="display: none;">
 										<div class="text-left">
 											<select name="item_group_pack" id="itemGroupPack" class="form-control form-control-select2" data-live-search="true">
-											<option value="">Select Item Group</option>
+												<option value="">Select Item Group</option>
 												<?php foreach($matrialGroup as $key=>$value){?>
 													<option value="<?=$value['ItmsGrpNam']?>" desc="<?=$value['ItmsGrpNam']?>"><?=$value['ItmsGrpNam']?></option>
 												<?php };?>
+												<option value="1" desc="Costing WP">Costing WP</option>
+												<option value="2" desc="Costing Selling">Costing Selling</option>
 											</select>
 										</div>
 									</div>
@@ -363,22 +349,7 @@
 													<th>Total Cost</th>
 												</tr>
 											</thead>
-											<tbody>
-												<!-- <tr id="firstRowPack" style="display: none;">
-													<td><input type="checkbox" class="check_delete_pack" id="recordPack"/></td>
-													<td>1</td>
-													<td width="35%">
-														<select class="form-control form-control-select2 dt_1" data-live-search="true" id="matrialGroupPackaging" onchange="setValueTablePackaging(this.value,1)">
-															<option value="">Select Item</option>
-														</select>
-													</td>
-													<td width="35%"></td>
-													<td><input type="text" class="form-control uom-pack" name="uom_costing" id="uomCostingPack_1" style="width:90px" autocomplete="off"></td>
-													<td><input type="text" class="form-control cost-pack" name="cost_costing" id="costCostingPack_1" style="width:90px" autocomplete="off"></td>
-													<td><input type="hidden" class="form-control pack" name="pack" id="pack_1" value="2"><input type="text" class="form-control" name="qty_costing" id="qtyCostingPack_1" style="width:90px" autocomplete="off" onchange="setTotalCostPack(this.value,1)"></td>
-													<td></td>
-												</tr> -->
-											</tbody>
+											<tbody></tbody>
 										</table>
 									</div>
 								</div>
@@ -423,12 +394,24 @@
 					orientation: 'bottom right',
 					autoclose: true
 				};
-				//$('#postDate').datepicker(optSimple);
+
+				if ($('#productType').val() == 'Selling') {
+					$('.wp').show();
+				} else {
+					$('.wp').hide();
+				}
 
 				$('#productSellPrice').val(parseFloat($('#productSellPrice').val()).toLocaleString())
 
 				$('#productSellPrice').change(function () {
-					$(this).val($(this).val() ? parseFloat($(this).val()).toLocaleString() : 0);
+					if ($(this).val() && $(this).val().includes(',')) {
+						$(this).val($(this).val().replace(',','').replace(',',''));
+						$(this).val(parseFloat($(this).val()).toLocaleString());
+					} else if ($(this).val() && !$(this).val().includes(',')) {
+						$(this).val(parseFloat($(this).val()).toLocaleString());
+					} else {
+						$(this).val(0);
+					}
 				});
 
 				$('#tblItemIngredients').DataTable({
@@ -566,21 +549,6 @@
 					setTotalCostIng($(this).val(),noIng);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
-				/* tbodyIng.on('change','.descmat', function(){
-					trIng = $(this).closest('tr');
-					noIng = trIng[0].rowIndex;
-					let productQty = $('#productQty').val();
-					let qtyIng = $("option:selected", this).attr("matqty");
-					let matrialNoIng = $("option:selected", this).attr("matno");
-					let uomIng = $("option:selected", this).attr("uOm");
-					let lastPriceIng = $("option:selected", this).attr("lastprice");
-					let tableIng = document.getElementById("tblItemIngredients").rows[noIng].cells;
-					tableIng[2].innerHTML = matrialNoIng;
-					tableIng[4].innerHTML = uomIng;
-					tableIng[5].innerHTML = lastPriceIng;
-					tableIng[6].innerHTML = `<input type="hidden" class="form-control" id="typeCosting_${noIng}" name="ing" value="1"><input type="text" name="qty_costing" class="form-control" value="${parseFloat(qtyIng * productQty)}" style="width:90px" autocomplete="off" onchange="setTotalCostIng(this.value,${noIng})">`;
-					tableIng[7].innerHTML = parseFloat((qtyIng * productQty) * lastPriceIng);
-				}); */
 				let tbodyPack = $("#tblItemPackaging tbody");
 				tbodyPack.on('change','.qty-pack', function(){
 					let trPack = $(this).closest('tr');
@@ -588,21 +556,6 @@
 					setTotalCostPack($(this).val(),noPack);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
-				/* tbodyPack.on('change','.descmat', function(){
-					trPack = $(this).closest('tr');
-					noPack = trPack[0].rowIndex;
-					let productQty = $('#productQty').val();
-					let qtyPack = $("option:selected", this).attr("matqty");
-					let matrialNoPack = $("option:selected", this).attr("matno");
-					let uomPack = $("option:selected", this).attr("uOm");
-					let lastPricePack = $("option:selected", this).attr("lastprice");
-					let tablePack = document.getElementById("tblItemIngredients").rows[noPack].cells;
-					tablePack[2].innerHTML = matrialNoPack;
-					tablePack[4].innerHTML = uomPack;
-					tablePack[5].innerHTML = lastPricePack;
-					tablePack[6].innerHTML = `<input type="hidden" class="form-control" id="typeCosting_${noPack}" name="pack" value="2"><input type="text" name="qty_costing" class="form-control" value="${parseFloat(qtyPack * productQty)}" style="width:90px" autocomplete="off" onchange="setTotalCostPack(this.value,${noPack})">`;
-					tablePack[7].innerHTML = parseFloat((qtyPack * productQtyPack) * lastPricePack);
-				}); */
 				
 			});
 
@@ -617,62 +570,6 @@
 					setProdCostPercentage($('#productSellPrice').val());
 				});
 			}
-
-			/* function getExistingBomData(){
-				$.post("<?php echo site_url('transaksi1/productcosting/getExistingBomData');?>",{material_no: $('#existingBom option:selected').val()},(data)=>{
-					const value = JSON.parse(data);
-					$("#productQtyDefault").val(value.data[0]['Qauntity'].slice(0,-2));
-					$("#productUom").val(value.data[0]['InvntryUom']);
-					$("#txtProductQtyDefault").text(`Suggest Qty : ${value.data[0]['Qauntity'].slice(0,-2)}`);
-
-					showOnExistingBomChoosen();
-				});
-			} */
-
-			/* function showOnExistingBomChoosen(){
-				let existingBomCode = $('#existingBom option:selected').val();
-				let qtyDefaultexistingBom = $("#productQtyDefault").val();
-
-				$.ajax({
-					url:"<?php echo site_url('transaksi1/productcosting/showDetailInput');?>",
-					type:"POST",
-					data:{ 
-						kode_paket:existingBomCode,
-						Qty:1,
-						qtyDefault: qtyDefaultexistingBom
-					},
-					success:function(res) {
-						row = JSON.parse(res);
-						let getTableIng = $("#tblItemIngredients").DataTable();
-						let getTablePack = $("#tblItemPackaging").DataTable();
-						
-						getTableIng.row(0).remove().draw();
-						getTableIng.rows.add(row.data).draw();
-						getTablePack.row(0).remove().draw();
-						getTablePack.rows.add(row.data).draw();
-						addClassesIntoTable();
-					},
-				});
-			} */
-
-			/* function addClassesIntoTable(){
-				let tableIng = $("#tblItemIngredients tbody");
-				let tablePack = $("#tblItemPackaging tbody");
-				tableIng.find('tr').each(function(i, el){
-					let tdIng = $(this).find('td');
-					tdIng.eq(0).find('input:checkbox').addClass('check_delete_ing');
-					tdIng.eq(6).find('input:hidden').addClass('ing');
-					tdIng.eq(6).find('input:hidden').val(1);
-					tdIng.eq(6).find('input:text').addClass('qty-ing');
-				});
-				tablePack.find('tr').each(function(i, el){
-					let tdPack = $(this).find('td');
-					tdPack.eq(0).find('input:checkbox').addClass('check_delete_pack');
-					tdPack.eq(6).find('input:hidden').addClass('pack');
-					tdPack.eq(6).find('input:hidden').val(2);
-					tdPack.eq(6).find('input:text').addClass('qty-pack');
-				});
-			} */
 
 			function multiplyingQtyItems_setTotalCost(productQty){
 				if ($('#docStatus').val() == 'Existing') {
@@ -693,6 +590,8 @@
 					setTotalFoodCost();
 					setTotalMaterialCost();
 					setProdCostPercentage($('#productSellPrice').val());
+				} else {
+					setTotalProdCostDivQtyProduct();
 				}
 			}
 
@@ -929,6 +828,14 @@
 				let qFactorResult = parseFloat($('#qFactorResult').text().replace(',','').replace(',',''));
 				let result = (totFood + totMaterial + qFactorResult) + (0.1 * (totFood + totMaterial + qFactorResult))
 				$('#totProdCost').text(result.toLocaleString());
+				setTotalProdCostDivQtyProduct();
+			}
+
+			function setTotalProdCostDivQtyProduct(){
+				let productQty = $('#productQty').val() ? $('#productQty').val() : 0;
+				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
+				let result = totProdCost / parseFloat(productQty);
+				$('#totProdCostDivQtyProd').text(result ? result.toLocaleString() : 0);
 			}
 
 			function setProdCostPercentage(price){
@@ -968,15 +875,12 @@
 			}
 
 			function addDatadb(id_approve){
-				//let docStatus = $('#docStatus').val();
 				let idDoc = $('#idProdCost').val();
 				let categoryCode = $('#category option:selected').val();
 				let categoryName = $('#category option:selected').text();
 				let categoryQF = $('#qFactorSAP').val();
 				let categoryMinCost = $('#minCostSAP').val();
 				let categoryMaxCost = $('#maxCostSAP').val();
-				//let existingBomCode	= $('#existingBom option:selected').val();
-				//let existingBomName	= $('#existingBom option:selected').text();
 				let productName = $('#productName').val();
 				let productQty = $('#productQty').val();
 				let productUom = $('#productUom').val();
@@ -984,7 +888,7 @@
 				let productQFactor = $('#qFactorResult').text().replace(',','').replace(',','');
 				let productResult = $('#totProdCost').text().replace(',','').replace(',','');
 				let productPercentage = $('#percentageCosting').text().split(' ');
-				//let postDate = $('#postDate').val();
+				let productResultDivQtyProd = $('#totProdCostDivQtyProd').text().replace(',','').replace(',','');
 				let approve = id_approve;
 
 				let tblItemIngredients = $('#tblItemIngredients > tbody');
@@ -1029,9 +933,6 @@
 						}
 					}
 				});
-				/* if(docStatus == ''){
-					errorMesseges.push('Document harus di pilih. \n');
-				} */
 				if(categoryCode == ''){
 					errorMesseges.push('Category harus di pilih. \n');
 				}
@@ -1044,9 +945,6 @@
 				if(productUom.trim() == ''){
 					errorMesseges.push('Product UOM harus di isi. \n');
 				}
-				/* if(postDate.trim() == ''){
-					errorMesseges.push('Posting Date harus di isi. \n');
-				} */
 				if(productSellPrice.trim() == ''){
 					errorMesseges.push('Selling Price Product harus di isi. \n');
 				}
@@ -1068,8 +966,6 @@
 						categoryQF:categoryQF,
 						categoryMin:categoryMinCost,
 						categoryMax:categoryMaxCost,
-						// existingBomCode:existingBomCode,
-						// existingBomName:existingBomName,
 						productName:productName,
 						productQty:productQty,
 						productUom:productUom,
@@ -1077,7 +973,7 @@
 						productQFactor:productQFactor,
 						productResult:productResult,
 						productPercentage:productPercentage[0],
-						// postDate:postDate, 
+						productResultDivQtyProd:productResultDivQtyProd,
 						approve:approve, 
 						matrialNo:matrialNo, 
 						matrialDesc:matrialDesc, 

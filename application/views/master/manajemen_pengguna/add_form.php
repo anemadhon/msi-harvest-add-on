@@ -96,7 +96,7 @@
 											</div>
 
 											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Departemen:</label>
+												<label class="col-lg-3 col-form-label">Departemen</label>
 												<div class="col-lg-9">
                                                     <select class="form-control form-control-select2" name="dept_manager" id="deptManager" required>
 														<option value="">Select Department</option>

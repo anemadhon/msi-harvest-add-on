@@ -5,7 +5,7 @@ class Productcosting_model extends CI_Model {
 	function getProdCostData($fromDate='', $toDate='', $status=''){
 		$kd_plant = $this->session->userdata['ADMIN']['plant'];
 		$this->db->distinct();
-		$this->db->select('a.id_prod_cost_header, a.product_name, a.existing_bom_code, a.existing_bom_name, a.product_qty, a.product_uom, a.status, a.created_date, a.status_head,
+		$this->db->select('a.id_prod_cost_header, a.product_name, a.existing_bom_code, a.existing_bom_name, a.product_qty, a.product_uom, a.status, a.created_date, a.status_head, a.approved_user_date, a.approved_head_dept_date, a.rejected_head_dept_date, a.prod_cost_no,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_input) as created_by,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_approved) as approved_by');
 		$this->db->from('t_prod_cost_header a');
@@ -134,7 +134,7 @@ class Productcosting_model extends CI_Model {
 		if ($item_groups->num_rows() > 0) {
 			return $item_groups->row_array();
 		} else {
-			return FALSE;
+			return $this->getDataItemSelectedWPSelling($itemSelect);
 		}
 	}
 
@@ -149,7 +149,7 @@ class Productcosting_model extends CI_Model {
 		if ($last->num_rows() > 0) {
 			return $last->row_array();
 		} else {
-			return FALSE;
+			return $this->getDataLastPurchaseItemSelectedWPSelling($itemSelect);
 		}
 	}
 
@@ -187,21 +187,6 @@ class Productcosting_model extends CI_Model {
 			return FALSE;
 		}
 	}
-
-	/* function getDataDetailValidForExistingBom($material_no){
-		$SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-		$SAP_MSI->select('OITM.validFor,OITB.DecreasAc');
-		$SAP_MSI->from('OITM');
-		$SAP_MSI->join('OITB','OITM.ItmsGrpCod = OITB.ItmsGrpCod');
-		$SAP_MSI->where('ItemCode',$material_no);
-		$query = $SAP_MSI->get();
-
-		if(($query)&&($query->num_rows() > 0)){
-			return $query->result_array();
-		}else{
-		return FALSE;
-		}
-	} */
 
 	function getDataDetailUOMForExistingBom($material_no){
 		$SAP_MSI = $this->load->database('SAP_MSI', TRUE);
@@ -333,6 +318,7 @@ class Productcosting_model extends CI_Model {
 				'product_q_factor' => $prod_cost_header['product_q_factor'],
 				'product_percentage' => $prod_cost_header['product_percentage'],
 				'product_result' => $prod_cost_header['product_result'],
+				'product_result_div_product_qty' => $prod_cost_header['product_result_div_product_qty'],
 				'status' => $prod_cost_header['status'],
 				'status_head' => $prod_cost_header['status_head'],
 				'id_user_approved' => $prod_cost_header['id_user_approved'],
@@ -354,6 +340,7 @@ class Productcosting_model extends CI_Model {
 				'product_q_factor' => $prod_cost_header['product_q_factor'],
 				'product_percentage' => $prod_cost_header['product_percentage'],
 				'product_result' => $prod_cost_header['product_result'],
+				'product_result_div_product_qty' => $prod_cost_header['product_result_div_product_qty'],
 				'status' => $prod_cost_header['status'],
 				'status_head' => $prod_cost_header['status_head'],
 				'id_user_approved' => $prod_cost_header['id_user_approved'],
@@ -381,5 +368,50 @@ class Productcosting_model extends CI_Model {
 			return TRUE;
 		else
 			return FALSE;
+	}
+
+	function updateNoProdCost($no, $id){
+		$update = array(
+			'prod_cost_no' => $no
+		);
+		$this->db->where('id_prod_cost_header', $id);
+        if($this->db->update('t_prod_cost_header', $update))
+			return TRUE;
+		else
+			return FALSE;
+	}
+
+	function getAllDataItemsWPSelling($type){
+		$this->db->distinct();
+		$this->db->select('a.product_name as MAKTX, a.prod_cost_no as MATNR');
+		$this->db->from('t_prod_cost_header a');
+		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
+		$this->db->where('a.product_type', $type);
+
+		$query = $this->db->get();
+		$data = $query->result_array();
+		return $data;
+	}
+	
+	function getDataItemSelectedWPSelling($code){
+		$this->db->distinct();
+		$this->db->select('a.product_name as MAKTX, a.product_uom as UNIT1');
+		$this->db->from('t_prod_cost_header a');
+		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
+		$this->db->where('a.prod_cost_no', $code);
+
+		$query = $this->db->get();
+		return $query->row_array();
+	}
+	
+	function getDataLastPurchaseItemSelectedWPSelling($code){
+		$this->db->distinct();
+		$this->db->select('a.product_result_div_product_qty as LastPrice');
+		$this->db->from('t_prod_cost_header a');
+		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
+		$this->db->where('a.prod_cost_no', $code);
+
+		$query = $this->db->get();
+		return $query->row_array();
 	}
 }

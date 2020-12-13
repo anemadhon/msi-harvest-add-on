@@ -31,14 +31,14 @@
                                             <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i>Ubah Data Pengguna</legend>
                                             
 											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">NIK:</label>
+												<label class="col-lg-3 col-form-label">NIK</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" name="data_nik" autocomplete="off" value="<?=$admin->admin_emp_id?>" readOnly>
 												</div>
 											</div>
 
                                             <div class="form-group row">
-												<label class="col-lg-3 col-form-label">Username:</label>
+												<label class="col-lg-3 col-form-label">Username</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control <?php echo validation_errors('admin_username') ? 'is-invalid':'' ?>"  name="admin_username" autocomplete="off" required value="<?=$admin->admin_username?>" readOnly>
 													<div class="invalid-feedback">
@@ -48,7 +48,7 @@
 											</div>
 
                                             <div class="form-group row">
-												<label class="col-lg-3 col-form-label">Nama Lengkap:</label>
+												<label class="col-lg-3 col-form-label">Nama Lengkap</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control <?php echo validation_errors('admin_realname') ? 'is-invalid':'' ?>" name="admin_realname" autocomplete="off" required value="<?=$admin->admin_realname?>" readOnly>
 													<div class="invalid-feedback">
@@ -68,7 +68,7 @@
 											</div>
 
                                             <div class="form-group row">
-												<label class="col-lg-3 col-form-label">Pilih Plant:</label>
+												<label class="col-lg-3 col-form-label">Pilih Plant</label>
 												<div class="col-lg-9">
                                                     <select class="form-control multiselect-select-all-filtering" multiple="multiple" data-fouc name="plants[]">
 													<?php 
@@ -90,7 +90,7 @@
 											</div>
 
                                             <div class="form-group row">
-												<label class="col-lg-3 col-form-label">Group Hak Akses:</label>
+												<label class="col-lg-3 col-form-label">Group Hak Akses</label>
 												<div class="col-lg-9">
                                                     <select class="form-control multiselect-select-all-filtering" multiple="multiple" data-fouc name="perm_group_id[]">
 													<?php 
@@ -123,7 +123,7 @@
 											?>
 
 											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Departemen:</label>
+												<label class="col-lg-3 col-form-label">Departemen</label>
 												<div class="col-lg-9">
 													<?php if($isSame == $admin->admin_id){?>
 														<input type="text" class="form-control" value="<?=$name?>" readOnly>

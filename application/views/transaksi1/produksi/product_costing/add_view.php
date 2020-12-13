@@ -104,12 +104,30 @@
 										<fieldset>
 											<legend class="font-weight-semibold"><i class="icon-reading mr-2"></i>Product Costing</legend>
 											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">No. Document</label>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" name="prod_cost_no" id="prodCostNo" placeholder="(Auto Generate After Submiting Document)" readOnly>
+												</div>
+											</div>
+
+											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Document</label>
 												<div class="col-lg-9">
 													<select name="doc_status" class="form-control form-control-select2" data-live-search="true" id="docStatus">
 														<option value="">Select Document</option>
 														<option value="1">New</option>
 														<option value="2">Existing</option>
+													</select>
+												</div>
+											</div>
+
+											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">Costing Type</label>
+												<div class="col-lg-9">
+													<select name="product_type" class="form-control form-control-select2" data-live-search="true" id="productType">
+														<option value="">Select Type</option>
+														<option value="1">WP</option>
+														<option value="2">Selling</option>
 													</select>
 												</div>
 											</div>
@@ -183,14 +201,14 @@
 												</div>
 											</div>
 											
-											<div class="form-group row">
+											<div class="form-group row wp">
 												<label class="col-lg-3 col-form-label">Selling Price (include Tax)</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" name="product_sell_price" id="productSellPrice" onchange="setProdCostPercentage(this.value)">
 												</div>
 											</div>
 											
-											<div class="form-group row">
+											<div class="form-group row wp">
 												<label class="col-lg-3 col-form-label">Product Costing</label>
 												<div class="col-lg-9">
 													<p class="mt-1"><span id="percentageCosting"></span> <span id="indicatorCosting"></span></p>
@@ -211,7 +229,7 @@
 						</div> 
 						<div id="load" style="display:none"></div>  
 
-						<div class="card">
+						<div class="card wp">
 							<div class="card-body">
 								<div class="row">
 									<div class="col-md-12">
@@ -220,6 +238,7 @@
 											<p>Total Packaging Cost : <span id="totAllPackCost">0</span></p>
 											<p>Q Factor : <span id="qFactorResult">0</span></p>
 											<p>Total Product Cost : <span id="totProdCost">0</span></p>
+											<p>Total Product Cost / Qty Produksi: <span id="totProdCostDivQtyProd">0</span></p>
 										</div>
 									</div>
 								</div>
@@ -233,10 +252,12 @@
 									<div class="col-md-8 mb-2 after-doc" style="display: none;">
 										<div class="text-left">
 											<select name="item_group_ing" id="itemGroupIng" class="form-control form-control-select2" data-live-search="true">
-											<option value="">Select Item Group</option>
+												<option value="">Select Item Group</option>
 												<?php foreach($matrialGroup as $key=>$value){?>
 													<option value="<?=$value['ItmsGrpNam']?>" desc="<?=$value['ItmsGrpNam']?>"><?=$value['ItmsGrpNam']?></option>
 												<?php };?>
+												<option value="1" desc="Costing WP">Costing WP</option>
+												<option value="2" desc="Costing Selling">Costing Selling</option>
 											</select>
 										</div>
 									</div>
@@ -289,10 +310,12 @@
 									<div class="col-md-8 mb-2 after-doc" style="display: none;">
 										<div class="text-left">
 											<select name="item_group_pack" id="itemGroupPack" class="form-control form-control-select2" data-live-search="true">
-											<option value="">Select Item Group</option>
+												<option value="">Select Item Group</option>
 												<?php foreach($matrialGroup as $key=>$value){?>
 													<option value="<?=$value['ItmsGrpNam']?>" desc="<?=$value['ItmsGrpNam']?>"><?=$value['ItmsGrpNam']?></option>
 												<?php };?>
+												<option value="1" desc="Costing WP">Costing WP</option>
+												<option value="2" desc="Costing Selling">Costing Selling</option>
 											</select>
 										</div>
 									</div>
@@ -347,6 +370,20 @@
 		<script>
 			$(document).ready(function(){
 
+				$('.wp').hide();
+
+				$('#productType').change(function(){
+					if ($(this).val() == 2) {
+						$('.wp').show();
+						$('#productSellPrice').val('');
+						$('#percentageCosting').val('');
+					} else {
+						$('.wp').hide();
+						$('#productSellPrice').val(0);
+						$('#percentageCosting').val(0);
+					}
+				});
+
 				$('#docStatus').change(function(){
 					let docStatus = $(this).val();
 					if (docStatus == 2) {
@@ -362,7 +399,14 @@
 				});
 
 				$('#productSellPrice').change(function () {
-					$(this).val($(this).val() ? parseFloat($(this).val()).toLocaleString() : 0);
+					if ($(this).val() && $(this).val().includes(',')) {
+						$(this).val($(this).val().replace(',','').replace(',',''));
+						$(this).val(parseFloat($(this).val()).toLocaleString());
+					} else if ($(this).val() && !$(this).val().includes(',')) {
+						$(this).val(parseFloat($(this).val()).toLocaleString());
+					} else {
+						$(this).val(0);
+					}
 				});
 
 				$("#tblItemIngredients").DataTable({
@@ -467,6 +511,8 @@
 					tableIng[5].innerHTML = lastPriceIng;
 					tableIng[6].innerHTML = `<input type="hidden" class="form-control" id="typeCosting_${noIng}" name="ing" value="1"><input type="text" name="qty_costing" class="form-control" value="${parseFloat(qtyIng * productQty)}" style="width:90px" autocomplete="off" onchange="setTotalCostIng(this.value,${noIng})">`;
 					tableIng[7].innerHTML = parseFloat((qtyIng * productQty) * lastPriceIng);
+					setTotalCostIng(parseFloat(qtyIng * productQty),noIng);
+					setProdCostPercentage($('#productSellPrice').val());
 				});
 				let tbodyPack = $("#tblItemPackaging tbody");
 				tbodyPack.on('change','.qty-pack', function(){
@@ -489,6 +535,8 @@
 					tablePack[5].innerHTML = lastPricePack;
 					tablePack[6].innerHTML = `<input type="hidden" class="form-control" id="typeCosting_${noPack}" name="pack" value="2"><input type="text" name="qty_costing" class="form-control" value="${parseFloat(qtyPack * productQty)}" style="width:90px" autocomplete="off" onchange="setTotalCostPack(this.value,${noPack})">`;
 					tablePack[7].innerHTML = parseFloat((qtyPack * productQtyPack) * lastPricePack);
+					setTotalCostPack(parseFloat(qtyPack * productQty),noPack);
+					setProdCostPercentage($('#productSellPrice').val());
 				});
 
 				$('#itemGroupIng').change(function(){
@@ -546,6 +594,9 @@
 						/* getTablePack.row(0).remove().draw();
 						getTablePack.rows.add(row.data).draw(); */
 						addClassesIntoTable();
+						if ($('#productType option:selected').val() == 1) {
+							$('#after-submit').show();
+						}
 					},
 				});
 			}
@@ -588,6 +639,8 @@
 					setTotalFoodCost();
 					//setTotalMaterialCost();
 					setProdCostPercentage($('#productSellPrice').val());
+				} else {
+					setTotalProdCostDivQtyProduct();
 				}
 			}
 
@@ -802,6 +855,14 @@
 				let qFactorResult = parseFloat($('#qFactorResult').text().replace(',','').replace(',',''));
 				let result = (totFood + totMaterial + qFactorResult) + (0.1 * (totFood + totMaterial + qFactorResult))
 				$('#totProdCost').text(result.toLocaleString());
+				setTotalProdCostDivQtyProduct();
+			}
+
+			function setTotalProdCostDivQtyProduct(){
+				let productQty = $('#productQty').val() ? $('#productQty').val() : 0;
+				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
+				let result = totProdCost / parseFloat(productQty);
+				$('#totProdCostDivQtyProd').text(result ? result.toLocaleString() : 0);
 			}
 
 			function setProdCostPercentage(price){
@@ -809,7 +870,7 @@
 				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
 				let percentage = (totProdCost / pricePB1) * 100;
 
-				$('#percentageCosting').text(`${percentage ? percentage.toFixed(4) : '0.0000'} %`);
+				$('#percentageCosting').text(`${$('#productType option:selected').val() == 2 ? (percentage ? percentage.toFixed(4) : 0) : 0} %`);
 				setPercentageColor();
 			}
 
@@ -820,12 +881,20 @@
 				let min = parseFloat($("#minCostSAP").val()) * (1/100);
 				let max = parseFloat($("#maxCostSAP").val()) * (1/100);
 
-				if ($('#percentageCosting').text() == '0 %' && totFood == '0' && qFactorResult == '0') {
-					$('#after-submit').hide();
+				let tblItemIngredients = $('#tblItemIngredients > tbody');
+
+				if ($('#productType option:selected').val() == 2) {
+					if ($('#percentageCosting').text() == '0 %' && totFood == '0' && qFactorResult == '0') {
+						$('#after-submit').hide();
+					} else {
+						$('#after-submit').show();
+					}
 				} else {
-					$('#after-submit').show();
+					if ($('#qtyCostingIng_1').val()) {
+						$('#after-submit').show();
+					}
 				}
-				
+
 				if (parseFloat(percentageCost[0] / 100) > max) {
 					$('#indicatorCosting').text('Product Cost above Threshold');
 					$('#indicatorCosting').css('background-color','red');
@@ -844,6 +913,7 @@
 
 			function addDatadb(id_approve){
 				let docStatus = $('#docStatus option:selected').val();
+				let productType = $('#productType option:selected').val();
 				let categoryCode = $('#category option:selected').val();
 				let categoryName = $('#category option:selected').text();
 				let categoryQF = $('#qFactorSAP').val();
@@ -858,6 +928,7 @@
 				let productQFactor = $('#qFactorResult').text().replace(',','').replace(',','');
 				let productResult = $('#totProdCost').text().replace(',','').replace(',','');
 				let productPercentage = $('#percentageCosting').text().split(' ');
+				let productResultDivQtyProd = $('#totProdCostDivQtyProd').text().replace(',','').replace(',','');
 				let postDate = $('#postDate').val();
 				let approve = id_approve;
 
@@ -903,6 +974,9 @@
 				if(docStatus == ''){
 					errorMesseges.push('Document harus di pilih. \n');
 				}
+				if(productType == ''){
+					errorMesseges.push('Costing Type harus di pilih. \n');
+				}
 				if(categoryCode == ''){
 					errorMesseges.push('Category harus di pilih. \n');
 				}
@@ -947,8 +1021,10 @@
 						productQFactor:productQFactor,
 						productResult:productResult,
 						productPercentage:productPercentage[0],
+						productResultDivQtyProd:productResultDivQtyProd,
 						postDate:postDate, 
 						approve:approve, 
+						productType:productType, 
 						matrialNo:matrialNo, 
 						matrialDesc:matrialDesc, 
 						itemQty:itemQty, 

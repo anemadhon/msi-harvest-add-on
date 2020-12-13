@@ -55,17 +55,20 @@ class Productcosting extends CI_Controller{
 
             $nestedData = array();
 			$nestedData['id_prod_cost_header'] 		= $val['id_prod_cost_header'];
+			$nestedData['prod_cost_no'] 			= $val['prod_cost_no'];
 			$nestedData['product_name'] 			= $val['product_name'];
             $nestedData['existing_bom'] 			= $val['existing_bom_code'].' - '.$val['existing_bom_name'];
 			$nestedData['product_qty'] 				= $val['product_qty'];
 			$nestedData['product_uom'] 				= $val['product_uom'];
-			$nestedData['status'] 					= $val['status'] == '1'  ||  $val['status_head'] == '0' ? 'Not Approved' : 'Approved' ;
+			$nestedData['status'] 					= ($val['status'] == '1' || $val['status_head'] == '0') ? 'Not Approved' : 'Approved' ;
 			$nestedData['status_head'] 				= $val['status_head'] == '1' ? 'Not Approved' : ($val['status_head'] == '0' ? 'Rejected' : 'Approved') ;
 			$nestedData['created_date'] 			= date("d-m-Y",strtotime($val['created_date']));
             $nestedData['created_by'] 				= $val['created_by'];
             $nestedData['approved_by'] 				= $val['status_head'] == '0' ? '' : $val['approved_by'];
             $nestedData['head_dept'] 				= $val['status_head'] != '1' ? $val['approved_by'] : '';
-            $data[] = $nestedData;
+            $nestedData['approval_admin_date'] 		= ($val['approved_user_date'] == '1900-01-01 00:00:00.000' || !$val['approved_user_date'] || $val['status_head'] == '0') ? '' : date("d-m-Y H:i:s",strtotime($val['approved_user_date']));
+            $nestedData['approval_head_date'] 		= $val['status_head'] == '1' ? '' : ($val['status_head'] == '0' ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : ''));//$val['status_head'] == '1' ? '' : $val['rejected_head_dept_date'] ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : '');
+            $data[] = $nestedData;					//= $val['status_head'] == '1' ? '' : ($val['status_head'] == '0' ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : '');
 
         }
 		
@@ -127,7 +130,7 @@ class Productcosting extends CI_Controller{
 
 	public function addItemRow(){
 		$itmGrp = $this->input->post('itmGrp');
-		$rs = $this->pc->getAllDataItems($itmGrp);
+		$rs = ($itmGrp == 1 || $itmGrp == 2) ? $this->pc->getAllDataItemsWPSelling($itmGrp) : $this->pc->getAllDataItems($itmGrp);
 		echo json_encode($rs);
 	}
 
@@ -142,30 +145,7 @@ class Productcosting extends CI_Controller{
         if($rs){
             foreach($rs as $data){
 		
-				/* $querySAP = $this->pc->getDataDetailValidForExistingBom($data['material_no']);
-				$validFor = '';
-				$decreasAc = '';
-				if($querySAP != false){
-					$validFor = $querySAP[0]['validFor'];
-					$decreasAc = $querySAP[0]['DecreasAc'];
-				} */
-				
-				/* $getopenqty = $this->wovendor->wo_detail_openqty($data['material_no']);
-				$openqty = '';
-				if($getopenqty != false){
-					$openqty = (float)$getopenqty[0]['OpenQty'];
-				} */
-				
-				/* $ucaneditqty = $this->wovendor->wo_detail_ucaneditqty($kode_paket,$data['material_no']);
-				$getlocked = $this->wovendor->sap_wo_select_locked($kode_paket); */
-
-				//$getucaneditqty='';
 				$getucaneditqty = '<input type="hidden" class="form-control" id="typeCosting_'.$i.'"><input type="text" id="qtyCosting_'.$i.'" class="form-control" value="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" style="width:90px" autocomplete="off">';
-				
-				/* if($getlocked[0]['U_Locked'] == 'N' && $ucaneditqty[0]['CanEditQty'] == 'Y'){
-				}else {
-					$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" readonly>';
-				} */
 
 				$queryUOM = $this->pc->getDataDetailUOMForExistingBom($data['material_no']);
 				if(count($queryUOM)>0){
@@ -179,13 +159,13 @@ class Productcosting extends CI_Controller{
 				$querySAP2 = $this->pc->getDataDetailItemBOMForExistingBom($kode_paket,$data['material_no']);
 				
 				$select = '<select class="form-control form-control-select2 descmat" data-live-search="true" name="descmat" id="descmat_'.$i.'">
-								<option value="'.$data['material_desc'].'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$data['material_no'].'" lastprice="'.$lastPurchase.'">'.$data['material_desc'].'</option>'; //$data['quantity'] * (float)$qty_header
+								<option value="'.$data['material_desc'].'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$data['material_no'].'" lastprice="'.$lastPurchase.'">'.$data['material_desc'].'</option>';
 								if($querySAP2){
 									foreach($querySAP2 as $_querySAP2){
 										$queryGetSubLastPurchase = $this->pc->getDataLastPurchaseItemSelected($_querySAP2['U_SubsCode']);
 										$subLastPurchase = $queryGetSubLastPurchase['LastPrice'] == ".000000" ? "0.0000" : number_format($queryGetSubLastPurchase['LastPrice'],4,'.','');
 										if($_querySAP2['U_ItemCodeBOM'] == $data['material_no']){
-											$select .= '<option value="'.$_querySAP2['NAME'].'" uOm="'.$_querySAP2['U_SubsUOM'].'" matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$_querySAP2['U_SubsCode'].'" lastprice="'.$subLastPurchase.'">'.$_querySAP2['NAME'].'</option>'; //$_querySAP2['U_SubsQty'] * (float)$qty_header
+											$select .= '<option value="'.$_querySAP2['NAME'].'" uOm="'.$_querySAP2['U_SubsUOM'].'" matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$_querySAP2['U_SubsCode'].'" lastprice="'.$subLastPurchase.'">'.$_querySAP2['NAME'].'</option>';
 										}
 									}
 								}
@@ -213,10 +193,6 @@ class Productcosting extends CI_Controller{
 				$nestedData['5'] = $lastPurchase;
 				$nestedData['6'] = $getucaneditqty;
 				$nestedData['7'] = '';
-				/* $nestedData['id_mpaket_h_detail'] = $data['id_mpaket_h_detail'];
-				$nestedData['material_desc'] = $data['material_desc'];
-				$nestedData['validFor'] = $validFor;
-				$nestedData['decreasAc'] = $decreasAc; */
 				$dt[] = $nestedData;
 				$i++;
 			}
@@ -230,7 +206,6 @@ class Productcosting extends CI_Controller{
 
 	public function addData(){
 		$product_cost_header['id_prod_cost_plant'] = $this->pc->selectIDPlant($this->session->userdata['ADMIN']['plant'],$this->l_general->str_to_date($this->input->post('postDate')));
-		$product_cost_header['prod_cost_no'] = '';
 		$product_cost_header['plant'] = $this->session->userdata['ADMIN']['plant'];
 		$product_cost_header['plant_name'] = $this->session->userdata['ADMIN']['plant_name'];
 		$product_cost_header['category_code'] = $this->input->post('categoryCode');
@@ -247,6 +222,8 @@ class Productcosting extends CI_Controller{
 		$product_cost_header['product_q_factor'] = $this->input->post('productQFactor');
 		$product_cost_header['product_percentage'] = $this->input->post('productPercentage');
 		$product_cost_header['product_result'] = $this->input->post('productResult');
+		$product_cost_header['product_result_div_product_qty'] = $this->input->post('productResultDivQtyProd');
+		$product_cost_header['product_type'] = $this->input->post('productType');
 		$product_cost_header['status'] = $this->input->post('approve');
 		$product_cost_header['status_head'] = 1;
 		$product_cost_header['posting_date'] = $this->l_general->str_to_date($this->input->post('postDate'));
@@ -258,18 +235,21 @@ class Productcosting extends CI_Controller{
 		
 		$count = count($this->input->post('matrialNo'));
 		if($id_product_cost_header = $this->pc->insertHeaderProdCost($product_cost_header)) {
-			$input_detail_success = FALSE;
-			for($i = 0; $i < $count; $i++){
-				$product_cost_detail['id_prod_cost_header'] = $id_product_cost_header;
-				$product_cost_detail['id_prod_cost_h_detail'] = $i+1;
-				$product_cost_detail['material_no'] = $this->input->post('matrialNo')[$i];
-				$product_cost_detail['material_desc'] = $this->input->post('matrialDesc')[$i];
-				$product_cost_detail['item_type'] = $this->input->post('itemType')[$i];
-				$product_cost_detail['item_qty'] = $this->input->post('itemQty')[$i];
-				$product_cost_detail['item_uom'] = $this->input->post('itemUom')[$i];
-				$product_cost_detail['item_cost'] = $this->input->post('itemCost')[$i];
-				if($this->pc->insertDetailProdCost($product_cost_detail) ){
-					$input_detail_success = TRUE;
+			$product_cost_header['prod_cost_no'] = $this->input->post('productType') == 1 ? 'WP'.date('Y').sprintf("%06s", $id_product_cost_header) : 'FG'.date('Y').sprintf("%06s", $id_product_cost_header);
+			if ($updateNoProdCost = $this->pc->updateNoProdCost($product_cost_header['prod_cost_no'],$id_product_cost_header)) {
+				$input_detail_success = FALSE;
+				for($i = 0; $i < $count; $i++){
+					$product_cost_detail['id_prod_cost_header'] = $id_product_cost_header;
+					$product_cost_detail['id_prod_cost_h_detail'] = $i+1;
+					$product_cost_detail['material_no'] = $this->input->post('matrialNo')[$i];
+					$product_cost_detail['material_desc'] = $this->input->post('matrialDesc')[$i];
+					$product_cost_detail['item_type'] = $this->input->post('itemType')[$i];
+					$product_cost_detail['item_qty'] = $this->input->post('itemQty')[$i];
+					$product_cost_detail['item_uom'] = $this->input->post('itemUom')[$i];
+					$product_cost_detail['item_cost'] = $this->input->post('itemCost')[$i];
+					if($this->pc->insertDetailProdCost($product_cost_detail) ){
+						$input_detail_success = TRUE;
+					}
 				}
 			}
 		}
@@ -303,6 +283,8 @@ class Productcosting extends CI_Controller{
 		$object['matrialGroup'] = $this->pc->showMatrialGroup();
 		
         $object['pc']['id_prod_cost_header'] = $object['data']['id_prod_cost_header'];
+        $object['pc']['prod_cost_no'] = $object['data']['prod_cost_no'];
+        $object['pc']['product_type'] = $object['data']['product_type'];
         $object['pc']['category_code'] = $object['data']['category_code'];
         $object['pc']['category_name'] = $object['data']['category_name'];
         $object['pc']['category_q_factor'] = $object['data']['category_q_factor'];
@@ -371,6 +353,7 @@ class Productcosting extends CI_Controller{
 		$prod_cost_header['product_q_factor'] = $this->input->post('productQFactor');
 		$prod_cost_header['product_percentage'] = $this->input->post('productPercentage');
 		$prod_cost_header['product_result'] = $this->input->post('productResult');
+		$prod_cost_header['product_result_div_product_qty'] = $this->input->post('productResultDivQtyProd');
 		$prod_cost_header['status'] = $approve == 2 || $approve == 3 ? 2 : 1;
 		$prod_cost_header['status_head'] = $approve == 3 ? 2 : 1;
 		$prod_cost_header['id_user_approved'] = $approve == 2 || $approve == 3 ? $this->session->userdata['ADMIN']['admin_id'] : 0;
@@ -378,7 +361,7 @@ class Productcosting extends CI_Controller{
 		if ($approve == 2) {
 			$prod_cost_header['approved_user_date'] = date('Y-m-d H:i:s');
 		}
-		$prod_cost_header['approved_head_dept_date'] = $approve == 3 ? date('Y-m-d H:i:s') : '';
+		$prod_cost_header['approved_head_dept_date'] = $approve == 3 ? date('Y-m-d H:i:s') : null;
 		$max = count($this->input->post('matrialNo'));
 
 		$prod_cost_header_update = $this->pc->updateDataProdCostHeader($prod_cost_header);
@@ -434,7 +417,7 @@ class Productcosting extends CI_Controller{
 
         //set config for column width
         $excel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
-        $excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+        $excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
         $excel->getActiveSheet()->getColumnDimension('C')->setWidth(30);
         $excel->getActiveSheet()->getColumnDimension('D')->setWidth(70);
         $excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
@@ -457,30 +440,38 @@ class Productcosting extends CI_Controller{
 		$excel->setActiveSheetIndex(0)->setCellValue('B3', 'Outlet '.$kd_plant.' '.$plant_name); 
 		
 		// set config for title header
-        $excel->getActiveSheet()->getStyle('B6:B16')->getFont()->setBold(true);
+        $excel->getActiveSheet()->getStyle('B5:B16')->getFont()->setBold(true);
 
+        $excel->setActiveSheetIndex(0)->setCellValue('B5', "No. Document"); 
         $excel->setActiveSheetIndex(0)->setCellValue('B6', "Document"); 
-        $excel->setActiveSheetIndex(0)->setCellValue('B7', "Category"); 
-        $excel->setActiveSheetIndex(0)->setCellValue('B8', "Existing Bom"); 
-		$excel->setActiveSheetIndex(0)->setCellValue('B9', "Name"); 
-		$excel->setActiveSheetIndex(0)->setCellValue('B10', "Qty Produksi"); 
-        $excel->setActiveSheetIndex(0)->setCellValue('B11', "UOM"); 
-        $excel->setActiveSheetIndex(0)->setCellValue('B12', "Posting Date"); 
-		$excel->setActiveSheetIndex(0)->setCellValue('B13', "Status"); 
-		$excel->setActiveSheetIndex(0)->setCellValue('B14', "Head of Department"); 
-		$excel->setActiveSheetIndex(0)->setCellValue('B15', "Selling Price"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B7', "Costing Type"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B8', "Category"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B9', "Existing Bom"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B10', "Name"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B11', "Qty Produksi"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B12', "UOM"); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B13', "Posting Date"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B14', "Status"); 
+		$excel->setActiveSheetIndex(0)->setCellValue('B15', "Head of Department"); 
+		if ($object['data']['product_type'] == 2) {
+			$excel->setActiveSheetIndex(0)->setCellValue('B16', "Selling Price"); 
+		}
 		
 		// set config for value header
+		$excel->setActiveSheetIndex(0)->setCellValue('C5', $object['data']['prod_cost_no']); 
 		$excel->setActiveSheetIndex(0)->setCellValue('C6', $object['data']['existing_bom_code'] ? 'Existing' : 'New'); 
-        $excel->setActiveSheetIndex(0)->setCellValue('C7', $object['data']['category_name']); 
-        $excel->setActiveSheetIndex(0)->setCellValue('C8', $object['data']['existing_bom_code'] ? $object['data']['existing_bom_code'].' - '.$object['data']['existing_bom_name'] : ''); 
-		$excel->setActiveSheetIndex(0)->setCellValue('C9', $object['data']['product_name']); 
-		$excel->setActiveSheetIndex(0)->setCellValue('C10', $object['data']['product_qty']); 
-        $excel->setActiveSheetIndex(0)->setCellValue('C11', $object['data']['product_uom']); 
-        $excel->setActiveSheetIndex(0)->setCellValue('C12', date('d-m-Y', strtotime($object['data']['posting_date']))); 
-		$excel->setActiveSheetIndex(0)->setCellValue('C13', ($object['data']['status'] == 1 || $object['data']['status_head'] == 0) ? 'Not Approved' : 'Approved'); 
-		$excel->setActiveSheetIndex(0)->setCellValue('C14', $object['data']['status'] == 2 && $object['data']['status_head'] == 2 ? 'Approved' : ($object['data']['status_head'] == 0 ? 'Rejected' : 'Not Approved')); 
-		$excel->setActiveSheetIndex(0)->setCellValue('C15', number_format($object['data']['product_selling_price'],4)); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C7', $object['data']['product_type'] == 1 ? 'WP' : 'Selling'); 
+        $excel->setActiveSheetIndex(0)->setCellValue('C8', $object['data']['category_name']); 
+        $excel->setActiveSheetIndex(0)->setCellValue('C9', $object['data']['existing_bom_code'] ? $object['data']['existing_bom_code'].' - '.$object['data']['existing_bom_name'] : '-'); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C10', $object['data']['product_name']); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C11', $object['data']['product_qty']); 
+        $excel->setActiveSheetIndex(0)->setCellValue('C12', $object['data']['product_uom']); 
+        $excel->setActiveSheetIndex(0)->setCellValue('C13', date('d-m-Y', strtotime($object['data']['posting_date']))); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C14', ($object['data']['status'] == 1 || $object['data']['status_head'] == 0) ? 'Not Approved' : 'Approved'); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C15', $object['data']['status'] == 2 && $object['data']['status_head'] == 2 ? 'Approved' : ($object['data']['status_head'] == 0 ? 'Rejected' : 'Not Approved')); 
+		if ($object['data']['product_type'] == 2) { 
+			$excel->setActiveSheetIndex(0)->setCellValue('C16', number_format($object['data']['product_selling_price'],4)); 
+		}
 
 		//style of border
         $styleArray = array(
@@ -570,26 +561,28 @@ class Productcosting extends CI_Controller{
 		
 		$numrowPack = $numrowIng + 4;
 		$totPackCost = 0;
-		foreach($object['pack'] as $keyPack => $rPack){ 
-
-			$excel->getActiveSheet()->getStyle('B'.$numrowPack)->getAlignment()
-			  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$excel->getActiveSheet()->getStyle('E'.$numrowPack)->getAlignment()
-			  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			
-            // applying border style
-            $excel->getActiveSheet()->getStyle('B'.$numrowPack.':H'.$numrowPack)->applyFromArray($styleArray);
-
-            $excel->setActiveSheetIndex(0)->setCellValue('B'.$numrowPack, ($keyPack+1));
-            $excel->setActiveSheetIndex(0)->setCellValue('C'.$numrowPack, $rPack['material_no']);
-            $excel->setActiveSheetIndex(0)->setCellValue('D'.$numrowPack, $rPack['material_desc']);
-			$excel->setActiveSheetIndex(0)->setCellValue('E'.$numrowPack, $rPack['item_uom']);
-			$excel->setActiveSheetIndex(0)->setCellValue('F'.$numrowPack, $rPack['item_cost']);
-			$excel->setActiveSheetIndex(0)->setCellValue('G'.$numrowPack, $rPack['item_qty']);
-			$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowPack, (float)($rPack['item_qty'] * $rPack['item_cost']));
-			
-			$totPackCost += (float)($rPack['item_qty'] * $rPack['item_cost']);
-            $numrowPack++;
+		if ($object['pack']) {
+			foreach($object['pack'] as $keyPack => $rPack){ 
+	
+				$excel->getActiveSheet()->getStyle('B'.$numrowPack)->getAlignment()
+				  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+				$excel->getActiveSheet()->getStyle('E'.$numrowPack)->getAlignment()
+				  ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+				
+				// applying border style
+				$excel->getActiveSheet()->getStyle('B'.$numrowPack.':H'.$numrowPack)->applyFromArray($styleArray);
+	
+				$excel->setActiveSheetIndex(0)->setCellValue('B'.$numrowPack, ($keyPack+1));
+				$excel->setActiveSheetIndex(0)->setCellValue('C'.$numrowPack, $rPack['material_no']);
+				$excel->setActiveSheetIndex(0)->setCellValue('D'.$numrowPack, $rPack['material_desc']);
+				$excel->setActiveSheetIndex(0)->setCellValue('E'.$numrowPack, $rPack['item_uom']);
+				$excel->setActiveSheetIndex(0)->setCellValue('F'.$numrowPack, $rPack['item_cost']);
+				$excel->setActiveSheetIndex(0)->setCellValue('G'.$numrowPack, $rPack['item_qty']);
+				$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowPack, (float)($rPack['item_qty'] * $rPack['item_cost']));
+				
+				$totPackCost += (float)($rPack['item_qty'] * $rPack['item_cost']);
+				$numrowPack++;
+			}
 		}
 
 		$excel->getActiveSheet()->getStyle('B'.$numrowPack.':H'.$numrowPack)->applyFromArray($styleArray);
@@ -602,31 +595,35 @@ class Productcosting extends CI_Controller{
 		$excel->setActiveSheetIndex(0)->setCellValue('B'.$numrowPack, 'Total Packaging Cost'); 
 		$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowPack, number_format($totPackCost,4));
 
-		$excel->getActiveSheet()->getStyle('B'.($numrowPack+3).':B'.($numrowPack+5))->getFont()->setBold(true);
+		if ($object['data']['product_type'] == 2) {
+			$excel->getActiveSheet()->getStyle('B'.($numrowPack+3).':B'.($numrowPack+6))->getFont()->setBold(true);
 
-		$excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPack+3), "Q Factor"); 
-		$excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPack+4), "Total Product Cost"); 
-		$excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPack+5), "Product Costing"); 
-		
-		$excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPack+3), number_format($object['data']['product_q_factor'],4)); 
-		$excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPack+4), number_format($object['data']['product_result'],4)); 
-		$excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPack+5), $object['data']['product_percentage'].' %');
+			$excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPack+3), "Q Factor"); 
+			$excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPack+4), "Total Product Cost"); 
+			$excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPack+5), "Total Product Cost / Qty Produksi"); 
+			$excel->setActiveSheetIndex(0)->setCellValue('B'.($numrowPack+6), "Product Costing"); 
+			
+			$excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPack+3), number_format($object['data']['product_q_factor'],4)); 
+			$excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPack+4), number_format($object['data']['product_result'],4)); 
+			$excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPack+5), number_format($object['data']['product_result_div_product_qty'],4)); 
+			$excel->setActiveSheetIndex(0)->setCellValue('C'.($numrowPack+6), $object['data']['product_percentage'].' %');
 
-		if ($object['data']['product_percentage'] > $object['data']['category_max']) {
-			$ket = 'Product Cost above Threshold';
-			$color = 'FF0000';
-		} elseif ($object['data']['product_percentage'] < $object['data']['category_min']) {
-			$ket = 'Product Cost below Threshold';
-			$color = 'FFFF00';
-		} else {
-			$ket = 'Product Cost within Threshold, Ok to continue';
-			$color = '008000';
+			if ($object['data']['product_percentage'] > $object['data']['category_max']) {
+				$ket = 'Product Cost above Threshold';
+				$color = 'FF0000';
+			} elseif ($object['data']['product_percentage'] < $object['data']['category_min']) {
+				$ket = 'Product Cost below Threshold';
+				$color = 'FFFF00';
+			} else {
+				$ket = 'Product Cost within Threshold, Ok to continue';
+				$color = '008000';
+			}
+
+			$excel->getActiveSheet()->getStyle('D'.($numrowPack+5))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+				->getStartColor()->setARGB($color);
+
+			$excel->setActiveSheetIndex(0)->setCellValue('D'.($numrowPack+5), $ket); 																			
 		}
-
-		$excel->getActiveSheet()->getStyle('D'.($numrowPack+5))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-			->getStartColor()->setARGB($color);
-
-		$excel->setActiveSheetIndex(0)->setCellValue('D'.($numrowPack+5), $ket); 
     
         // Set height semua kolom menjadi auto (mengikuti height isi dari kolommnya, jadi otomatis)
         $excel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
@@ -642,374 +639,5 @@ class Productcosting extends CI_Controller{
         $write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
         $write->save('php://output');
 	}
-	
-	//
-	
-	 public function wo_header_uom(){
-		$material_no = $this->input->post('material_no');
-		$data = $this->wovendor->sap_wo_headers_select_by_item($material_no);	
-		$json_data=array(
-			"data" => $data
-		);
-		echo json_encode($json_data);
-     }
-
-    
-	
-	public function showDetailEdit_(){
-        $id_wo_header = $this->input->post('id');
-        $kode_paket = $this->input->post('kodepaket');
-		$qty_paket = $this->input->post('qtypaket');
-		$qtyDefault = $this->input->post('qtyDefault');
-		$rs = $this->wovendor->wo_details_select($id_wo_header,$kode_paket,$qty_paket);
-		$object['data'] = $this->wovendor->wo_header_select($id_wo_header);
-		$disabled = $object['data']['status'] == 2 ? 'disabled' : '';
-		
-		$dt = array();
-        $i = 1;
-        if($rs){
-            foreach($rs as $data){
-				$inWhs = $this->wovendor->wo_detail_onhand($data['material_no']);
-				$queryUOM = $this->wovendor->wo_detail_uom($data['material_no']);
-				if(count($queryUOM)>0){
-					$uom = $queryUOM[0]['UNIT'];
-				} else {
-					$uom = '';
-				}
-				$ucaneditqty = $this->wovendor->wo_detail_ucaneditqty($kode_paket,$data['material_no']);
-				$getlocked = $this->wovendor->sap_wo_select_locked($kode_paket);
-				$getucaneditqty='';
-				
-				if($object['data']['status'] == 1){
-					if($getlocked[0]['U_Locked'] == 'N' && $ucaneditqty[0]['CanEditQty'] == 'Y'){
-						$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.number_format($data['qty'],4,'.','').'">';
-					}else {
-						$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.number_format($data['qty'],4,'.','').'" readonly>';
-					}
-				}else{
-					$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.number_format($data['qty'],4,'.','').'" readonly>';
-				}
-				$querySAP2 = $this->wovendor->wo_detail_itemcodebom($kode_paket,$data['material_no']);
-				$select = '<select class="form-control form-control-select2" data-live-search="true" name="descmat" id="descmat" '.$disabled.'>
-								<option value="'.$data['material_no'].'" rel="'.$ucaneditqty[0]['CanEditQty'].'" matqty="'.number_format($data['qty'],4,'.','').'" onHand="'.number_format($data['OnHand'],4,'.','').'" minStock = "'.$data['MinStock'].'" uOm="'.$data['uom'].'" matdesc="'.$data['material_desc'].'">'.$data['material_desc'].'</option>';
-								if($querySAP2){
-									foreach($querySAP2 as $_querySAP2){
-										$getonhandAlt = $this->wovendor->wo_detail_onhand($_querySAP2['U_SubsCode']);
-										$onhandAlt = '';
-										$minstockAlt = '';
-										if($getonhandAlt != false){
-											$onhandAlt = (float)$getonhandAlt[0]['OnHand'];
-											$minstockAlt = (float)$getonhandAlt[0]['MinStock'];
-										}
-										if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
-											$select .= '<option value="'.$_querySAP2['U_SubsCode'].'" 
-											rel="'.$ucaneditqty[0]['CanEditQty'].'" onHand="'.number_format((float)$onhandAlt,4,'.','').'" minStock = "'.$minstockAlt.'" uOm="'.$_querySAP2['U_SubsUOM'].'"
-											matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_paket),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>'; //* (float)$qty_paket
-										}
-									}
-								}
-				$select .= '</select>';
-				$descolumn = '';
-				if($querySAP2){
-					foreach($querySAP2 as $_querySAP2){
-						if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
-							$descolumn = $select;
-						}else{
-							$descolumn = $data['material_no'];
-						}
-					}
-				}else{
-					$descolumn = $select;
-				}
-			
-				$nestedData=array();
-				$nestedData['no'] = $i;
-				$nestedData['id_produksi_detail'] = $data['id_produksi_detail'];
-				$nestedData['id_produksi_header'] = $data['id_produksi_header'];
-				$nestedData['material_no'] = $data['material_no'];
-				$nestedData['material_desc'] = $data['material_desc'];
-				$nestedData['qty'] = $getucaneditqty;
-				$nestedData['uom'] = $uom;
-				$nestedData['OnHand'] = $inWhs[0]['OnHand']!='.000000' ? number_format($inWhs[0]['OnHand'],4,'.','') : '0.0000';
-				$nestedData['MinStock'] = $data['MinStock']; 
-				$nestedData['OpenQty'] = $data['OpenQty'];
-				$nestedData['descolumn'] = $descolumn;
-				$dt[] = $nestedData;
-				$i++;
-			}
-        }
-        $json_data = array(
-			"data" => $dt
-		);
-		echo json_encode($json_data);
-
-	}
-	
-	public function addItemRowz(){
-		$rs = $this->wovendor->sap_item();
-		echo json_encode($rs);
-	}
-
-	function getdataDetailMaterialSelectO(){
-        $itemSelect = $this->input->post('MATNR');
-        
-		$dataMatrialSelect = $this->wovendor->sap_item($itemSelect);
-		
-		$dt = array();
-		foreach ($dataMatrialSelect as $data) {
-			$getonhand = $this->wovendor->wo_detail_onhand($data['MATNR']);
-			$onhand = '';
-			$minstock = '';
-			if($getonhand != false){
-				$onhand = (float)$getonhand[0]['OnHand'];
-				$minstock = (float)$getonhand[0]['MinStock'];
-			}
-			$getopenqty = $this->wovendor->wo_detail_openqty($data['MATNR']);
-			$openqty = '';
-			if($getopenqty != false){
-				$openqty = (float)$getopenqty[0]['OpenQty'];
-			}
-			$uom = '';
-			if($data['UNIT'] != '' || !empty($data['UNIT'])){
-				$uom = $data['UNIT'];
-			}
-
-			$nestedData=array();
-			$nestedData['MATNR'] = $data['MATNR'];
-			$nestedData['MAKTX'] = $data['MAKTX'];
-			$nestedData['qty'] = 0;
-			$nestedData['UNIT'] = $uom;
-			$nestedData['OnHand'] = $onhand; 
-			$nestedData['MinStock'] = $minstock; 
-			$nestedData['OpenQty'] = $openqty;
-			$dt[] = $nestedData;
-		}
-		
-		echo json_encode($dt);
-        
-	}
-	
-	public function showDetailInput_(){
-		$kode_paket = $this->input->post('kode_paket');
-		$qty_header = $this->input->post('Qty');
-		$qtyDefault = $this->input->post('qtyDefault');
-        $rs = $this->wovendor->wo_details_input_select($kode_paket);
-		
-		$dt = array();
-        $i = 1;
-        if($rs){
-            foreach($rs as $data){
-		
-				$querySAP = $this->wovendor->wo_detail_valid($data['material_no']);
-				$validFor = '';
-				$decreasAc = '';
-				if($querySAP != false){
-					$validFor = $querySAP[0]['validFor'];
-					$decreasAc = $querySAP[0]['DecreasAc'];
-				}
-				
-				$qty_paket = $data['quantity'];
-				
-				$getonhand = $this->wovendor->wo_detail_onhand($data['material_no']);
-				$onhand = '';
-				$minstock = '';
-				if($getonhand != false){
-					$onhand = (float)$getonhand[0]['OnHand'];
-					$minstock = (float)$getonhand[0]['MinStock'];
-				}
-				
-				$getopenqty = $this->wovendor->wo_detail_openqty($data['material_no']);
-				$openqty = '';
-				if($getopenqty != false){
-					$openqty = (float)$getopenqty[0]['OpenQty'];
-				}
-				
-				$ucaneditqty = $this->wovendor->wo_detail_ucaneditqty($kode_paket,$data['material_no']);
-				$getlocked = $this->wovendor->sap_wo_select_locked($kode_paket);
-
-				$getucaneditqty='';
-				
-				if($getlocked[0]['U_Locked'] == 'N' && $ucaneditqty[0]['CanEditQty'] == 'Y'){
-					$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'">';
-				}else {
-					$getucaneditqty = '<input type="text" id="editqty_'.$i.'" class="form-control" value="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" readonly>';
-				}
-
-				$queryUOM = $this->wovendor->wo_detail_uom($data['material_no']);
-				if(count($queryUOM)>0){
-					$uom = $queryUOM[0]['UNIT'];
-				} else {
-					$uom = '';
-				}
-				
-				$querySAP2 = $this->wovendor->wo_detail_itemcodebom($kode_paket,$data['material_no']);
-				
-				$select = '<select class="form-control form-control-select2" data-live-search="true" name="descmat" id="descmat">
-								<option value="'.$data['material_no'].'" rel="'.$ucaneditqty[0]['CanEditQty'] .'" onHand="'.number_format($onhand,4,'.','').'" minStock = "'.$minstock.'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matdesc="'.$data['material_desc'].'">'.$data['material_desc'].'</option>'; //$data['quantity'] * (float)$qty_header
-								if($querySAP2){
-									foreach($querySAP2 as $_querySAP2){
-										$getonhandAlt = $this->wovendor->wo_detail_onhand($_querySAP2['U_SubsCode']);
-										$onhandAlt = '';
-										$minstockAlt = '';
-										if($getonhandAlt != false){
-											$onhandAlt = (float)$getonhandAlt[0]['OnHand'];
-											$minstockAlt = (float)$getonhandAlt[0]['MinStock'];
-										}
-										if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
-											$select .= '<option value="'.$_querySAP2['U_SubsCode'].'" 
-											rel="'.$ucaneditqty[0]['CanEditQty'].'" onHand="'.number_format((float)$onhandAlt,4,'.','').'" minStock = "'.$minstockAlt.'" uOm="'.$_querySAP2['U_SubsUOM'].'"
-											matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matdesc="'.$_querySAP2['NAME'].'">'.$_querySAP2['NAME'].'</option>'; //$_querySAP2['U_SubsQty'] * (float)$qty_header
-										}
-									}
-								}
-				$select .= '</select>';
-				
-				$descolumn = '';
-				if($querySAP2){
-					foreach($querySAP2 as $_querySAP2){
-						if($_querySAP2['U_ItemCodeBOM'] = $data['material_no']){
-							$descolumn = $select;
-						}else{
-							$descolumn = $data['material_no'];
-						}
-					}
-				}else{
-					$descolumn = $select;
-				}
-				
-				$openitem = $this->wovendor->wo_detail_item();
-				$qtyopen = '';
-				foreach($openitem as $_openqty){
-					if($_openqty['U_ItemCodeBOM'] = $data['material_no']){
-						$qtyopen = $select;
-					}else{
-						$qtyopen = $data['material_no'];
-					}
-				}
-
-				$nestedData=array();
-				$nestedData['no'] = $i;
-				$nestedData['id_mpaket_header'] = $data['id_mpaket_header'];
-				$nestedData['id_mpaket_h_detail'] = $data['id_mpaket_h_detail'];
-				$nestedData['material_no'] = $data['material_no'];
-				$nestedData['material_desc'] = $data['material_desc'];
-				$nestedData['qty'] = $getucaneditqty;
-				$nestedData['uom'] = $uom;
-				$nestedData['OnHand'] = number_format($onhand,4,'.',''); 
-				$nestedData['MinStock'] = $minstock; 
-				$nestedData['OpenQty'] = $openqty;
-				$nestedData['validFor'] = $validFor;
-				$nestedData['decreasAc'] = $decreasAc;
-				$nestedData['descolumn'] = $descolumn;
-				$dt[] = $nestedData;
-				$i++;
-			}
-        }
-        $json_data = array(
-			"data" => $dt
-		);
-		echo json_encode($json_data);
-
-	}
-	
-	public function addData_(){
-		$produksi_header['plant'] = $this->session->userdata['ADMIN']['plant'];
-		$produksi_header['storage_location'] = $this->session->userdata['ADMIN']['storage_location'];
-		$produksi_header['posting_date'] = $this->l_general->str_to_date($this->input->post('postDate'));
-		$produksi_header['id_produksi_plant'] = $this->wovendor->id_produksi_plant_new_select($this->session->userdata['ADMIN']['plant'],$this->input->post('postDate'));
-		$produksi_header['produksi_no'] = '';
-
-		$produksi_header['status'] = $this->input->post('approve')? $this->input->post('approve') : '1';
-		$produksi_header['kode_paket'] = $this->input->post('woNumber');
-		$produksi_header['nama_paket'] = $this->input->post('woDesc');
-		$produksi_header['qty_paket'] = $this->input->post('qtyProd');
-		$produksi_header['uom_paket'] = $this->input->post('uomProd');
-		$produksi_header['id_user_input'] = $this->session->userdata['ADMIN']['admin_id'];
-		$produksi_header['id_user_approved'] = $this->input->post('approve')? $this->session->userdata['ADMIN']['admin_id'] : 0 ;
-		$produksi_header['created_date']=date('Y-m-d');
-		$produksi_header['back']=1;
-		
-		/*Batch Number */
-		$date=date('ym');
-		$batch = $this->wovendor->wo_header_batch($produksi_header['kode_paket'],$this->session->userdata['ADMIN']['plant']);
-		if(!empty($batch)){
-			$date=date('ym');
-			$count1=count($batch) + 1;
-			if ($count1 > 9 && $count1 < 100){
-				$dg="0";
-			}else {
-				$dg="00";
-			}
-			$num=$produksi_header['kode_paket'].$date.$dg.$count1;
-			$produksi_header['num'] = $num;
-		}else{
-			$produksi_header['num'] = '';
-		}
-		
-		$count = count($this->input->post('matrialNo'));
-		if($id_produksi_header = $this->wovendor->produksi_header_insert($produksi_header)) {
-			$input_detail_success = FALSE;
-			for($i = 0; $i < $count; $i++){
-				$produksi_detail['id_produksi_header'] = $id_produksi_header;
-				$produksi_detail['qty'] = $this->input->post('qty')[$i];
-				$produksi_detail['id_produksi_h_detail'] = $i+1;
-				$produksi_detail['material_no'] = $this->input->post('matrialNo')[$i];
-				$produksi_detail['num'] = '';
-				$produksi_detail['material_desc'] = trim($this->input->post('matrialDesc')[$i]);
-				$produksi_detail['uom'] = $this->input->post('uom')[$i];
-				$produksi_detail['qc'] = '';
-				$produksi_detail['OnHand'] = $this->input->post('onHand')[$i];
-				$produksi_detail['MinStock'] = $this->input->post('minStock')[$i];
-				$produksi_detail['OpenQty'] = $this->input->post('outStandTot')[$i];
-				if($this->wovendor->produksi_detail_insert($produksi_detail) ){
-					$input_detail_success = TRUE;
-				}
-			}
-		}
-        if($input_detail_success){
-            return $this->session->set_flashdata('success', "Work Order Telah Terbentuk");
-        }else{
-            return $this->session->set_flashdata('failed', "Work Order Gagal Terbentuk");
-        } 
-	}
-	
-
-	public function addUpdateData(){
-		$id_produksi_header = $this->input->post('id_wo_header');
-		$kode_paket 		=$this->input->post('kd_paket');
-		$approve 			=$this->input->post('approve');
-		$produksi_header['id_produksi_header'] = $id_produksi_header;
-		$produksi_header['status'] = $approve ? $approve: "1";
-		$produksi_header['id_user_approved'] = $approve? $this->session->userdata['ADMIN']['admin_id'] : 0 ;
-		$max = count($this->input->post('matrialNo'));
-
-		$produksi_header_update = $this->wovendor->update_produksi_header($produksi_header);
-		$succes_update = false;
-		if($produksi_header_update){
-			$this->wovendor->wo_details_delete($id_produksi_header);
-			for($i=0; $i < $max; $i++){
-				$produksi_detail['id_produksi_header'] = $id_produksi_header;
-				$produksi_detail['qty'] = $this->input->post('qty')[$i];
-				$produksi_detail['id_produksi_h_detail'] = $i+1;
-				$produksi_detail['material_no'] = $this->input->post('matrialNo')[$i];
-				$produksi_detail['num'] = '';
-				$produksi_detail['material_desc'] = $this->input->post('matrialDesc')[$i];
-				$produksi_detail['uom'] = $this->input->post('uom')[$i];
-				$produksi_detail['qc'] = '';
-				$produksi_detail['OnHand'] = $this->input->post('onHand')[$i];
-				$produksi_detail['MinStock'] = $this->input->post('minStock')[$i];
-				$produksi_detail['OpenQty'] = $this->input->post('outStandTot')[$i];
-							
-				if($this->wovendor->produksi_detail_insert($produksi_detail) ){
-					$succes_update = TRUE;
-				}
-			}
-		}
-		if($succes_update){
-            return $this->session->set_flashdata('success', "WO Telah Berhasil Terupdate");
-        }else{
-            return $this->session->set_flashdata('failed', "WO Gagal Terupdate");
-        }
-	} 
 }
 ?>

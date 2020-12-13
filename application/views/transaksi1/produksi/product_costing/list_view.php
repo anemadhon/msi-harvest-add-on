@@ -80,8 +80,9 @@
                                         <thead>
                                             <tr>
                                                 <th style="text-align: left"><input type="checkbox" name="checkall" id="checkall"></th>
-                                                <th style="text-align: center">ID</th>
                                                 <th style="text-align: center">Action</th>
+                                                <th style="text-align: center">ID</th>
+                                                <th style="text-align: center">No. Product</th>
                                                 <th style="text-align: center">Name</th>
                                                 <th style="text-align: center">Existing BOM</th>
                                                 <th style="text-align: right">Qty</th>
@@ -89,8 +90,10 @@
                                                 <th style="text-align: center">Created by</th>
                                                 <th style="text-align: center">Created Date</th>
                                                 <th style="text-align: center">Status</th>
+                                                <th style="text-align: center">Approved Admin Date</th>
                                                 <th style="text-align: center">Approved by</th>
                                                 <th style="text-align: center">Status Kepala Departemen</th>
+                                                <th style="text-align: center">Approved/Rejected Date</th>
                                                 <th style="text-align: center">Kepala Departemen</th>
                                             </tr>
                                         </thead>
@@ -142,7 +145,6 @@
                             rr=`<input type="checkbox" class="check_delete" id="chk_${data}" value="${data}" onclick="checkcheckbox();">`;
                             return rr;
                         }},
-                        {"data":"id_prod_cost_header", "className":"dt-center"},
                         {"data":"id_prod_cost_header", "className":"dt-center", render:function(data, type, row, meta){
                             rr = `<div style="width:100px">
                                     <a href='<?php echo site_url('transaksi1/productcosting/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;
@@ -150,6 +152,8 @@
                                 </div>`;
                             return rr;
                         }},
+                        {"data":"id_prod_cost_header", "className":"dt-center"},
+                        {"data":"prod_cost_no", "className":"dt-center"},
                         {"data":"product_name", "className":"dt-center"},
                         {"data":"existing_bom", "className":"dt-center"},
                         {"data":"product_qty"},
@@ -157,8 +161,10 @@
                         {"data":"created_date", "className":"dt-center"},
                         {"data":"created_by", "className":"dt-center"},
                         {"data":"status", "className":"dt-center"},
+                        {"data":"approval_admin_date", "className":"dt-center"},
                         {"data":"approved_by", "className":"dt-center"},
                         {"data":"status_head", "className":"dt-center"},
+                        {"data":"approval_head_date", "className":"dt-center"},
                         {"data":"head_dept", "className":"dt-center"}
                     ]
                 });

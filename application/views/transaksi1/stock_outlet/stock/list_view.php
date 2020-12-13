@@ -101,8 +101,11 @@
                                                 <th style="text-align: center">Created Date</th>
                                                 <th style="text-align: center">Created By</th>
                                                 <th style="text-align: center">Outlet Status</th>
+                                                <th style="text-align: center">Approved Date</th>
                                                 <th style="text-align: center">Area Manager Status</th>
+                                                <th style="text-align: center">Approved/Rejected Date</th>
                                                 <th style="text-align: center">Regional Manager Status</th>
+                                                <th style="text-align: center">Approved/Rejected Date</th>
                                                 <th style="text-align: center">Last Modified</th>
                                                 <th style="text-align: center">Freeze</th>
                                                 <th style="text-align: center">Log</th>
@@ -247,10 +250,13 @@
                         {"data":"status", "className":"dt-center", render:function(data, type, row, meta){
                             return (row['am_status'] == 'Rejected' || row['rm_status'] == 'Rejected') ? 'Not Approved' : data;
                         }},
+                        {"data":"admin_approved_date"},
                         {"data":"am_status", "className":"dt-center", render:function(data, type, row, meta){
                             return (row['rm_status'] == 'Rejected') ? 'Not Approved' : data;
                         }},
+                        {"data":"am_approved_date"},
                         {"data":"rm_status"},
+                        {"data":"rm_approved_date"},
                         {"data":"last_modified"},
                         {"data":"freeze", "className":"dt-center", render:function(data, type, row, meta){
                             return (row['am_status'] == 'Rejected' || row['rm_status'] == 'Rejected') ? 'No' : data;

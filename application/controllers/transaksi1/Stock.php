@@ -99,6 +99,9 @@ class Stock extends CI_Controller {
             $nestedData['back'] = ($val['back'] =='1')?'Not Integrated':'Integrated';
             $nestedData['status_real'] = $val['status'];
             $nestedData['freeze'] = $freeze;
+            $nestedData['admin_approved_date'] = $val['admin_approved_date'] ? date("d-m-Y H:i:s",strtotime($val['admin_approved_date'])) : '';
+            $nestedData['am_approved_date'] = $val['am_approved'] =='1' ? ($val['am_rejected_date'] ? date("d-m-Y H:i:s",strtotime($val['am_rejected_date'])) : '') : ($val['am_approved_date'] ? date("d-m-Y H:i:s",strtotime($val['am_approved_date'])) : '');
+            $nestedData['rm_approved_date'] = $val['rm_approved'] =='1' ? ($val['rm_rejected_date'] ? date("d-m-Y H:i:s",strtotime($val['rm_rejected_date'])) : '') : ($val['rm_approved_date'] ? date("d-m-Y H:i:s",strtotime($val['rm_approved_date'])) : '');
             $data[] = $nestedData;
 
         }
