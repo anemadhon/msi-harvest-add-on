@@ -693,7 +693,7 @@ class Stock extends CI_Controller {
             ),
         );
 
-        $excel->getActiveSheet()->protectCells('A9:M9', 'MSI_SO');
+        $excel->getActiveSheet()->getProtection()->setPassword('MSI_SO');
         
         $excel->getActiveSheet()->getStyle('A9:M9')->applyFromArray($styleArray);
 

@@ -843,7 +843,7 @@
 				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
 				let percentage = (totProdCost / pricePB1) * 100;
 
-				$('#percentageCosting').text(`${percentage ? percentage.toFixed(4) : '0.0000'} %`);
+				$('#percentageCosting').text(`${$('#productType option:selected').val() == 'Selling' ? (percentage ? percentage.toFixed(4) : 0) : 0} %`);
 				setPercentageColor();
 			}
 
@@ -852,7 +852,7 @@
 				let min = parseFloat($("#minCostSAP").val()) * (1/100);
 				let max = parseFloat($("#maxCostSAP").val()) * (1/100);
 
-				if ($('#percentageCosting').text() == '0 %') {
+				if ($('#percentageCosting').text() == '0 %' && $('#productType option:selected').val() == 'Selling') {
 					$('#after-submit').hide();
 				} else {
 					$('#after-submit').show();
