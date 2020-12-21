@@ -75,7 +75,7 @@
 <table width="640" align="center">
   <tr>
     <td width="180">Outlet Manager</td>
-    <td width="180">Cost Controll</td>
+    <td width="180">Cost Control</td>
     <td width="180">Operation Head</td>
     <td width="180">Accounting Department</td>
   </tr>
@@ -110,3 +110,4 @@
     <td width="180"><?php echo 'Nama : '.str_repeat('...',10); ?></td>
   </tr>
 </table>
+
