@@ -104,14 +104,14 @@
 										<fieldset>
 											<legend class="font-weight-semibold"><i class="icon-reading mr-2"></i>Edit Product Costing</legend>
 											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">No. Document</label>
+												<label class="col-lg-3 col-form-label">No. Product</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" value="<?php echo $pc['prod_cost_no'] ?>" readOnly>
 												</div>
 											</div>
 
 											<div class="form-group row">
-												<label class="col-lg-3 col-form-label">Document</label>
+												<label class="col-lg-3 col-form-label">Product</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" name="doc_status" id="docStatus" value="<?php echo $pc['existing_bom_code'] ? 'Existing' : 'New' ?>" readOnly>
 													<input type="hidden" id="idProdCost" value="<?php echo $pc['id_prod_cost_header'] ?>">
@@ -121,7 +121,7 @@
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Costing Type</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" id="productType" value="<?php echo $pc['product_type'] == 1 ? 'WP' : 'Selling' ?>" readOnly>
+													<input type="text" class="form-control" id="productType" value="<?php echo $pc['product_type'] == 1 ? 'WP' : 'Finish Goods' ?>" readOnly>
 												</div>
 											</div>
 
@@ -254,7 +254,7 @@
 						</div> 
 						<div id="load" style="display:none"></div>  
 
-						<div class="card wp">
+						<div class="card">
 							<div class="card-body">
 								<div class="row">
 									<div class="col-md-12">
@@ -282,16 +282,18 @@
 													<option value="<?=$value['ItmsGrpNam']?>" desc="<?=$value['ItmsGrpNam']?>"><?=$value['ItmsGrpNam']?></option>
 												<?php };?>
 												<option value="1" desc="Costing WP">Costing WP</option>
-												<option value="2" desc="Costing Selling">Costing Selling</option>
+												<option value="2" desc="Costing Finish Goods">Costing Finish Goods</option>
 											</select>
 										</div>
 									</div>
+									<?php if($pc['status_head'] != 2) : ?>
 									<div class="col-md-4 mb-2 after-doc" style="display: none;">
 										<div class="text-right">
 											<input type="button" class="btn btn-primary" value="Add" id="addTableIng" onclick="onAddrowItemIngredients()"> 
 											<input type="button" value="Delete" class="btn btn-danger" id="deleteRecordIng"> 
 										</div>
 									</div>
+									<?php endif; ?>
 									<div class="col-md-12" style="overflow: auto" >
 										<table class="table table-striped" id="tblItemIngredients">
 											<thead>
@@ -325,16 +327,18 @@
 													<option value="<?=$value['ItmsGrpNam']?>" desc="<?=$value['ItmsGrpNam']?>"><?=$value['ItmsGrpNam']?></option>
 												<?php };?>
 												<option value="1" desc="Costing WP">Costing WP</option>
-												<option value="2" desc="Costing Selling">Costing Selling</option>
+												<option value="2" desc="Costing Finish Goods">Costing Finish Goods</option>
 											</select>
 										</div>
 									</div>
+									<?php if($pc['status_head'] != 2) : ?>
 									<div class="col-md-4 mb-2 after-doc" style="display: none;">
 										<div class="text-right">
 											<input type="button" class="btn btn-primary" value="Add" id="addTablePack" onclick="onAddrowItemPackaging()"> 
 											<input type="button" value="Delete" class="btn btn-danger" id="deleteRecordPack"> 
 										</div>
 									</div>
+									<?php endif; ?>
 									<div class="col-md-12" style="overflow: auto" >
 										<table class="table table-striped" id="tblItemPackaging">
 											<thead>
@@ -395,20 +399,20 @@
 					autoclose: true
 				};
 
-				if ($('#productType').val() == 'Selling') {
+				if ($('#productType').val() == 'Finish Goods') {
 					$('.wp').show();
 				} else {
 					$('.wp').hide();
 				}
 
-				$('#productSellPrice').val(parseFloat($('#productSellPrice').val()).toLocaleString())
+				$('#productSellPrice').val(parseFloat($('#productSellPrice').val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}))
 
 				$('#productSellPrice').change(function () {
 					if ($(this).val() && $(this).val().includes(',')) {
 						$(this).val($(this).val().replace(',','').replace(',',''));
-						$(this).val(parseFloat($(this).val()).toLocaleString());
+						$(this).val(parseFloat($(this).val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 					} else if ($(this).val() && !$(this).val().includes(',')) {
-						$(this).val(parseFloat($(this).val()).toLocaleString());
+						$(this).val(parseFloat($(this).val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 					} else {
 						$(this).val(0);
 					}
@@ -443,7 +447,7 @@
 						{"data":"4"},
 						{"data":"5"},
 						{"data":"6", render:function(data, type, row, meta){
-							rr = `<input type="hidden" class="form-control ing" name="ing" id="ing_${row['1']}" value="1"><input type="text" class="form-control qty-ing" id="qtyCostingIng_${row['1']}" value="${data}" style="width:90px" autocomplete="off">`
+							rr = `<input type="hidden" class="form-control ing" name="ing" id="ing_${row['1']}" value="1"><input type="text" class="form-control qty-ing" id="qtyCostingIng_${row['1']}" value="${data}" matqty="${data}" style="width:90px" autocomplete="off">`
 							return rr;
 						}},
 						{"data":"7"}
@@ -471,7 +475,7 @@
 					},
 					"columns": [
 						{"data":"0", "className":"dt-center", render:function(data, type, row, meta){
-							rr=`<input type="checkbox" value="${data}" class="check_delete_pack" id="dt_pack_${row['no']}">`;
+							rr=`<input type="checkbox" value="${data}" class="check_delete_pack" id="dt_pack_${data}">`;
 							return rr;
 						}},
 						{"data":"1", "className":"dt-center"},
@@ -480,7 +484,7 @@
 						{"data":"4"},
 						{"data":"5"},
 						{"data":"6", render:function(data, type, row, meta){
-							rr = `<input type="hidden" class="form-control pack" name="pack" id="pack_${row['1']}" value="2"><input type="text" class="form-control qty-pack" id="qtyCostingPack_${row['1']}" value="${data}" style="width:90px" autocomplete="off">`
+							rr = `<input type="hidden" class="form-control pack" name="pack" id="pack_${row['1']}" value="2"><input type="text" class="form-control qty-pack" id="qtyCostingPack_${row['1']}" value="${data}" matqty="${data}" style="width:90px" autocomplete="off">`
 							return rr;
 						}},
 						{"data":"7"}
@@ -549,11 +553,39 @@
 					setTotalCostIng($(this).val(),noIng);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
+				tbodyIng.on('change','.cost-ing', function(){
+					let trIng = $(this).closest('tr');
+					let noIng = trIng[0].rowIndex;
+					if ($(this).val() && $(this).val().includes(',')) {
+						$(this).val($(this).val().replace(',','').replace(',',''));
+						$(this).val(parseFloat($(this).val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+					} else if ($(this).val() && !$(this).val().includes(',')) {
+						$(this).val(parseFloat($(this).val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+					} else {
+						$(this).val(0);
+					}
+					setTotalCostByPriceIng($(this).val(),noIng);
+					setProdCostPercentage($('#productSellPrice').val());
+				});
 				let tbodyPack = $("#tblItemPackaging tbody");
 				tbodyPack.on('change','.qty-pack', function(){
 					let trPack = $(this).closest('tr');
 					let noPack = trPack[0].rowIndex;
 					setTotalCostPack($(this).val(),noPack);
+					setProdCostPercentage($('#productSellPrice').val());
+				});
+				tbodyPack.on('change','.cost-pack', function(){
+					let trPack = $(this).closest('tr');
+					let noPack = trPack[0].rowIndex;
+					if ($(this).val() && $(this).val().includes(',')) {
+						$(this).val($(this).val().replace(',','').replace(',',''));
+						$(this).val(parseFloat($(this).val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+					} else if ($(this).val() && !$(this).val().includes(',')) {
+						$(this).val(parseFloat($(this).val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+					} else {
+						$(this).val(0);
+					}
+					setTotalCostByPricePack($(this).val(),noPack);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
 				
@@ -577,15 +609,17 @@
 					let tablePack = $("#tblItemPackaging tbody");
 					tableIng.find('tr').each(function(i, el){
 						let tdIng = $(this).find('td');
-						let costIng = parseFloat(tdIng.eq(5).text() ? tdIng.eq(5).text() : 0);
-						tdIng.eq(6).find('input:text').val(parseFloat(productQty) * parseFloat(tdIng.eq(6).find('input:text').val() ? tdIng.eq(6).find('input:text').val() : 0));
-						tdIng.eq(7).text(parseFloat(tdIng.eq(6).find('input:text').val() ? tdIng.eq(6).find('input:text').val() : 0) * costIng);
+						let costIng = parseFloat(tdIng.eq(5).text() ? tdIng.eq(5).text().replace(',','').replace(',','') : 0);
+						let qtyIng = parseFloat($('input:text', this).attr('matqty'));
+						tdIng.eq(6).find('input:text').val(parseFloat(productQty) * qtyIng);
+						tdIng.eq(7).text(qtyIng * costIng);
 					});
 					tablePack.find('tr').each(function(i, el){
 						let tdPack = $(this).find('td');
-						let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text() : 0);
-						tdPack.eq(6).find('input:text').val(parseFloat(productQty) * parseFloat(tdPack.eq(6).find('input:text').val() ? tdPack.eq(6).find('input:text').val() : 0));
-						tdPack.eq(7).text(parseFloat(tdPack.eq(6).find('input:text').val() ? tdPack.eq(6).find('input:text').val() : 0) * costPack);
+						let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text().replace(',','').replace(',','') : 0);
+						let qtyPack = parseFloat($('input:text', this).attr("matqty"));
+						tdPack.eq(6).find('input:text').val(parseFloat(productQty) * qtyPack);
+						tdPack.eq(7).text(parseFloat(qtyPack * costPack).toLocaleStrPack(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 					});
 					setTotalFoodCost();
 					setTotalMaterialCost();
@@ -633,6 +667,12 @@
 					setTotalCostIng($(this).val(),no);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
+				tbody.on('change','.cost-ing', function(){
+					tr = $(this).closest('tr');
+					no = tr[0].rowIndex;
+					setTotalCostByPriceIng($(this).val(),no);
+					setProdCostPercentage($('#productSellPrice').val());
+				});
 			}
 
 			function showMatrialDetailDataIng(selectTable){
@@ -657,7 +697,7 @@
 			function setValueTableIngredients(id,no){
 				let tbodyItemIngredientsRows = document.getElementById("tblItemIngredients").rows[no].cells;
 				if (id == '-') {
-					tbodyItemIngredientsRows[3].innerHTML = `<input type="text" class="form-control" id="productNameIng_${no}" value="" style="width:100%" autocomplete="off">`;
+					tbodyItemIngredientsRows[3].innerHTML = `<input type="text" class="form-control" id="productNameIng_${no}" value="" style="width:300px" autocomplete="off">`;
 					tbodyItemIngredientsRows[4].innerHTML = `<input type="text" class="form-control uom-ing" id="uomCostingIng_${no}" value="" style="width:90px" autocomplete="off">`;
 					tbodyItemIngredientsRows[5].innerHTML = `<input type="text" class="form-control cost-ing" id="costCostingIng_${no}" value="" style="width:90px" autocomplete="off">`;
 				} else {
@@ -666,7 +706,7 @@
 							matSelect = JSON.parse(res);
 							tbodyItemIngredientsRows[3].innerHTML = matSelect.data.MAKTX;
 							tbodyItemIngredientsRows[4].innerHTML = matSelect.data.UNIT1;
-							tbodyItemIngredientsRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : matSelect.dataLast.LastPrice.slice(0, -2);
+							tbodyItemIngredientsRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : parseFloat(matSelect.dataLast.LastPrice).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
 						}
 					)
 				}
@@ -676,8 +716,16 @@
 				let docStatus = $('#docStatus').val();
 				let tbodyItemIngredientsRows = document.getElementById("tblItemIngredients").rows[no].cells;
 				let itemCodeSelected = ((docStatus == 'Existing' && tbodyItemIngredientsRows[2].children[0]) || tbodyItemIngredientsRows[2].children[0]) ? tbodyItemIngredientsRows[2].children[0].value : tbodyItemIngredientsRows[2].innerHTML;
-				let lastPrice = itemCodeSelected == '-' ? tbodyItemIngredientsRows[5].children[0].value : tbodyItemIngredientsRows[5].innerHTML;
-				tbodyItemIngredientsRows[7].innerHTML = parseFloat(lastPrice) * parseFloat(qty);
+				let lastPrice = itemCodeSelected == '-' ? tbodyItemIngredientsRows[5].children[0].value.replace(',','').replace(',','') : tbodyItemIngredientsRows[5].innerHTML.replace(',','').replace(',','');
+				tbodyItemIngredientsRows[7].innerHTML = (parseFloat(lastPrice) * parseFloat(qty)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
+				setTotalFoodCost();
+				setProdCostPercentage($('#productSellPrice').val());
+			}
+			
+			function setTotalCostByPriceIng(price,no){
+				let tbodyItemIngredientsRows = document.getElementById("tblItemIngredients").rows[no].cells;
+				let qty = tbodyItemIngredientsRows[6].children[1].value ? tbodyItemIngredientsRows[6].children[1].value : 0;
+				tbodyItemIngredientsRows[7].innerHTML = (parseFloat(price) * parseFloat(qty)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
 				setTotalFoodCost();
 				setProdCostPercentage($('#productSellPrice').val());
 			}
@@ -686,7 +734,7 @@
 				let tableIng = $("#tblItemIngredients tbody");
 				tableIng.find('tr').each(function(i, el){
 					let td = $(this).find('td');
-					td.eq(7).text(parseFloat(td.eq(5).text() * td.eq(6).find('input:text').val()));
+					td.eq(7).text(parseFloat(td.eq(5).text().replace(',','').replace(',','') * td.eq(6).find('input:text').val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				});
 				setTotalFoodCost();
 				setProdCostPercentage($('#productSellPrice').val());
@@ -697,8 +745,8 @@
 				let totCost = 0;
 				tableIng.find('tr').each(function(i, el){
 					let td = $(this).find('td');
-					totCost += parseFloat(td.eq(7).text() ? td.eq(7).text() : 0);
-					$('#totAllIngCost').text(totCost.toLocaleString());
+					totCost += parseFloat(td.eq(7).text() ? td.eq(7).text().replace(',','').replace(',','') : 0);
+					$('#totAllIngCost').text(totCost.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				});
 				setQFactor();
 			}
@@ -741,6 +789,12 @@
 					setTotalCostPack($(this).val(),no);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
+				tbody.on('change','.cost-pack', function(){
+					tr = $(this).closest('tr');
+					no = tr[0].rowIndex;
+					setTotalCostByPricePack($(this).val(),no);
+					setProdCostPercentage($('#productSellPrice').val());
+				});
 			}
 
 			function showMatrialDetailDataPack(selectTable){
@@ -765,7 +819,7 @@
 			function setValueTablePackaging(id,no){
 				let tbodyItemPackagingRows = document.getElementById("tblItemPackaging").rows[no].cells;
 				if (id == '-') {
-					tbodyItemPackagingRows[3].innerHTML = `<input type="text" class="form-control" id="productNamePack_${no}" value="" style="width:100%" autocomplete="off">`;
+					tbodyItemPackagingRows[3].innerHTML = `<input type="text" class="form-control" id="productNamePack_${no}" value="" style="width:300px" autocomplete="off">`;
 					tbodyItemPackagingRows[4].innerHTML = `<input type="text" class="form-control uom-pack" id="uomCostingPack_${no}" value="" style="width:90px" autocomplete="off">`;
 					tbodyItemPackagingRows[5].innerHTML = `<input type="text" class="form-control cost-pack" id="costCostingPack_${no}" value="" style="width:90px" autocomplete="off">`;
 				} else {
@@ -774,7 +828,7 @@
 							matSelect = JSON.parse(res);
 							tbodyItemPackagingRows[3].innerHTML = matSelect.data.MAKTX;
 							tbodyItemPackagingRows[4].innerHTML = matSelect.data.UNIT1;
-							tbodyItemPackagingRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : matSelect.dataLast.LastPrice.slice(0, -2);
+							tbodyItemPackagingRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : parseFloat(matSelect.dataLast.LastPrice).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
 						}
 					)
 				}
@@ -784,18 +838,33 @@
 				let docStatus = $('#docStatus').val();
 				let tbodyItemPackagingRows = document.getElementById("tblItemPackaging").rows[no].cells;
 				let itemCodeSelected = ((docStatus == 'Existing' && tbodyItemPackagingRows[2].children[0]) || tbodyItemPackagingRows[2].children[0]) ? tbodyItemPackagingRows[2].children[0].value : tbodyItemPackagingRows[2].innerHTML;
-				let lastPrice = itemCodeSelected == '-' ? tbodyItemPackagingRows[5].children[0].value : tbodyItemPackagingRows[5].innerHTML;
-				tbodyItemPackagingRows[7].innerHTML = parseFloat(lastPrice)*parseFloat(qty);
+				let lastPrice = itemCodeSelected == '-' ? tbodyItemPackagingRows[5].children[0].value.replace(',','').replace(',','') : tbodyItemPackagingRows[5].innerHTML.replace(',','').replace(',','');
+				tbodyItemPackagingRows[7].innerHTML = (parseFloat(lastPrice)*parseFloat(qty)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
+				setTotalMaterialCost();
+				setProdCostPercentage($('#productSellPrice').val());
+			}
+			
+			function setTotalCostByPricePack(price,no){
+				let tbodyItemPackagingRows = document.getElementById("tblItemPackaging").rows[no].cells;
+				let qty = tbodyItemPackagingRows[6].children[1].value ? tbodyItemPackagingRows[6].children[1].value : 0;
+				tbodyItemPackagingRows[7].innerHTML = (parseFloat(price)*parseFloat(qty)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
 				setTotalMaterialCost();
 				setProdCostPercentage($('#productSellPrice').val());
 			}
 
 			function setMaterialCostItem(){
 				let tablePack = $("#tblItemPackaging tbody");
+				let tblItemPackagingCountRow = $('#tblItemPackaging > tbody tr');
 				tablePack.find('tr').each(function(i, el){
-					if (i+1 > 0) {
-						let td = $(this).find('td');
-						td.eq(7).text(parseFloat(td.eq(5).text() * td.eq(6).find('input:text').val()));
+					let tdPack = $(this).find('td');
+					console.log(tblItemPackagingCountRow.length)
+					console.log(tdPack.eq(2).has('select'))
+					console.log(tdPack.eq(2).has('select').length)
+					console.log(tdPack.eq(2).text())
+					if (tblItemPackagingCountRow.length > 0 && tblItemPackagingCountRow.text() != 'No data available in table') {
+						if (tdPack.eq(2).text() || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
+							tdPack.eq(7).text(parseFloat(tdPack.eq(5).text().replace(',','').replace(',','') * tdPack.eq(6).find('input:text').val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+						}
 					}
 				});
 				setTotalMaterialCost();
@@ -807,8 +876,8 @@
 				let totCost = 0;
 				tablePack.find('tr').each(function(i, el){
 					let td = $(this).find('td');
-					totCost += parseFloat(td.eq(7).text() ? td.eq(7).text() : 0);
-					$('#totAllPackCost').text(totCost.toLocaleString());
+					totCost += parseFloat(td.eq(7).text() ? td.eq(7).text().replace(',','').replace(',','') : 0);
+					$('#totAllPackCost').text(totCost.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				});
 				setQFactor();
 			}
@@ -818,7 +887,7 @@
 				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorSAP = parseFloat($("#qFactorSAP").val()) * (1/100);
 				let qFactor = qFactorSAP * (totFood + totMaterial);
-				$('#qFactorResult').text(qFactor.toLocaleString());
+				$('#qFactorResult').text(qFactor.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCost();
 			}
 
@@ -827,7 +896,7 @@
 				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorResult = parseFloat($('#qFactorResult').text().replace(',','').replace(',',''));
 				let result = (totFood + totMaterial + qFactorResult) + (0.1 * (totFood + totMaterial + qFactorResult))
-				$('#totProdCost').text(result.toLocaleString());
+				$('#totProdCost').text(result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCostDivQtyProduct();
 			}
 
@@ -835,7 +904,7 @@
 				let productQty = $('#productQty').val() ? $('#productQty').val() : 0;
 				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
 				let result = totProdCost / parseFloat(productQty);
-				$('#totProdCostDivQtyProd').text(result ? result.toLocaleString() : 0);
+				$('#totProdCostDivQtyProd').text(result ? result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) : 0);
 			}
 
 			function setProdCostPercentage(price){
@@ -843,7 +912,7 @@
 				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
 				let percentage = (totProdCost / pricePB1) * 100;
 
-				$('#percentageCosting').text(`${$('#productType option:selected').val() == 'Selling' ? (percentage ? percentage.toFixed(4) : 0) : 0} %`);
+				$('#percentageCosting').text(`${$('#productType').val() == 'Finish Goods' ? (percentage ? percentage.toFixed(4) : 0) : 0} %`);
 				setPercentageColor();
 			}
 
@@ -852,7 +921,7 @@
 				let min = parseFloat($("#minCostSAP").val()) * (1/100);
 				let max = parseFloat($("#maxCostSAP").val()) * (1/100);
 
-				if ($('#percentageCosting').text() == '0 %' && $('#productType option:selected').val() == 'Selling') {
+				if ($('#percentageCosting').text() == '0 %' && $('#productType').val() == 'Finish Goods') {
 					$('#after-submit').hide();
 				} else {
 					$('#after-submit').show();
@@ -919,7 +988,7 @@
 				tblItemPackaging.find('tr').each(function(i, el){
 					let tdPack = $(this).find('td');
 					if (tblItemPackagingCountRow.length > 0 && tblItemPackagingCountRow.text() != 'No data available in table') {
-						if (tdPack.eq(2).find('select option:selected').val()) {
+						if (tdPack.eq(2).text() || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
 							matrialNo.push(tdPack.eq(2).has('select').length > 0 ? tdPack.eq(2).find('select option:selected').val() : tdPack.eq(2).text());
 							matrialDesc.push(tdPack.eq(3).children().length == 0 ? tdPack.eq(3).text() : tdPack.eq(3).children(0).val()); 
 							itemUom.push(tdPack.eq(4).has('input:text').length > 0 ? tdPack.eq(4).find('input').val() : tdPack.eq(4).text());	

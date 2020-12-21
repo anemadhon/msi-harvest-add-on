@@ -5,9 +5,10 @@ class Productcosting_model extends CI_Model {
 	function getProdCostData($fromDate='', $toDate='', $status=''){
 		$kd_plant = $this->session->userdata['ADMIN']['plant'];
 		$this->db->distinct();
-		$this->db->select('a.id_prod_cost_header, a.product_name, a.existing_bom_code, a.existing_bom_name, a.product_qty, a.product_uom, a.status, a.created_date, a.status_head, a.approved_user_date, a.approved_head_dept_date, a.rejected_head_dept_date, a.prod_cost_no,
+		$this->db->select("a.id_prod_cost_header, a.product_name, a.existing_bom_code, a.existing_bom_name, a.product_qty, a.product_uom, a.status, a.created_date, a.status_head, a.approved_user_date, a.approved_head_dept_date, a.rejected_head_dept_date, a.prod_cost_no,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_input) as created_by,
-		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_approved) as approved_by');
+		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_approved) as approved_by,
+		(SELECT CONCAT(dept_code, '-', dept_name) FROM t_department WHERE dept_head_id = a.id_user_approved) as dept");
 		$this->db->from('t_prod_cost_header a');
 		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
 		$this->db->where('a.plant', $kd_plant);

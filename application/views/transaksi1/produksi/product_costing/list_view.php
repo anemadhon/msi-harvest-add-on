@@ -95,6 +95,7 @@
                                                 <th style="text-align: center">Status Kepala Departemen</th>
                                                 <th style="text-align: center">Approved/Rejected Date</th>
                                                 <th style="text-align: center">Kepala Departemen</th>
+                                                <th style="text-align: center">Departemen</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -147,8 +148,8 @@
                         }},
                         {"data":"id_prod_cost_header", "className":"dt-center", render:function(data, type, row, meta){
                             rr = `<div style="width:100px">
-                                    <a href='<?php echo site_url('transaksi1/productcosting/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;
-                                    <a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp;
+                                    <a href='<?php echo site_url('transaksi1/productcosting/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp
+                                    ${row['head_dept'] ? `<a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp` : ''}
                                 </div>`;
                             return rr;
                         }},
@@ -158,14 +159,15 @@
                         {"data":"existing_bom", "className":"dt-center"},
                         {"data":"product_qty"},
                         {"data":"product_uom", "className":"dt-center"},
-                        {"data":"created_date", "className":"dt-center"},
                         {"data":"created_by", "className":"dt-center"},
+                        {"data":"created_date", "className":"dt-center"},
                         {"data":"status", "className":"dt-center"},
                         {"data":"approval_admin_date", "className":"dt-center"},
                         {"data":"approved_by", "className":"dt-center"},
                         {"data":"status_head", "className":"dt-center"},
                         {"data":"approval_head_date", "className":"dt-center"},
-                        {"data":"head_dept", "className":"dt-center"}
+                        {"data":"head_dept", "className":"dt-center"},
+                        {"data":"dept", "className":"dt-center"}
                     ]
                 });
             }

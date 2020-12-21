@@ -68,8 +68,8 @@ class Productcosting extends CI_Controller{
             $nestedData['head_dept'] 				= $val['status_head'] != '1' ? $val['approved_by'] : '';
             $nestedData['approval_admin_date'] 		= ($val['approved_user_date'] == '1900-01-01 00:00:00.000' || !$val['approved_user_date'] || $val['status_head'] == '0') ? '' : date("d-m-Y H:i:s",strtotime($val['approved_user_date']));
             $nestedData['approval_head_date'] 		= $val['status_head'] == '1' ? '' : ($val['status_head'] == '0' ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : ''));//$val['status_head'] == '1' ? '' : $val['rejected_head_dept_date'] ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : '');
-            $data[] = $nestedData;					//= $val['status_head'] == '1' ? '' : ($val['status_head'] == '0' ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : '');
-
+            $nestedData['dept'] 					= $val['dept'];
+            $data[] = $nestedData;					
         }
 		
 		$json_data = array(
@@ -144,7 +144,7 @@ class Productcosting extends CI_Controller{
         $i = 1;
         if($rs){
             foreach($rs as $data){
-		
+
 				$getucaneditqty = '<input type="hidden" class="form-control" id="typeCosting_'.$i.'"><input type="text" id="qtyCosting_'.$i.'" class="form-control" value="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" style="width:90px" autocomplete="off">';
 
 				$queryUOM = $this->pc->getDataDetailUOMForExistingBom($data['material_no']);
@@ -159,13 +159,13 @@ class Productcosting extends CI_Controller{
 				$querySAP2 = $this->pc->getDataDetailItemBOMForExistingBom($kode_paket,$data['material_no']);
 				
 				$select = '<select class="form-control form-control-select2 descmat" data-live-search="true" name="descmat" id="descmat_'.$i.'">
-								<option value="'.$data['material_desc'].'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$data['material_no'].'" lastprice="'.$lastPurchase.'">'.$data['material_desc'].'</option>';
+								<option value="'.$data['material_desc'].'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$data['material_no'].'" lastprice="'.$lastPurchase.'">'.$data['material_desc'].'</option>'; 
 								if($querySAP2){
 									foreach($querySAP2 as $_querySAP2){
 										$queryGetSubLastPurchase = $this->pc->getDataLastPurchaseItemSelected($_querySAP2['U_SubsCode']);
 										$subLastPurchase = $queryGetSubLastPurchase['LastPrice'] == ".000000" ? "0.0000" : number_format($queryGetSubLastPurchase['LastPrice'],4,'.','');
 										if($_querySAP2['U_ItemCodeBOM'] == $data['material_no']){
-											$select .= '<option value="'.$_querySAP2['NAME'].'" uOm="'.$_querySAP2['U_SubsUOM'].'" matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$_querySAP2['U_SubsCode'].'" lastprice="'.$subLastPurchase.'">'.$_querySAP2['NAME'].'</option>';
+											$select .= '<option value="'.$_querySAP2['NAME'].'" uOm="'.$_querySAP2['U_SubsUOM'].'" matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$_querySAP2['U_SubsCode'].'" lastprice="'.$subLastPurchase.'">'.$_querySAP2['NAME'].'</option>'; 
 										}
 									}
 								}
@@ -305,7 +305,6 @@ class Productcosting extends CI_Controller{
 		$object['pc']['plant'] = $this->session->userdata['ADMIN']['plant'].' - '.$this->session->userdata['ADMIN']['plant_name'];
 		$object['pc']['user_login'] = $this->session->userdata['ADMIN']['admin_id'];
 		
-		
         $this->load->view('transaksi1/produksi/product_costing/edit_view', $object);
 	}
 	
@@ -323,7 +322,7 @@ class Productcosting extends CI_Controller{
 				$nestedData['2'] = $data['material_no'];
 				$nestedData['3'] = $data['material_desc'];
 				$nestedData['4'] = $data['item_uom'];
-				$nestedData['5'] = $data['item_cost'];
+				$nestedData['5'] = number_format($data['item_cost'],4);
 				$nestedData['6'] = $data['item_qty'];
 				$nestedData['7'] = '';
 				$dt[] = $nestedData;
