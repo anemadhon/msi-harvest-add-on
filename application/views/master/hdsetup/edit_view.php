@@ -90,8 +90,20 @@
                                         <div class="form-group row">
                                             <label class="col-lg-3 col-form-label" for="dept">Departemen</label>
                                             <div class="col-lg-9">
-                                                <input type="text" name="dept" id="dept" class="form-control" value="<?=$divisi['dept_code'].' - '.$divisi['dept_name']?>" readOnly>
+                                                <input type="text" name="dept" id="dept" class="form-control" value="<?=$divisi['dept']?>">
                                                 <input type="hidden" name="dept" id="idDept" value="<?=$divisi['id_dept']?>" readOnly>
+                                            </div>
+										</div>
+										
+										<div class="form-group row">
+                                            <label class="col-lg-3 col-form-label" for="dept">Acc Dept Name</label>
+                                            <div class="col-lg-9">
+                                                <select class="form-control form-control-select2" id="accDept" name="acc_dept">
+                                                    <option value="-">Select Departemen</option>
+                                                    <?php foreach($divisi_sap as $value){?>
+                                                        <option value="<?=$value['PrcCode']?>" desc="<?=$value['PrcName']?>" <?=$value['PrcCode'] == $divisi['dept_code'] ? 'selected' : ''?>><?=$value['PrcCode'].' - '.$value['PrcName']?></option>
+                                                    <?php } ?>
+                                                </select>
                                             </div>
                                         </div>
 
@@ -125,12 +137,18 @@
             $(document).ready(function(){
                 $('#update').click(function(){
                     let deptId = $('#idDept').val();
+					let deptName = $('#dept').val();
+					let accDeptCode = $('#accDept option:selected').val();
+                    let accDeptName = accDeptCode == '-' ? '-' : $('#accDept option:selected').attr('desc');
                     let deptHead = $('#deptHead option:selected').val();
 
                     let errorMesseges = [];
 
+					if(deptName == ''){
+                        errorMesseges.push('Departemen Harus dipilih. \n');
+                    }
                     if(deptHead == ''){
-                        errorMesseges.push('Kepala Divisi harus dipilih. \n');
+                        errorMesseges.push('Kepala Departemen harus dipilih. \n');
                     }
                     if (errorMesseges.length > 0) {
                         alert(errorMesseges.join(''));
@@ -140,6 +158,9 @@
                     setTimeout(() => {
                         $.post("<?php echo site_url('master/hdsetup/update')?>",{
                             deptId:deptId,
+                            dept:deptName,
+							accDeptCode:accDeptCode,
+                            accDeptName:accDeptName,
                             deptHead:deptHead,
                         }, function(){
                             $('#load').hide();

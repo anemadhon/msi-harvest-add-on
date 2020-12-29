@@ -27,8 +27,9 @@ class Hdsetup extends CI_Controller {
     }
 
     public function store(){
-        $department['dept_code'] = $this->input->post('deptCode');
-        $department['dept_name'] = $this->input->post('deptName');
+        $department['dept'] = $this->input->post('dept');
+        $department['dept_code'] = $this->input->post('accDeptCode');
+        $department['dept_name'] = $this->input->post('accDeptName');
         $department['dept_head_id'] = $this->input->post('deptHead');
         $department['id_user_input'] = $this->session->userdata['ADMIN']['admin_id'];
         $department['created_date'] = date('Y-m-d H:i:s');
@@ -42,7 +43,7 @@ class Hdsetup extends CI_Controller {
     }
 
     public function edit($id){
-
+        $data['divisi_sap'] = $this->divisi->getAllDataDivisiSAP();
         $data['divisi'] = $this->divisi->getDivisibyId($id);
         $data['users'] = $this->divisi->getUserForHeadDept();
         
@@ -52,6 +53,9 @@ class Hdsetup extends CI_Controller {
     public function update(){
         
         $department['id_dept'] = $this->input->post('deptId');
+        $department['dept'] = $this->input->post('dept');
+        $department['dept_code'] = $this->input->post('accDeptCode');
+        $department['dept_name'] = $this->input->post('accDeptName');
         $department['dept_head_id'] = $this->input->post('deptHead');
         $department['id_user_edit'] = $this->session->userdata['ADMIN']['admin_id'];
         $department['lastmodified'] = date('Y-m-d H:i:s');

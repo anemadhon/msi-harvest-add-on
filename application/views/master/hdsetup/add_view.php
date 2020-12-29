@@ -85,13 +85,20 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <fieldset>
-                                        <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i>Tambah Data Departemen</legend>
-
-                                        <div class="form-group row">
+										<legend class="font-weight-semibold"><i class="icon-reading mr-2"></i>Tambah Data Departemen</legend>
+										
+										<div class="form-group row">
                                             <label class="col-lg-3 col-form-label" for="dept">Departemen</label>
                                             <div class="col-lg-9">
-                                                <select class="form-control form-control-select2" id="dept" name="dept" required>
-                                                    <option value="">Select Departemen</option>
+                                                <input type="text" name="dept" id="dept" class="form-control" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 col-form-label" for="dept">Acc Dept Name</label>
+                                            <div class="col-lg-9">
+                                                <select class="form-control form-control-select2" id="accDept" name="acc_dept">
+                                                    <option value="-">Select Departemen</option>
                                                     <?php foreach($divisi as $value){?>
                                                         <option value="<?=$value['PrcCode']?>" desc="<?=$value['PrcName']?>"><?=$value['PrcCode'].' - '.$value['PrcName']?></option>
                                                     <?php } ?>
@@ -128,17 +135,18 @@
         <script>
             $(document).ready(function(){
                 $('#save').click(function(){
-                    let deptCode = $('#dept option:selected').val();
-                    let deptName = $('#dept option:selected').attr('desc');
+                    let deptName = $('#dept').val();
+                    let accDeptCode = $('#accDept option:selected').val();
+                    let accDeptName = accDeptCode == '-' ? '-' : $('#accDept option:selected').attr('desc');
                     let deptHead = $('#deptHead option:selected').val();
 
                     let errorMesseges = [];
 
-                    if(deptCode == ''){
-                        errorMesseges.push('Divisi Harus dipilih. \n');
+                    if(deptName == ''){
+                        errorMesseges.push('Departemen Harus dipilih. \n');
                     }
                     if(deptHead == ''){
-                        errorMesseges.push('Kepala Divisi harus dipilih. \n');
+                        errorMesseges.push('Kepala Departemen harus dipilih. \n');
                     }
                     if (errorMesseges.length > 0) {
                         alert(errorMesseges.join(''));
@@ -147,8 +155,9 @@
                     $('#load').show();
                     setTimeout(() => {
                         $.post("<?php echo site_url('master/hdsetup/store')?>",{
-                            deptCode:deptCode,
-                            deptName:deptName,
+                            dept:deptName,
+                            accDeptCode:accDeptCode,
+                            accDeptName:accDeptName,
                             deptHead:deptHead,
                         }, function(){
                             $('#load').hide();

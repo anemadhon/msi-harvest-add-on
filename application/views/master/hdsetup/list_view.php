@@ -21,7 +21,7 @@
                     <?php endif; ?>
                     <div class="card">
                         <div class="card-header">
-                            <legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List Head Departemen</legend>
+                            <legend class="font-weight-semibold"><i class="icon-list mr-2"></i>List of Department Heads</legend>
                             <a href="<?php echo site_url('master/hdsetup/add') ?>" class="btn btn-primary"> Add New</a>
                         </div>
                         <div class="card-body">
@@ -29,9 +29,10 @@
                                 <thead>
                                     <tr>
                                         <th style="text-align: left">*</th>
-                                        <th>Divisi</th>
-                                        <th>Head of Departemen</th>
-                                        <th>Aksi</th>
+                                        <th>Department</th>
+                                        <th>Acc Dept Name</th>
+                                        <th>Head of Department</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -41,7 +42,8 @@
                                     foreach($dept as $divisi):?>
                                     <tr>
                                         <td><?= $i++?></td>
-                                        <td><?= $divisi['dept_code'].' - '.$divisi['dept_name']?></td>
+                                        <td><?= $divisi['dept']?></td>
+                                        <td><?= $divisi['dept_code'] == '-' ? '' : $divisi['dept_code'].' - '.$divisi['dept_name']?></td>
                                         <td><?= $divisi['dept_head_name']?></td>
                                         <td>
                                             <a href='<?php echo site_url('master/hdsetup/edit/'.$divisi['id_dept'])?>' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp;

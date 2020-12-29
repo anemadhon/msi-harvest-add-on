@@ -30,7 +30,7 @@ class Department_Model extends CI_Model {
     }
     
     function getAllDataDivisi(){
-        $this->db->select('id_dept, dept_code, dept_name, dept_head_id, (SELECT admin_realname FROM d_admin WHERE admin_id = a.dept_head_id) as dept_head_name');
+        $this->db->select('id_dept, dept_code, dept_name, dept_head_id, dept, (SELECT admin_realname FROM d_admin WHERE admin_id = a.dept_head_id) as dept_head_name');
         $this->db->from('t_department a');
 
         $query = $this->db->get();
@@ -39,7 +39,7 @@ class Department_Model extends CI_Model {
     }
 
     function getDivisibyId($id){
-        $this->db->select('id_dept, dept_code, dept_name, dept_head_id');
+        $this->db->select('id_dept, dept_code, dept_name, dept_head_id, dept');
         $this->db->from('t_department a');
         $this->db->where('id_dept', $id);
 
@@ -59,6 +59,9 @@ class Department_Model extends CI_Model {
     function update($data){
 
         $update = array(
+            'dept' => $data['dept'],
+            'dept_code' => $data['dept_code'],
+            'dept_name' => $data['dept_name'],
             'dept_head_id' => $data['dept_head_id'],
             'id_user_edit' => $data['id_user_edit'],
             'lastmodified' => $data['lastmodified']
