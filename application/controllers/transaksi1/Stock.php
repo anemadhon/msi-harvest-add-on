@@ -712,7 +712,6 @@ class Stock extends CI_Controller {
         $excel->setActiveSheetIndex(0)->setCellValue('B9', "Item Group"); 
         $excel->setActiveSheetIndex(0)->setCellValue('C9', "Item Code"); 
         $excel->setActiveSheetIndex(0)->setCellValue('D9', "Item Name"); 
-        // $excel->setActiveSheetIndex(0)->setCellValue('E9', "On Hand");
         $excel->setActiveSheetIndex(0)->setCellValue('E9', "UOM"); 
         $abjadBegin = 'E';
         for ($i=1; $i <= count($object['head']); $i++) {
@@ -721,8 +720,6 @@ class Stock extends CI_Controller {
 
         $numrow = 10;
         foreach($object['dataOnHand'] as $key=>$r){ 
-
-            $excel->getActiveSheet()->protectCells('A'.$numrow.':M'.$numrow, 'MSI_SO');
 
             // applying border style
             $excel->getActiveSheet()->getStyle('A'.$numrow.':M'.$numrow)->applyFromArray($styleArray);
@@ -738,7 +735,6 @@ class Stock extends CI_Controller {
             $excel->setActiveSheetIndex(0)->setCellValue('B'.$numrow, $r['ItmsGrpNam']);
             $excel->setActiveSheetIndex(0)->setCellValue('C'.$numrow, $r['ItemCode']);
             $excel->setActiveSheetIndex(0)->setCellValue('D'.$numrow, $r['ItemName']);
-            // $excel->setActiveSheetIndex(0)->setCellValue('E'.$numrow, (float)$r['OnHand']);
             $excel->setActiveSheetIndex(0)->setCellValue('E'.$numrow, $r['UNIT']);
 
             $abjadBegin = 'E';
