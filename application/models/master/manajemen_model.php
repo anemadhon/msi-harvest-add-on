@@ -255,8 +255,9 @@ class Manajemen_model extends CI_Model{
     }
 
     function getAllDataDivisi(){
-        $this->db->select('id_dept, dept_code, dept_name, dept_head_id, (SELECT admin_realname FROM d_admin WHERE admin_id = a.dept_head_id) as dept_head_name');
+        $this->db->select('id_dept, dept, dept_head_id, (SELECT admin_realname FROM d_admin WHERE admin_id = a.dept_head_id) as dept_head_name');
         $this->db->from('t_department a');
+        $this->db->where("a.dept <> ''",null,false);
 
         $query = $this->db->get();
         $ret = $query->result_array();

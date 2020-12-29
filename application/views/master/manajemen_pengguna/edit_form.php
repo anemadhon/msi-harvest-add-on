@@ -18,9 +18,6 @@
 							<?php echo $this->session->flashdata('failed'); ?>
 						</div>
 				<?php endif; ?>
-
-					
-				
                     <div class="card">
                         <div class="card-body">
                             <form action="<?php base_url('master/manajemen/edit')?>" method="POST">
@@ -58,7 +55,7 @@
 											</div>
 
                                             <div class="form-group row">
-												<label class="col-lg-3 col-form-label">Email:</label>
+												<label class="col-lg-3 col-form-label">Email</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control <?php echo validation_errors('admin_email') ? 'is-invalid':'' ?>" name="admin_email" autocomplete="off" required value="<?=$admin->admin_email ? $admin->admin_email : 'default@gmail.com'?>" readOnly>
 													<div class="invalid-feedback">
@@ -116,7 +113,7 @@
 												foreach($dept as $value){ 
 													if ($value['dept_head_id'] == $admin->admin_id) {
 														$isSame = $value['dept_head_id'];
-														$name = $value['dept_code'].' - '.$value['dept_name'];
+														$name = $value['dept'];
 														break;
 													}
 												}
@@ -132,7 +129,7 @@
 														<select class="form-control form-control-select2" name="dept_manager" id="deptManager" required> 
 															<option value="">Select Department</option>
 															<?php foreach($dept as $value){ ?>
-																<option value="<?=$value['dept_head_id']?>" desc="<?=$value['dept_name']?>" <?=$value['dept_head_id'] == $admin->dept_manager ? 'selected' : ''?>><?=$value['dept_code'].' - '.$value['dept_name']?></option>
+																<option value="<?=$value['dept_head_id']?>" desc="<?=$value['dept']?>" <?=$value['dept_head_id'] == $admin->dept_manager ? 'selected' : ''?>><?=$value['dept']?></option>
 															<?php } ?>
 														</select>
 													<?php } ?>

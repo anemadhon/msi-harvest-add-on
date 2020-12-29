@@ -101,7 +101,7 @@
                                                     <select class="form-control form-control-select2" name="dept_manager" id="deptManager" required>
 														<option value="">Select Department</option>
 														<?php foreach($dept as $value){?>
-															<option value="<?=$value['dept_head_id']?>" desc="<?=$value['dept_name']?>"><?=$value['dept_code'].' - '.$value['dept_name']?></option>
+															<option value="<?=$value['dept_head_id']?>" desc="<?=$value['dept']?>"><?=$value['dept']?></option>
 														<?php } ?>
                                                     </select>
 												</div>
