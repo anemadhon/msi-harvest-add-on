@@ -14,7 +14,9 @@ class Msi extends CI_Controller {
         
 		// load model
 		$this->load->model('dashboard_model', 'dash_model');
-        $this->load->model('transaksi1/stock_model', 'st_model');
+		$this->load->model('transaksi1/stock_model', 'st_model');
+		$this->load->model('master/permission_model', 'm_perm');
+		$this->load->model('transaksi1/productcosting_model', 'pc');
 
 	}
 
@@ -46,6 +48,13 @@ class Msi extends CI_Controller {
 		$object['so_status'] = $this->st_model->getLastSOOutlet();
 		$object['so_last'] = $this->st_model->getLastSOOutlet('last');
 		$object['so_next'] = $this->st_model->getNextSODate();
+
+		$object['prod_cost_data'] = $this->pc->getAllProdCostData();
+		$object['prod_cost_data_ca'] = $this->pc->getAllProdCostData('ca');
+		$object['prod_cost_data_cc'] = $this->pc->getAllProdCostData('cc');
+		$object['prod_cost'] = $this->m_perm->perm_group_admins_select(30064)->result_array();
+		
+		$object['username_login'] = $this->session->userdata['ADMIN']['admin_username'];
 
 		$this->load->view('index', $object);
 	}

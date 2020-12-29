@@ -23,17 +23,13 @@
 			<?php  $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-
 					<!-- Dashboard content -->
 					<div class="row">
 						<div class="col-xl-8"></div>
-
 						<div class="col-xl-4">
-
 							<!-- Daily sales -->
 							<div class="card">
 								<div class="card-header header-elements-inline" style="margin-bottom:-10px; display: block;">
-									
 									<div class="header-elements" style="position: relative;">
 									<h4>Perhatian</h4>
 										<span class="font-weight-bold text-danger-600 ml-2" style="position: absolute; right: 0;"><?= $tglterkini ?></span>
@@ -41,9 +37,7 @@
 									<div class="header-elements">
 										<h5>Harap Segera Tindak Lanjuti</h5>
 									</div>
-									
 								</div>
-
 								<div class="table-responsive">
 									<?php if($jagwarning):?>
 									<table class="table text-nowrap">
@@ -57,37 +51,36 @@
 											<?php for($i=101; $i<=104; $i++):?>
 											<tr>
 												<td>
-												<?php if ($isFreeze == 0 || $isReject == 1):?>
+												<?php if (($isFreeze == 0 && $isMgr == 0) || $isReject == 1):?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url($link[$i])?>" class="font-size-sm mr-1"><?=$nama[$i]?> </a> 
 												<?php else: ?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><span><?=$nama[$i]?> </span> 
 												<?php endif; ?>
 												</td>
-												<td>
+												<td class="text-center">
 													<h6 class="font-weight-semibold mb-0"><?=$data[$i]['Total']?></h6>
 												</td>
 											</tr>
-
 											<?php endfor;?>
 											<tr>
 												<td>
-												<?php if ($isFreeze == 0 || $isReject == 1):?>
+												<?php if (($isFreeze == 0 && $isMgr == 0) || $isReject == 1):?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url($link[105])?>" class="font-size-sm mr-1"><?=$nama[105]?> </a> 
 												<?php else: ?>
 												<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><span><?=$nama[105]?> </span>
 												<?php endif; ?>
 												</td>
-												<td>
+												<td class="text-center">
 													<h6 class="font-weight-semibold mb-0"><?=$data[105]?></h6>
 												</td>
 											</tr>
-
 										</tbody>
 									</table>
-											<?php endif;?>
+									<?php endif;?>
 								</div>
 							</div>
-							<!-- SO table info -->
+							<!-- /daily sales -->
+							<!-- Stock Opname info -->
 							<div class="card">
 								<div class="table-responsive">
 									<table class="table text-nowrap">
@@ -159,12 +152,58 @@
 									</table>
 								</div>
 							</div>
-							<!-- /daily sales -->
-
+							<!-- /Stock Opname info -->
+							<!-- Product Costing info -->
+							<?php  
+							foreach ($prod_cost as $key => $value) {
+								if ($value['admin_username'] == $username_login) {
+							?>
+									<div class="card">
+										<div class="table-responsive">
+											<table class="table text-nowrap">
+												<thead>
+													<tr>
+														<th class="w-100">Product Costing Status</th>
+														<th>Jumlah</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>
+														<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Product Costing - Menunggu Approval Head Dept'?> </a> 
+														</td>
+														<td class="text-center">
+															<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data?></h6>
+														</td>
+													</tr>
+													<tr>
+														<td>
+														<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Product Costing - Menunggu Approval Category Approver'?> </a> 
+														</td>
+														<td class="text-center">
+															<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_ca?></h6>
+														</td>
+													</tr>
+													<tr>
+														<td>
+														<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Product Costing - Menunggu Approval Cost Control'?> </a> 
+														</td>
+														<td class="text-center">
+															<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_cc?></h6>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+							<?php
+								}
+							}
+							?>
+							<!-- /Product Costing info -->
 						</div>
 					</div>
 					<!-- /dashboard content -->
-
 				</div>
 				<?php $this->load->view("_template/footer.php")?>
 			</div>
