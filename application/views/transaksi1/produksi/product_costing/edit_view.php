@@ -127,6 +127,7 @@
 
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Category</label>
+												<?php if ($pc['status'] != 2) : ?>
 												<div class="col-lg-9">
 													<select name="category" id="category" class="form-control form-control-select2" data-live-search="true" onchange="getDataForQFactorFormula(this.value)">
 													<option value="">Select Category</option>
@@ -134,39 +135,46 @@
 															<option value="<?=$value['Code']?>" desc="<?=$value['Name']?>" <?php echo $value['Code'] == $pc['category_code'] ? 'selected' : '' ?>><?=$value['Name']?></option>
 														<?php }; ?>
 													</select>
-													<input type="hidden" id="qFactorSAP" value="<?php echo $pc['q_factor_sap'] ?>">
-													<input type="hidden" id="minCostSAP" value="<?php echo $pc['min'] ?>">
-													<input type="hidden" id="maxCostSAP" value="<?php echo $pc['max'] ?>">
 												</div>
+												<?php else : ?>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" name="category" id="category" value="<?php echo $pc['category_name'] ?>" readOnly>
+												</div>
+												<?php endif; ?>
+												<input type="hidden" id="qFactorSAP" value="<?php echo $pc['q_factor_sap'] ?>">
+												<input type="hidden" id="minCostSAP" value="<?php echo $pc['min'] ?>">
+												<input type="hidden" id="maxCostSAP" value="<?php echo $pc['max'] ?>">
+												<input type="hidden" id="catAppSAP" value="<?php echo $pc['category_approver'] ?>">
+												<input type="hidden" id="categoryCode" value="<?php echo $pc['category_code'] ?>">
 											</div>
 
-											<?php if($pc['existing_bom_code']) {?>
+											<?php if($pc['existing_bom_code']) :?>
 											<div class="form-group row" id="existingCost">
 												<label class="col-lg-3 col-form-label">Existing Bom</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" name="existing_bom" id="existingBom" value="<?php echo $pc['existing_bom_code'].' - '.$pc['existing_bom_name'] ?>" readOnly>
 												</div>
 											</div>
-											<?php } ?>
+											<?php endif; ?>
 
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Name</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" name="product_name" id="productName" value="<?php echo $pc['product_name'] ?>">
+													<input type="text" class="form-control" name="product_name" id="productName" value="<?php echo $pc['product_name'] ?>" <?php echo $pc['status'] == 2 ? 'readOnly' : '' ?>>
 												</div>
 											</div>
 
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Qty Produksi</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" name="product_qty" id="productQty" value="<?php echo $pc['product_qty'] ?>" onchange="multiplyingQtyItems_setTotalCost(this.value)">
+													<input type="text" class="form-control" name="product_qty" id="productQty" value="<?php echo $pc['product_qty'] ?>" onchange="multiplyingQtyItems_setTotalCost(this.value)" <?php echo $pc['status'] == 2 ? 'readOnly' : '' ?>>
 												</div>
 											</div>	
 
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">UOM</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" name="product_uom" id="productUom" value="<?php echo $pc['product_uom'] ?>" <?php echo $pc['existing_bom_code'] ? 'readOnly' : '' ?>>
+													<input type="text" class="form-control" name="product_uom" id="productUom" value="<?php echo $pc['product_uom'] ?>" <?php echo $pc['existing_bom_code'] || $pc['status'] == 2 ? 'readOnly' : '' ?>>
 												</div>
 											</div>
 
@@ -185,32 +193,50 @@
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Status</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" id="status" value="<?php echo ($pc['status'] == 1 || $pc['status_head'] == 0) ? 'Not Approved' : 'Approved' ?>" readOnly>
+													<input type="text" class="form-control" id="status" value="<?php echo ($pc['status'] == 1 || $pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) ? 'Not Approved' : 'Approved' ?>" readOnly>
 												</div>
 											</div>
 											
-											<?php if ($pc['status'] == 2) { ?>
+											<?php if ($pc['status'] == 2) : ?>
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Head of Department</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" value="<?php echo $pc['status'] == 2 && $pc['status_head'] == 2 ? 'Approved' : ($pc['status_head'] == 0 ? 'Rejected' : 'Not Approved') ?>" readOnly>
+													<input type="text" class="form-control" id="statusHead" value="<?php echo ($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] !== 0 && $pc['status_cost_control'] !== 0) ? 'Approved' : ($pc['status_head'] === 0 ? 'Rejected' : 'Not Approved') ?>" readOnly>
 												</div>
 											</div>
-											<?php } ?>
+											<?php endif; ?>
 											
-											<?php if ($pc['status_head'] == 0 && $pc['reject_reason']) { ?>
+											<?php if ($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['product_type'] == 2) : ?>
+											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">Category Approver</label>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" id="statusCatApp" value="<?php echo ($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] == 2 && $pc['status_cost_control'] !== 0) ? 'Approved' : ($pc['status_cat_approver'] === 0 ? 'Rejected' : 'Not Approved') ?>" readOnly>
+												</div>
+											</div>
+											<?php endif; ?>
+											
+											<?php if ($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] == 2 && $pc['product_type'] == 2) : ?>
+											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">Cost Control</label>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" id="statusCostControl" value="<?php echo $pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] == 2 && $pc['status_cost_control'] == 2 ? 'Approved' : ($pc['status_cost_control'] === 0 ? 'Rejected' : 'Not Approved') ?>" readOnly>
+												</div>
+											</div>
+											<?php endif; ?>
+											
+											<?php if (($pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) && $pc['reject_reason']) : ?>
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Reject Reason</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" value="<?php echo $pc['reject_reason']?>" readOnly>
 												</div>
 											</div>
-											<?php } ?>
+											<?php endif; ?>
 											
 											<div class="form-group row wp">
 												<label class="col-lg-3 col-form-label">Selling Price (include Tax)</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" name="product_sell_price" id="productSellPrice" value="<?php echo $pc['product_selling_price'] ?>" onchange="setProdCostPercentage(this.value)">
+													<input type="text" class="form-control" name="product_sell_price" id="productSellPrice" value="<?php echo $pc['product_selling_price'] ?>" onchange="setProdCostPercentage(this.value)" <?php echo $pc['status'] == 2 ? 'readOnly' : '' ?>>
 												</div>
 											</div>
 											
@@ -234,15 +260,29 @@
 											?>
 
 											<div class="text-right" id="after-submit" style="display: none;">
-												<?php if ($pc['status'] == 1 && $this->auth->is_have_perm('auth_approve') || $pc['status_head'] == 0) : ?>
+												<?php if ($pc['status'] == 1 && $this->auth->is_have_perm('auth_approve') || $pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) : ?>
 													<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb(1)">Save <i class="icon-pencil5 ml-2"></i></button>
 													<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)" >Approve <i class="icon-paperplane ml-2" ></input></i>
-												<?php elseif($pc['status'] == 2 && $this->auth->is_have_perm('auth_approve') && $pc['status_head'] != 0 && $this->auth->is_head_dept()['head_dept'] == $pc['user_login'] && $isUser != 0) : ?>
+												<?php elseif($pc['status'] == 2 && $this->auth->is_have_perm('auth_approve') && $pc['status_head'] !== 0 && $this->auth->is_head_dept()['head_dept'] == $pc['user_login'] && $isUser !== 0) : ?>
 													<?php if($pc['status_head'] == 1) : ?>
 														<button type="button" class="btn btn-danger" name="reject" id="reject" data-toggle="modal" data-target="#exampleModal" data-backdrop="static">Reject<i class="icon-paperplane ml-2"></i></button>	
 													<?php endif; ?>
 													<?php if($pc['status'] != 2 || $pc['status_head'] != 2) : ?>
 														<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(3)" >Approve <i class="icon-paperplane ml-2" ></input></i>
+													<?php endif; ?>
+												<?php elseif($pc['product_type'] == 2 && $pc['status'] == 2 && $pc['status_head'] == 2 && $pc['category_approver'] == strtolower($pc['username_login']) && $pc['status_cat_approver'] !== 0) : ?>
+													<?php if($pc['status_cat_approver'] == 1) : ?>
+														<button type="button" class="btn btn-danger" name="reject" id="reject" data-toggle="modal" data-target="#exampleModal" data-backdrop="static">Reject<i class="icon-paperplane ml-2"></i></button>	
+													<?php endif; ?>
+													<?php if($pc['status'] != 2 || $pc['status_head'] != 2 || $pc['status_cat_approver'] != 2) : ?>
+														<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(4)" >Approve <i class="icon-paperplane ml-2" ></input></i>
+													<?php endif; ?>
+												<?php elseif($pc['product_type'] == 2 && $pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] == 2 && strtolower($pc['username_dept']) == 'cost control' && $pc['status_cost_control'] !== 0) : ?>
+													<?php if($pc['status_cost_control'] == 1) : ?>
+														<button type="button" class="btn btn-danger" name="reject" id="reject" data-toggle="modal" data-target="#exampleModal" data-backdrop="static">Reject<i class="icon-paperplane ml-2"></i></button>	
+													<?php endif; ?>
+													<?php if($pc['status'] != 2 || $pc['status_head'] != 2 || $pc['status_cat_approver'] != 2 || $pc['status_cost_control'] != 2) : ?>
+														<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(5)" >Approve <i class="icon-paperplane ml-2" ></input></i>
 													<?php endif; ?>
 												<?php endif; ?>
 											</div>
@@ -286,7 +326,7 @@
 											</select>
 										</div>
 									</div>
-									<?php if($pc['status_head'] != 2) : ?>
+									<?php if($pc['status'] != 2 || $pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) : ?>
 									<div class="col-md-4 mb-2 after-doc" style="display: none;">
 										<div class="text-right">
 											<input type="button" class="btn btn-primary" value="Add" id="addTableIng" onclick="onAddrowItemIngredients()"> 
@@ -331,7 +371,7 @@
 											</select>
 										</div>
 									</div>
-									<?php if($pc['status_head'] != 2) : ?>
+									<?php if($pc['status'] != 2 || $pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) : ?>
 									<div class="col-md-4 mb-2 after-doc" style="display: none;">
 										<div class="text-right">
 											<input type="button" class="btn btn-primary" value="Add" id="addTablePack" onclick="onAddrowItemPackaging()"> 
@@ -447,7 +487,7 @@
 						{"data":"4"},
 						{"data":"5"},
 						{"data":"6", render:function(data, type, row, meta){
-							rr = `<input type="hidden" class="form-control ing" name="ing" id="ing_${row['1']}" value="1"><input type="text" class="form-control qty-ing" id="qtyCostingIng_${row['1']}" value="${data}" matqty="${data}" style="width:90px" autocomplete="off">`
+							rr = `<input type="hidden" class="form-control ing" name="ing" id="ing_${row['1']}" value="1"><input type="text" class="form-control qty-ing" id="qtyCostingIng_${row['1']}" value="${data}" matqty="${data}" style="width:90px" autocomplete="off" ${$('#status').val() == 'Approved' ? 'readOnly' : ''}>`
 							return rr;
 						}},
 						{"data":"7"}
@@ -484,7 +524,7 @@
 						{"data":"4"},
 						{"data":"5"},
 						{"data":"6", render:function(data, type, row, meta){
-							rr = `<input type="hidden" class="form-control pack" name="pack" id="pack_${row['1']}" value="2"><input type="text" class="form-control qty-pack" id="qtyCostingPack_${row['1']}" value="${data}" matqty="${data}" style="width:90px" autocomplete="off">`
+							rr = `<input type="hidden" class="form-control pack" name="pack" id="pack_${row['1']}" value="2"><input type="text" class="form-control qty-pack" id="qtyCostingPack_${row['1']}" value="${data}" matqty="${data}" style="width:90px" autocomplete="off" ${$('#status').val() == 'Approved' ? 'readOnly' : ''}>`
 							return rr;
 						}},
 						{"data":"7"}
@@ -597,6 +637,7 @@
 					$("#qFactorSAP").val(value.data['q_factor'].slice(0,-2));
 					$("#minCostSAP").val(value.data['min_cost'].slice(0,-2));
 					$("#maxCostSAP").val(value.data['max_cost'].slice(0,-2));
+					$("#catAppSAP").val(value.data['approver'].toLowerCase());
 					setTotalFoodCost();
 					setTotalMaterialCost();
 					setProdCostPercentage($('#productSellPrice').val());
@@ -687,7 +728,7 @@
 					success:function(res) {
 						optData = JSON.parse(res);
 						optData.forEach((val)=>{						
-							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR}).appendTo(select);
+							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR, tax:val.TAX}).appendTo(select);
 						})
 						$("<option />", {value:'-', text:'other', rel:'-'}).appendTo(select);
 					}
@@ -704,9 +745,10 @@
 					$.post(
 						"<?php echo site_url('transaksi1/productcosting/getdataDetailMaterialSelect')?>",{ MATNR:id },(res)=>{
 							matSelect = JSON.parse(res);
+							taxIdx = tbodyItemIngredientsRows[2].children[0].selectedOptions[0].attributes[2].value
 							tbodyItemIngredientsRows[3].innerHTML = matSelect.data.MAKTX;
 							tbodyItemIngredientsRows[4].innerHTML = matSelect.data.UNIT1;
-							tbodyItemIngredientsRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : parseFloat(matSelect.dataLast.LastPrice).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
+							tbodyItemIngredientsRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : (taxIdx == 'Y' ? parseFloat(matSelect.dataLast.LastPrice * (110/100)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) : parseFloat(matSelect.dataLast.LastPrice).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 						}
 					)
 				}
@@ -809,7 +851,7 @@
 					success:function(res) {
 						optData = JSON.parse(res);
 						optData.forEach((val)=>{						
-							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR}).appendTo(select);
+							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR, tax:val.TAX}).appendTo(select);
 						})
 						$("<option />", {value:'-', text:'other', rel:'-'}).appendTo(select);
 					}
@@ -826,9 +868,10 @@
 					$.post(
 						"<?php echo site_url('transaksi1/productcosting/getdataDetailMaterialSelect')?>",{ MATNR:id },(res)=>{
 							matSelect = JSON.parse(res);
+							taxIdx = tbodyItemPackagingRows[2].children[0].selectedOptions[0].attributes[2].value
 							tbodyItemPackagingRows[3].innerHTML = matSelect.data.MAKTX;
 							tbodyItemPackagingRows[4].innerHTML = matSelect.data.UNIT1;
-							tbodyItemPackagingRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : parseFloat(matSelect.dataLast.LastPrice).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
+							tbodyItemPackagingRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : (taxIdx == 'Y' ? parseFloat(matSelect.dataLast.LastPrice * (110/100)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) : parseFloat(matSelect.dataLast.LastPrice).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 						}
 					)
 				}
@@ -857,10 +900,6 @@
 				let tblItemPackagingCountRow = $('#tblItemPackaging > tbody tr');
 				tablePack.find('tr').each(function(i, el){
 					let tdPack = $(this).find('td');
-					console.log(tblItemPackagingCountRow.length)
-					console.log(tdPack.eq(2).has('select'))
-					console.log(tdPack.eq(2).has('select').length)
-					console.log(tdPack.eq(2).text())
 					if (tblItemPackagingCountRow.length > 0 && tblItemPackagingCountRow.text() != 'No data available in table') {
 						if (tdPack.eq(2).text() || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
 							tdPack.eq(7).text(parseFloat(tdPack.eq(5).text().replace(',','').replace(',','') * tdPack.eq(6).find('input:text').val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
@@ -895,7 +934,8 @@
 				let totFood = parseFloat($('#totAllIngCost').text().replace(',','').replace(',',''));
 				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorResult = parseFloat($('#qFactorResult').text().replace(',','').replace(',',''));
-				let result = (totFood + totMaterial + qFactorResult) + (0.1 * (totFood + totMaterial + qFactorResult))
+				let result = $('#productType option:selected').val() == 'Finish Goods' ? totFood + totMaterial + qFactorResult : totFood + totMaterial
+				//let result = (totFood + totMaterial + qFactorResult) + (0.1 * (totFood + totMaterial + qFactorResult))
 				$('#totProdCost').text(result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCostDivQtyProduct();
 			}
@@ -945,11 +985,12 @@
 
 			function addDatadb(id_approve){
 				let idDoc = $('#idProdCost').val();
-				let categoryCode = $('#category option:selected').val();
-				let categoryName = $('#category option:selected').text();
+				let categoryCode = $('#status').val() == 'Approved' ? $('#categoryCode').val() : $('#category option:selected').val();
+				let categoryName = $('#status').val() == 'Approved' ? $('#category').val() : $('#category option:selected').text();
 				let categoryQF = $('#qFactorSAP').val();
 				let categoryMinCost = $('#minCostSAP').val();
 				let categoryMaxCost = $('#maxCostSAP').val();
+				let categoryApprover = $('#catAppSAP').val();
 				let productName = $('#productName').val();
 				let productQty = $('#productQty').val();
 				let productUom = $('#productUom').val();
@@ -975,7 +1016,7 @@
 				tblItemIngredients.find('tr').each(function(i, el){
 					let tdIng = $(this).find('td');
 					matrialNo.push(tdIng.eq(2).has('select').length > 0 ? tdIng.eq(2).find('select option:selected').val() : tdIng.eq(2).text());
-					matrialDesc.push(tdIng.eq(3).children().length == 0 ? tdIng.eq(3).text() : tdIng.eq(3).children(0).val()); 
+					matrialDesc.push(tdIng.eq(3).children().length === 0 ? tdIng.eq(3).text() : tdIng.eq(3).children(0).val()); 
 					itemUom.push(tdIng.eq(4).has('input:text').length > 0 ? tdIng.eq(4).find('input').val() : tdIng.eq(4).text());	
 					itemCost.push(tdIng.eq(5).has('input:text').length > 0 ? tdIng.eq(5).find('input').val() : tdIng.eq(5).text());
 					itemQty.push(tdIng.eq(6).find('input:text').val());
@@ -990,7 +1031,7 @@
 					if (tblItemPackagingCountRow.length > 0 && tblItemPackagingCountRow.text() != 'No data available in table') {
 						if (tdPack.eq(2).text() || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
 							matrialNo.push(tdPack.eq(2).has('select').length > 0 ? tdPack.eq(2).find('select option:selected').val() : tdPack.eq(2).text());
-							matrialDesc.push(tdPack.eq(3).children().length == 0 ? tdPack.eq(3).text() : tdPack.eq(3).children(0).val()); 
+							matrialDesc.push(tdPack.eq(3).children().length === 0 ? tdPack.eq(3).text() : tdPack.eq(3).children(0).val()); 
 							itemUom.push(tdPack.eq(4).has('input:text').length > 0 ? tdPack.eq(4).find('input').val() : tdPack.eq(4).text());	
 							itemCost.push(tdPack.eq(5).has('input:text').length > 0 ? tdPack.eq(5).find('input').val() : tdPack.eq(5).text());
 							itemQty.push(tdPack.eq(6).find('input:text').val());
@@ -1035,6 +1076,7 @@
 						categoryQF:categoryQF,
 						categoryMin:categoryMinCost,
 						categoryMax:categoryMaxCost,
+						categoryApprover:categoryApprover,
 						productName:productName,
 						productQty:productQty,
 						productUom:productUom,
@@ -1057,8 +1099,8 @@
 						location.replace("<?php echo site_url('transaksi1/productcosting/')?>");
 					})
 					.fail(function(xhr, status) {
-						alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
-						location.reload(true);
+						console.log(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
+						//location.reload(true);
 					});
 				}, 600);
 			}
@@ -1067,14 +1109,25 @@
 				let idDoc = $('#idProdCost').val();
 				let reason = $('#reason').val();
 				let status = $('#status').val();
+				let statusHead = $('#statusHead').val();
+				let statusCatApp = $('#statusCatApp').val();
+				let statusCostControl = $('#statusCostControl').val();
+				let whosRejectFlag = '';
+				if (status == 'Approved' && statusHead == 'Not Approved') {
+					whosRejectFlag = 'head'
+				} else if (status == 'Approved' && statusHead == 'Approved' && statusCatApp == 'Not Approved') {
+					whosRejectFlag = 'catApp'
+				} else if (status == 'Approved' && statusHead == 'Approved' && statusCatApp == 'Approved' && statusCostControl == 'Not Approved') {
+					whosRejectFlag = 'costControl'
+				}
 
-				if (status == 'Approved' && reason.trim() == '') {
+				if ((status == 'Approved' && statusHead == 'Not Approved' && reason.trim() == '') || (status == 'Approved' && statusHead == 'Approved' && statusCatApp == 'Not Approved' && reason.trim() == '') || (status == 'Approved' && statusHead == 'Approved' && statusCatApp == 'Approved' && statusCostControl == 'Not Approved' && reason.trim() == '')) {
 					alert('Alasan Tidak Boleh Kosong')
 					return false;
 				}
 
 				$.post("<?php echo site_url('transaksi1/productcosting/reject')?>", {
-					id:idDoc, reason:reason
+					id:idDoc, reason:reason, whosRejectFlag:whosRejectFlag
 				}, function(res){
 					location.replace("<?php echo site_url('transaksi1/productcosting/')?>");
 				}

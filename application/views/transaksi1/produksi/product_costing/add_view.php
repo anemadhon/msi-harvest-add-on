@@ -144,6 +144,7 @@
 													<input type="hidden" id="qFactorSAP" value="0">
 													<input type="hidden" id="minCostSAP" value="0">
 													<input type="hidden" id="maxCostSAP" value="0">
+													<input type="hidden" id="catAppSAP" value="">
 												</div>
 											</div>
 
@@ -276,7 +277,7 @@
 													<th>Item Code</th>
 													<th>Item Desc</th>
 													<th>UOM</th>
-													<th>Unit Cost</th>
+													<th>Unit Cost include Tax 10%</th>
 													<th>Quantity</th>
 													<th>Total Cost</th>
 												</tr>
@@ -334,7 +335,7 @@
 													<th>Item Code</th>
 													<th>Item Desc</th>
 													<th>UOM</th>
-													<th>Unit Cost</th>
+													<th>Unit Cost include Tax 10%</th>
 													<th>Quantity</th>
 													<th>Total Cost</th>
 												</tr>
@@ -582,6 +583,7 @@
 					$("#qFactorSAP").val(value.data['q_factor'].slice(0,-2));
 					$("#minCostSAP").val(value.data['min_cost'].slice(0,-2));
 					$("#maxCostSAP").val(value.data['max_cost'].slice(0,-2));
+					$("#catAppSAP").val(value.data['approver'].toLowerCase());
 					setTotalFoodCost();
 					setTotalMaterialCost();
 					setProdCostPercentage($('#productSellPrice').val());
@@ -729,7 +731,7 @@
 					success:function(res) {
 						optData = JSON.parse(res);
 						optData.forEach((val)=>{						
-							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR}).appendTo(select);
+							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR, tax:val.TAX}).appendTo(select);
 						})
 						$("<option />", {value:'-', text:'other', rel:'-'}).appendTo(select);
 					}
@@ -746,9 +748,10 @@
 					$.post(
 						"<?php echo site_url('transaksi1/productcosting/getdataDetailMaterialSelect')?>",{ MATNR:id },(res)=>{
 							matSelect = JSON.parse(res);
+							taxIdx = tbodyItemIngredientsRows[2].children[0].selectedOptions[0].attributes[2].value
 							tbodyItemIngredientsRows[3].innerHTML = matSelect.data.MAKTX;
 							tbodyItemIngredientsRows[4].innerHTML = matSelect.data.UNIT1;
-							tbodyItemIngredientsRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : parseFloat(matSelect.dataLast.LastPrice).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
+							tbodyItemIngredientsRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : (taxIdx == 'Y' ? parseFloat(matSelect.dataLast.LastPrice * (110/100)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) : parseFloat(matSelect.dataLast.LastPrice).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 						}
 					)
 				}
@@ -841,7 +844,7 @@
 					success:function(res) {
 						optData = JSON.parse(res);
 						optData.forEach((val)=>{						
-							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR}).appendTo(select);
+							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR, tax:val.TAX}).appendTo(select);
 						})
 						$("<option />", {value:'-', text:'other', rel:'-'}).appendTo(select);
 					}
@@ -858,9 +861,10 @@
 					$.post(
 						"<?php echo site_url('transaksi1/productcosting/getdataDetailMaterialSelect')?>",{ MATNR:id },(res)=>{
 							matSelect = JSON.parse(res);
+							taxIdx = tbodyItemPackagingRows[2].children[0].selectedOptions[0].attributes[2].value
 							tbodyItemPackagingRows[3].innerHTML = matSelect.data.MAKTX;
 							tbodyItemPackagingRows[4].innerHTML = matSelect.data.UNIT1;
-							tbodyItemPackagingRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : parseFloat(matSelect.dataLast.LastPrice).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
+							tbodyItemPackagingRows[5].innerHTML = matSelect.dataLast.LastPrice == ".000000" ? "0.0000" : (taxIdx == 'Y' ? parseFloat(matSelect.dataLast.LastPrice * (110/100)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) : parseFloat(matSelect.dataLast.LastPrice).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 						}
 					)
 				}
@@ -908,7 +912,8 @@
 				let totFood = parseFloat($('#totAllIngCost').text().replace(',','').replace(',',''));
 				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorResult = parseFloat($('#qFactorResult').text().replace(',','').replace(',',''));
-				let result = (totFood + totMaterial + qFactorResult) + (0.1 * (totFood + totMaterial + qFactorResult))
+				let result = $('#productType option:selected').val() == 2 ? totFood + totMaterial + qFactorResult : totFood + totMaterial
+				//let result = (totFood + totMaterial + qFactorResult) + (0.1 * (totFood + totMaterial + qFactorResult))
 				$('#totProdCost').text(result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCostDivQtyProduct();
 			}
@@ -974,6 +979,7 @@
 				let categoryQF = $('#qFactorSAP').val();
 				let categoryMinCost = $('#minCostSAP').val();
 				let categoryMaxCost = $('#maxCostSAP').val();
+				let categoryApprover = $('#catAppSAP').val();
 				let existingBomCode	= $('#existingBom option:selected').val();
 				let existingBomName	= $('#existingBom option:selected').text().split(' - ');
 				let productName = $('#productName').val();
@@ -1067,6 +1073,7 @@
 						categoryQF:categoryQF,
 						categoryMin:categoryMinCost,
 						categoryMax:categoryMaxCost,
+						categoryApprover:categoryApprover,
 						existingBomCode:existingBomCode,
 						existingBomName:existingBomName[1],
 						productName:productName,

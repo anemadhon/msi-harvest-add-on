@@ -5,10 +5,10 @@ class Productcosting_model extends CI_Model {
 	function getProdCostData($fromDate='', $toDate='', $status=''){
 		$kd_plant = $this->session->userdata['ADMIN']['plant'];
 		$this->db->distinct();
-		$this->db->select("a.id_prod_cost_header, a.product_name, a.existing_bom_code, a.existing_bom_name, a.product_qty, a.product_uom, a.status, a.created_date, a.status_head, a.approved_user_date, a.approved_head_dept_date, a.rejected_head_dept_date, a.prod_cost_no,
+		$this->db->select("a.id_prod_cost_header, a.product_name, a.existing_bom_code, a.existing_bom_name, a.product_qty, a.product_uom, a.status, a.created_date, a.status_head, a.approved_user_date, a.approved_head_dept_date, a.rejected_head_dept_date, a.prod_cost_no, a.status_cat_approver, a.status_cost_control, a.approved_cat_approver_date, a.rejected_cat_approver_date, a.approved_cost_control_date, a.rejected_cost_control_date, a.product_type,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_input) as created_by,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_approved) as approved_by,
-		(SELECT CONCAT(dept_code, '-', dept_name) FROM t_department WHERE dept_head_id = a.id_user_approved) as dept");
+		(SELECT dept FROM t_department WHERE dept_head_id = a.id_user_approved) as dept");
 		$this->db->from('t_prod_cost_header a');
 		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
 		$this->db->where('a.plant', $kd_plant);
@@ -68,7 +68,7 @@ class Productcosting_model extends CI_Model {
 
 	function getDataForQFactorFormula($code){
 		$SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-		$SAP_MSI->select('yc.U_QFactor as q_factor, yc.U_MinCost as min_cost, yc.U_MaxCost as max_cost');
+		$SAP_MSI->select('yc.U_QFactor as q_factor, yc.U_MinCost as min_cost, yc.U_MaxCost as max_cost, U_CatApprov as approver');
 		$SAP_MSI->from('@YBC_COST as yc');
 		$SAP_MSI->where('Code', $code);
 		$query = $SAP_MSI->get();
@@ -96,8 +96,8 @@ class Productcosting_model extends CI_Model {
 	function getAllDataItems($itmGrp = ''){
 		$kd_plant = $this->session->userdata['ADMIN']['plant'];
         $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
-        $SAP_MSI->select('t0.ItemCode as MATNR,t0.ItemName as MAKTX,t0.ItmsGrpCod as DISPO,t0.InvntryUom as UNIT,t1.ItmsGrpNam as DSNAM');
-        $SAP_MSI->from('OITM  t0');
+        $SAP_MSI->select('t0.ItemCode as MATNR,t0.ItemName as MAKTX,t0.ItmsGrpCod as DISPO,t0.InvntryUom as UNIT,t1.ItmsGrpNam as DSNAM, t1.U_PlusTaxCost as TAX');
+        $SAP_MSI->from('OITM t0');
         $SAP_MSI->join('oitb t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
         $SAP_MSI->where('validFor', 'Y');
 		$SAP_MSI->where('t0.InvntItem', 'Y');
@@ -305,7 +305,40 @@ class Productcosting_model extends CI_Model {
 	}
 
 	function updateDataProdCostHeader($prod_cost_header){
-		if ($prod_cost_header['approved_user_date']) {
+		$update = array(
+			'category_code' => $prod_cost_header['category_code'],
+			'category_name' => $prod_cost_header['category_name'],
+			'category_q_factor' => $prod_cost_header['category_q_factor'],
+			'category_min' => $prod_cost_header['category_min'],
+			'category_max' => $prod_cost_header['category_max'],
+			'product_name' => $prod_cost_header['product_name'],
+			'product_qty' => $prod_cost_header['product_qty'],
+			'product_uom' => $prod_cost_header['product_uom'],
+			'product_selling_price' => $prod_cost_header['product_selling_price'],
+			'product_q_factor' => $prod_cost_header['product_q_factor'],
+			'product_percentage' => $prod_cost_header['product_percentage'],
+			'product_result' => $prod_cost_header['product_result'],
+			'product_result_div_product_qty' => $prod_cost_header['product_result_div_product_qty'],
+			'lastmodified' => $prod_cost_header['lastmodified']
+		);
+		if ($prod_cost_header['flag'] == 2) {
+			$update['status'] = $prod_cost_header['status'];
+			$update['approved_user_date'] = $prod_cost_header['approved_user_date'];
+			$update['id_user_approved'] = $prod_cost_header['id_user_approved'];
+		} elseif ($prod_cost_header['flag'] == 3) {
+			$update['status'] = $prod_cost_header['status'];
+			$update['status_head'] = $prod_cost_header['status_head'];
+			$update['approved_head_dept_date'] = $prod_cost_header['approved_head_dept_date'];
+			$update['id_user_approved'] = $prod_cost_header['id_user_approved'];
+		} elseif ($prod_cost_header['flag'] == 4) {
+			$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];
+			$update['approved_cat_approver_date'] = $prod_cost_header['approved_cat_approver_date'];
+		} elseif ($prod_cost_header['flag'] == 5) {
+			$update['status_cost_control'] = $prod_cost_header['status_cost_control'];
+			$update['approved_cost_control_date'] = $prod_cost_header['approved_cost_control_date'];
+			$update['id_cost_control'] = $prod_cost_header['id_cost_control'];
+		}
+		/* if ($prod_cost_header['approved_user_date']) {
 			$update = array(
 				'category_code' => $prod_cost_header['category_code'],
 				'category_name' => $prod_cost_header['category_name'],
@@ -348,7 +381,7 @@ class Productcosting_model extends CI_Model {
 				'lastmodified' => $prod_cost_header['lastmodified'],
 				'approved_head_dept_date' => $prod_cost_header['approved_head_dept_date']
 			);
-		}
+		} */
 		
 		$this->db->where('id_prod_cost_header', $prod_cost_header['id_prod_cost_header']);
         if($this->db->update('t_prod_cost_header', $update))
@@ -358,12 +391,27 @@ class Productcosting_model extends CI_Model {
 	}
 	
 	function reject($reject){
-		$update = array(
-			'status_head' => $reject['status_head'],
-			'reject_reason' => $reject['reject_reason'],
-			'id_user_approved' => $reject['id_user_approved'],
-			'rejected_head_dept_date' => $reject['rejected_head_dept_date']
-		);
+		if ($reject['whosRejectFlag'] == 1) {
+			$update = array(
+				'status_head' => $reject['status_head'],
+				'reject_reason' => $reject['reject_reason'],
+				'id_user_approved' => $reject['id_user_approved'],
+				'rejected_head_dept_date' => $reject['rejected_head_dept_date']
+			);
+		} elseif ($reject['whosRejectFlag'] == 2) {
+			$update = array(
+				'status_cat_approver' => $reject['status_cat_approver'],
+				'reject_reason' => $reject['reject_reason'],
+				'rejected_cat_approver_date' => $reject['rejected_cat_approver_date']
+			);
+		} elseif ($reject['whosRejectFlag'] == 3) {
+			$update = array(
+				'status_cost_control' => $reject['status_cost_control'],
+				'reject_reason' => $reject['reject_reason'],
+				'id_cost_control' => $reject['id_cost_control'],
+				'rejected_cost_control_date' => $reject['rejected_cost_control_date']
+			);
+		}
 		$this->db->where('id_prod_cost_header', $reject['id_prod_cost_header']);
         if($this->db->update('t_prod_cost_header', $update))
 			return TRUE;
@@ -384,10 +432,15 @@ class Productcosting_model extends CI_Model {
 
 	function getAllDataItemsWPSelling($type){
 		$this->db->distinct();
-		$this->db->select('a.product_name as MAKTX, a.prod_cost_no as MATNR');
+		$this->db->select("a.product_name as MAKTX, a.prod_cost_no as MATNR, 'N' as TAX");
 		$this->db->from('t_prod_cost_header a');
 		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
 		$this->db->where('a.product_type', $type);
+		$this->db->where('a.status_head', 2);
+		if ($type == 2) {
+			$this->db->where('a.status_cat_approver', 2);
+			$this->db->where('a.status_cost_control', 2);
+		}
 
 		$query = $this->db->get();
 		$data = $query->result_array();
@@ -415,4 +468,34 @@ class Productcosting_model extends CI_Model {
 		$query = $this->db->get();
 		return $query->row_array();
 	}
+
+	function getDeptUserLogin($user_id){
+		$this->db->select('dept');
+		$this->db->from('t_department a');
+		$this->db->join('d_admin b', 'a.dept_head_id = b.dept_manager');
+		$this->db->where('b.admin_id', $user_id);
+
+		$query = $this->db->get();
+		return $query->row_array();
+	}
+
+	//for dashboard
+	function getAllProdCostData($flag = ''){
+		$kd_plant = $this->session->userdata['ADMIN']['plant'];
+		$this->db->from('t_prod_cost_header a');
+		$this->db->where('a.status', 2);
+		$this->db->where('a.plant', $kd_plant);
+		if ($flag == 'ca') {
+			$this->db->where('a.product_type', 2);
+			$this->db->where('a.status_head', 2);
+		}
+		if ($flag == 'cc') {
+			$this->db->where('a.product_type', 2);
+			$this->db->where('a.status_cat_approver', 2);
+		}
+
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+	//for dashboard
 }

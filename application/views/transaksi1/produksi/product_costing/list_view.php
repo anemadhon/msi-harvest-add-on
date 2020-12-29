@@ -96,6 +96,10 @@
                                                 <th style="text-align: center">Approved/Rejected Date</th>
                                                 <th style="text-align: center">Kepala Departemen</th>
                                                 <th style="text-align: center">Departemen</th>
+                                                <th style="text-align: center">Status Kategori Approval</th>
+                                                <th style="text-align: center">Approved/Rejected Date</th>
+                                                <th style="text-align: center">Status Cost Control</th>
+                                                <th style="text-align: center">Approved/Rejected Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -149,7 +153,7 @@
                         {"data":"id_prod_cost_header", "className":"dt-center", render:function(data, type, row, meta){
                             rr = `<div style="width:100px">
                                     <a href='<?php echo site_url('transaksi1/productcosting/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp
-                                    ${row['head_dept'] ? `<a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp` : ''}
+                                    ${row['head_dept'] ? (row['prod_cost_no'].substr(0,2) == 'FG' && row['status_cat_approver'] == 2 && row['status_cost_control'] == 2 ? `<a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp` : (row['prod_cost_no'].substr(0,2) == 'WP' ? `<a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp` : '')) : ''}
                                 </div>`;
                             return rr;
                         }},
@@ -167,7 +171,11 @@
                         {"data":"status_head", "className":"dt-center"},
                         {"data":"approval_head_date", "className":"dt-center"},
                         {"data":"head_dept", "className":"dt-center"},
-                        {"data":"dept", "className":"dt-center"}
+                        {"data":"dept", "className":"dt-center"},
+                        {"data":"status_cat_approver", "className":"dt-center"},
+                        {"data":"approval_cat_approver_date", "className":"dt-center"},
+                        {"data":"status_cost_control", "className":"dt-center"},
+                        {"data":"approval_cost_control_date", "className":"dt-center"}
                     ]
                 });
             }
