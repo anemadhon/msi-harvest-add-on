@@ -237,7 +237,7 @@
 										<div class="text-left">
 											<p>Total Ingredients Cost : <span id="totAllIngCost">0</span></p>
 											<p>Total Packaging Cost : <span id="totAllPackCost">0</span></p>
-											<p>Q Factor : <span id="qFactorResult">0</span></p>
+											<p class="wp">Q Factor : <span id="qFactorResult">0</span></p>
 											<p>Total Product Cost : <span id="totProdCost">0</span></p>
 											<p>Total Product Cost / Qty Produksi: <span id="totProdCostDivQtyProd">0</span></p>
 										</div>
@@ -277,7 +277,7 @@
 													<th>Item Code</th>
 													<th>Item Desc</th>
 													<th>UOM</th>
-													<th>Unit Cost include Tax 10%</th>
+													<th>Unit Cost (include Tax 10%)</th>
 													<th>Quantity</th>
 													<th>Total Cost</th>
 												</tr>
@@ -335,7 +335,7 @@
 													<th>Item Code</th>
 													<th>Item Desc</th>
 													<th>UOM</th>
-													<th>Unit Cost include Tax 10%</th>
+													<th>Unit Cost (include Tax 10%)</th>
 													<th>Quantity</th>
 													<th>Total Cost</th>
 												</tr>
@@ -586,6 +586,7 @@
 					$("#catAppSAP").val(value.data['approver'].toLowerCase());
 					setTotalFoodCost();
 					setTotalMaterialCost();
+					setTotalProdCostDivQtyProduct();
 					setProdCostPercentage($('#productSellPrice').val());
 				});
 			}
@@ -621,6 +622,9 @@
 						getTableIng.rows.add(row.data).draw();
 						$('#firstRowPack').show();
 						addClassesIntoTable();
+						setFoodCostItem();
+						setTotalProdCostDivQtyProduct();
+						setProdCostPercentage($('#productSellPrice').val());
 						if ($('#productType option:selected').val() == 1) {
 							$('#after-submit').show();
 						}
@@ -660,13 +664,16 @@
 					});
 					tablePack.find('tr').each(function(i, el){
 						let tdPack = $(this).find('td');
-						let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text().replace(',','').replace(',','') : 0);
-						let qtyPack = parseFloat($("option:selected", this).attr("matqty"));
-						tdPack.eq(6).find('input:text').val(parseFloat(productQty) * qtyPack);
-						tdPack.eq(7).text(parseFloat(qtyPack * costPack).toLocaleStrPack(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+						if (tdPack.eq(2).find('select option:selected').val()) {
+							let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text().replace(',','').replace(',','') : 0);
+							let qtyPack = parseFloat($("option:selected", this).attr("matqty"));
+							tdPack.eq(6).find('input:text').val(parseFloat(productQty) * qtyPack);
+							tdPack.eq(7).text(parseFloat(qtyPack * costPack).toLocaleStrPack(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+						}
 					});
 					setTotalFoodCost();
 					setTotalMaterialCost();
+					setTotalProdCostDivQtyProduct();
 					setProdCostPercentage($('#productSellPrice').val());
 				} else {
 					setTotalProdCostDivQtyProduct();
@@ -771,6 +778,16 @@
 				let tbodyItemIngredientsRows = document.getElementById("tblItemIngredients").rows[no].cells;
 				let qty = tbodyItemIngredientsRows[6].children[1].value ? tbodyItemIngredientsRows[6].children[1].value : 0;
 				tbodyItemIngredientsRows[7].innerHTML = (parseFloat(price) * parseFloat(qty)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
+				setTotalFoodCost();
+				setProdCostPercentage($('#productSellPrice').val());
+			}
+
+			function setFoodCostItem(){
+				let tableIng = $("#tblItemIngredients tbody");
+				tableIng.find('tr').each(function(i, el){
+					let td = $(this).find('td');
+					td.eq(7).text(parseFloat(td.eq(5).text().replace(',','').replace(',','') * td.eq(6).find('input:text').val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+				});
 				setTotalFoodCost();
 				setProdCostPercentage($('#productSellPrice').val());
 			}
@@ -913,16 +930,15 @@
 				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorResult = parseFloat($('#qFactorResult').text().replace(',','').replace(',',''));
 				let result = $('#productType option:selected').val() == 2 ? totFood + totMaterial + qFactorResult : totFood + totMaterial
-				//let result = (totFood + totMaterial + qFactorResult) + (0.1 * (totFood + totMaterial + qFactorResult))
 				$('#totProdCost').text(result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCostDivQtyProduct();
 			}
 
 			function setTotalProdCostDivQtyProduct(){
-				let productQty = $('#productQty').val() ? $('#productQty').val() : 0;
+				let productQty = $('#productQty').val() ? $('#productQty').val() : '0.0000';
 				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
 				let result = totProdCost / parseFloat(productQty);
-				$('#totProdCostDivQtyProd').text(result ? result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) : 0);
+				$('#totProdCostDivQtyProd').text(result ? result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}) : '0.0000');
 			}
 
 			function setProdCostPercentage(price){

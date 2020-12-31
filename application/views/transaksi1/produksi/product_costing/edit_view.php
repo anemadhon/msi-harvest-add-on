@@ -194,6 +194,7 @@
 												<label class="col-lg-3 col-form-label">Status</label>
 												<div class="col-lg-9">
 													<input type="text" class="form-control" id="status" value="<?php echo ($pc['status'] == 1 || $pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) ? 'Not Approved' : 'Approved' ?>" readOnly>
+													<input type="hidden" id="statusInt" value="<?php echo $pc['status'] ?>">
 												</div>
 											</div>
 											
@@ -301,7 +302,7 @@
 										<div class="text-left">
 											<p>Total Ingredients Cost : <span id="totAllIngCost">0</span></p>
 											<p>Total Packaging Cost : <span id="totAllPackCost">0</span></p>
-											<p>Q Factor : <span id="qFactorResult">0</span></p>
+											<p class="wp">Q Factor : <span id="qFactorResult">0</span></p>
 											<p>Total Product Cost : <span id="totProdCost">0</span></p>
 											<p>Total Product Cost / Qty Produksi: <span id="totProdCostDivQtyProd">0</span></p>
 										</div>
@@ -343,7 +344,7 @@
 													<th>Item Code</th>
 													<th>Item Desc</th>
 													<th>UOM</th>
-													<th>Unit Cost</th>
+													<th>Unit Cost (include Tax 10%)</th>
 													<th>Quantity</th>
 													<th>Total Cost</th>
 												</tr>
@@ -388,7 +389,7 @@
 													<th>Item Code</th>
 													<th>Item Desc</th>
 													<th>UOM</th>
-													<th>Unit Cost</th>
+													<th>Unit Cost (include Tax 10%)</th>
 													<th>Quantity</th>
 													<th>Total Cost</th>
 												</tr>
@@ -640,6 +641,7 @@
 					$("#catAppSAP").val(value.data['approver'].toLowerCase());
 					setTotalFoodCost();
 					setTotalMaterialCost();
+					setTotalProdCostDivQtyProduct();
 					setProdCostPercentage($('#productSellPrice').val());
 				});
 			}
@@ -648,6 +650,7 @@
 				if ($('#docStatus').val() == 'Existing') {
 					let tableIng = $("#tblItemIngredients tbody");
 					let tablePack = $("#tblItemPackaging tbody");
+					let tblItemPackagingCountRow = $('#tblItemPackaging > tbody tr');
 					tableIng.find('tr').each(function(i, el){
 						let tdIng = $(this).find('td');
 						let costIng = parseFloat(tdIng.eq(5).text() ? tdIng.eq(5).text().replace(',','').replace(',','') : 0);
@@ -657,13 +660,18 @@
 					});
 					tablePack.find('tr').each(function(i, el){
 						let tdPack = $(this).find('td');
-						let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text().replace(',','').replace(',','') : 0);
-						let qtyPack = parseFloat($('input:text', this).attr("matqty"));
-						tdPack.eq(6).find('input:text').val(parseFloat(productQty) * qtyPack);
-						tdPack.eq(7).text(parseFloat(qtyPack * costPack).toLocaleStrPack(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+						if (tblItemPackagingCountRow.length > 0 && tblItemPackagingCountRow.text() != 'No data available in table') {
+							if (tdPack.eq(2).text() || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
+								let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text().replace(',','').replace(',','') : 0);
+								let qtyPack = parseFloat($('input:text', this).attr("matqty"));
+								tdPack.eq(6).find('input:text').val(parseFloat(productQty) * qtyPack);
+								tdPack.eq(7).text(parseFloat(qtyPack * costPack).toLocaleStrPack(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+							}
+						}
 					});
 					setTotalFoodCost();
 					setTotalMaterialCost();
+					setTotalProdCostDivQtyProduct();
 					setProdCostPercentage($('#productSellPrice').val());
 				} else {
 					setTotalProdCostDivQtyProduct();
@@ -935,7 +943,6 @@
 				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorResult = parseFloat($('#qFactorResult').text().replace(',','').replace(',',''));
 				let result = $('#productType option:selected').val() == 'Finish Goods' ? totFood + totMaterial + qFactorResult : totFood + totMaterial
-				//let result = (totFood + totMaterial + qFactorResult) + (0.1 * (totFood + totMaterial + qFactorResult))
 				$('#totProdCost').text(result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCostDivQtyProduct();
 			}
@@ -985,8 +992,8 @@
 
 			function addDatadb(id_approve){
 				let idDoc = $('#idProdCost').val();
-				let categoryCode = $('#status').val() == 'Approved' ? $('#categoryCode').val() : $('#category option:selected').val();
-				let categoryName = $('#status').val() == 'Approved' ? $('#category').val() : $('#category option:selected').text();
+				let categoryCode = $('#statusInt').val() == 2 ? $('#categoryCode').val() : $('#category option:selected').val();
+				let categoryName = $('#statusInt').val() == 2 ? $('#category').val() : $('#category option:selected').text();
 				let categoryQF = $('#qFactorSAP').val();
 				let categoryMinCost = $('#minCostSAP').val();
 				let categoryMaxCost = $('#maxCostSAP').val();
@@ -1099,8 +1106,8 @@
 						location.replace("<?php echo site_url('transaksi1/productcosting/')?>");
 					})
 					.fail(function(xhr, status) {
-						console.log(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
-						//location.reload(true);
+						alert(`Terjadi Error (${xhr.status} : ${xhr.statusText}), Silahkan Coba Lagi`);
+						location.reload(true);
 					});
 				}, 600);
 			}

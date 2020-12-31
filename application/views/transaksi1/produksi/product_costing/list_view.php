@@ -98,8 +98,10 @@
                                                 <th style="text-align: center">Departemen</th>
                                                 <th style="text-align: center">Status Kategori Approval</th>
                                                 <th style="text-align: center">Approved/Rejected Date</th>
+                                                <th style="text-align: center">Kategori Approver</th>
                                                 <th style="text-align: center">Status Cost Control</th>
                                                 <th style="text-align: center">Approved/Rejected Date</th>
+                                                <th style="text-align: center">Cost Control</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -174,8 +176,10 @@
                         {"data":"dept", "className":"dt-center"},
                         {"data":"status_cat_approver", "className":"dt-center"},
                         {"data":"approval_cat_approver_date", "className":"dt-center"},
+                        {"data":"cat_approver", "className":"dt-center"},
                         {"data":"status_cost_control", "className":"dt-center"},
-                        {"data":"approval_cost_control_date", "className":"dt-center"}
+                        {"data":"approval_cost_control_date", "className":"dt-center"},
+                        {"data":"cost_control", "className":"dt-center"}
                     ]
                 });
             }

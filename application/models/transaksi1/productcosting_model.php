@@ -8,7 +8,10 @@ class Productcosting_model extends CI_Model {
 		$this->db->select("a.id_prod_cost_header, a.product_name, a.existing_bom_code, a.existing_bom_name, a.product_qty, a.product_uom, a.status, a.created_date, a.status_head, a.approved_user_date, a.approved_head_dept_date, a.rejected_head_dept_date, a.prod_cost_no, a.status_cat_approver, a.status_cost_control, a.approved_cat_approver_date, a.rejected_cat_approver_date, a.approved_cost_control_date, a.rejected_cost_control_date, a.product_type,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_input) as created_by,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_approved) as approved_by,
-		(SELECT dept FROM t_department WHERE dept_head_id = a.id_user_approved) as dept");
+		(SELECT dept FROM t_department WHERE dept_head_id = a.id_user_approved) as dept,
+		(SELECT admin_realname FROM d_admin WHERE admin_username = a.category_approver) as category_approver,
+		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_cost_control) as cost_control,
+		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_head_dept) as head_dept");
 		$this->db->from('t_prod_cost_header a');
 		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
 		$this->db->where('a.plant', $kd_plant);
@@ -329,7 +332,7 @@ class Productcosting_model extends CI_Model {
 			$update['status'] = $prod_cost_header['status'];
 			$update['status_head'] = $prod_cost_header['status_head'];
 			$update['approved_head_dept_date'] = $prod_cost_header['approved_head_dept_date'];
-			$update['id_user_approved'] = $prod_cost_header['id_user_approved'];
+			$update['id_head_dept'] = $prod_cost_header['id_head_dept'];
 		} elseif ($prod_cost_header['flag'] == 4) {
 			$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];
 			$update['approved_cat_approver_date'] = $prod_cost_header['approved_cat_approver_date'];
@@ -338,50 +341,6 @@ class Productcosting_model extends CI_Model {
 			$update['approved_cost_control_date'] = $prod_cost_header['approved_cost_control_date'];
 			$update['id_cost_control'] = $prod_cost_header['id_cost_control'];
 		}
-		/* if ($prod_cost_header['approved_user_date']) {
-			$update = array(
-				'category_code' => $prod_cost_header['category_code'],
-				'category_name' => $prod_cost_header['category_name'],
-				'category_q_factor' => $prod_cost_header['category_q_factor'],
-				'category_min' => $prod_cost_header['category_min'],
-				'category_max' => $prod_cost_header['category_max'],
-				'product_name' => $prod_cost_header['product_name'],
-				'product_qty' => $prod_cost_header['product_qty'],
-				'product_uom' => $prod_cost_header['product_uom'],
-				'product_selling_price' => $prod_cost_header['product_selling_price'],
-				'product_q_factor' => $prod_cost_header['product_q_factor'],
-				'product_percentage' => $prod_cost_header['product_percentage'],
-				'product_result' => $prod_cost_header['product_result'],
-				'product_result_div_product_qty' => $prod_cost_header['product_result_div_product_qty'],
-				'status' => $prod_cost_header['status'],
-				'status_head' => $prod_cost_header['status_head'],
-				'id_user_approved' => $prod_cost_header['id_user_approved'],
-				'lastmodified' => $prod_cost_header['lastmodified'],
-				'approved_user_date' => $prod_cost_header['approved_user_date'],
-				'approved_head_dept_date' => $prod_cost_header['approved_head_dept_date']
-			);
-		} else {
-			$update = array(
-				'category_code' => $prod_cost_header['category_code'],
-				'category_name' => $prod_cost_header['category_name'],
-				'category_q_factor' => $prod_cost_header['category_q_factor'],
-				'category_min' => $prod_cost_header['category_min'],
-				'category_max' => $prod_cost_header['category_max'],
-				'product_name' => $prod_cost_header['product_name'],
-				'product_qty' => $prod_cost_header['product_qty'],
-				'product_uom' => $prod_cost_header['product_uom'],
-				'product_selling_price' => $prod_cost_header['product_selling_price'],
-				'product_q_factor' => $prod_cost_header['product_q_factor'],
-				'product_percentage' => $prod_cost_header['product_percentage'],
-				'product_result' => $prod_cost_header['product_result'],
-				'product_result_div_product_qty' => $prod_cost_header['product_result_div_product_qty'],
-				'status' => $prod_cost_header['status'],
-				'status_head' => $prod_cost_header['status_head'],
-				'id_user_approved' => $prod_cost_header['id_user_approved'],
-				'lastmodified' => $prod_cost_header['lastmodified'],
-				'approved_head_dept_date' => $prod_cost_header['approved_head_dept_date']
-			);
-		} */
 		
 		$this->db->where('id_prod_cost_header', $prod_cost_header['id_prod_cost_header']);
         if($this->db->update('t_prod_cost_header', $update))
@@ -483,8 +442,13 @@ class Productcosting_model extends CI_Model {
 	function getAllProdCostData($flag = ''){
 		$kd_plant = $this->session->userdata['ADMIN']['plant'];
 		$this->db->from('t_prod_cost_header a');
-		$this->db->where('a.status', 2);
 		$this->db->where('a.plant', $kd_plant);
+		if ($flag == '') {
+			$this->db->where('a.status', 1);
+		}
+		if ($flag == 'hd') {
+			$this->db->where('a.status', 2);
+		}
 		if ($flag == 'ca') {
 			$this->db->where('a.product_type', 2);
 			$this->db->where('a.status_head', 2);
@@ -492,6 +456,26 @@ class Productcosting_model extends CI_Model {
 		if ($flag == 'cc') {
 			$this->db->where('a.product_type', 2);
 			$this->db->where('a.status_cat_approver', 2);
+		}
+
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+	
+	function getAllProdCostDataRejected($flag){
+		$kd_plant = $this->session->userdata['ADMIN']['plant'];
+		$this->db->from('t_prod_cost_header a');
+		$this->db->where('a.plant', $kd_plant);
+		if ($flag == 'hd') {
+			$this->db->where('a.status_head', 0);
+		}
+		if ($flag == 'ca') {
+			$this->db->where('a.product_type', 2);
+			$this->db->where('a.status_cat_approver', 0);
+		}
+		if ($flag == 'cc') {
+			$this->db->where('a.product_type', 2);
+			$this->db->where('a.status_cost_control', 0);
 		}
 
 		$query = $this->db->get();
