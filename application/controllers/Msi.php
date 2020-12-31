@@ -50,9 +50,12 @@ class Msi extends CI_Controller {
 		$object['so_next'] = $this->st_model->getNextSODate();
 
 		$object['prod_cost_data'] = $this->pc->getAllProdCostData();
+		$object['prod_cost_data_head'] = $this->pc->getAllProdCostData('hd');
 		$object['prod_cost_data_ca'] = $this->pc->getAllProdCostData('ca');
 		$object['prod_cost_data_cc'] = $this->pc->getAllProdCostData('cc');
-		$object['prod_cost'] = $this->m_perm->perm_group_admins_select(30064)->result_array();
+		$object['prod_cost_data_rejected_head'] = $this->pc->getAllProdCostDataRejected('hd');
+		$object['prod_cost_data_rejected_ca'] = $this->pc->getAllProdCostDataRejected('ca');
+		$object['prod_cost_data_rejected_cc'] = $this->pc->getAllProdCostDataRejected('cc');
 		
 		$object['username_login'] = $this->session->userdata['ADMIN']['admin_username'];
 

@@ -155,49 +155,97 @@
 							<!-- /Stock Opname info -->
 							<!-- Product Costing info -->
 							<?php  
-							foreach ($prod_cost as $key => $value) {
-								if ($value['admin_username'] == $username_login) {
+							if ($this->auth->is_have_perm('inv_productcosting')) {
 							?>
-									<div class="card">
-										<div class="table-responsive">
-											<table class="table text-nowrap">
-												<thead>
-													<tr>
-														<th class="w-100">Product Costing Status</th>
-														<th>Jumlah</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td>
-														<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Product Costing - Menunggu Approval Head Dept'?> </a> 
-														</td>
-														<td class="text-center">
-															<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data?></h6>
-														</td>
-													</tr>
-													<tr>
-														<td>
-														<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Product Costing - Menunggu Approval Category Approver'?> </a> 
-														</td>
-														<td class="text-center">
-															<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_ca?></h6>
-														</td>
-													</tr>
-													<tr>
-														<td>
-														<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Product Costing - Menunggu Approval Cost Control'?> </a> 
-														</td>
-														<td class="text-center">
-															<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_cc?></h6>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
+								<div class="card">
+									<div class="table-responsive">
+										<table class="table text-nowrap">
+											<thead>
+												<tr>
+													<th class="w-100">Product Costing Status</th>
+													<th>Jumlah</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>
+													<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Menunggu Approval Admin'?> </a> 
+													</td>
+													<td class="text-center">
+														<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data?></h6>
+													</td>
+												</tr>
+												<tr>
+													<td>
+													<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Menunggu Approval Head Dept'?> </a> 
+													</td>
+													<td class="text-center">
+														<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_head - $prod_cost_data_ca - $prod_cost_data_rejected_head?></h6>
+													</td>
+												</tr>
+												<?php 
+												if ($prod_cost_data_rejected_head > 0) {
+												?>
+												<tr>
+													<td>
+													<i class="icon-checkmark3 font-size-sm mr-1" style="color: red;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1" style="color: red;"><?='Head Dept Rejected'?> </a> 
+													</td>
+													<td class="text-center">
+														<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_rejected_head?></h6>
+													</td>
+												</tr>
+												<?php
+												}
+												?>
+												<tr>
+													<td>
+													<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Menunggu Approval Category Approver'?> </a> 
+													</td>
+													<td class="text-center">
+														<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_ca - $prod_cost_data_cc - $prod_cost_data_rejected_ca?></h6>
+													</td>
+												</tr>
+												<?php 
+												if ($prod_cost_data_rejected_ca > 0) {
+												?>
+												<tr>
+													<td>
+													<i class="icon-checkmark3 font-size-sm mr-1" style="color: red;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1" style="color: red;"><?='Category Approver Rejected'?> </a> 
+													</td>
+													<td class="text-center">
+														<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_rejected_ca?></h6>
+													</td>
+												</tr>
+												<?php
+												}
+												?>
+												<tr>
+													<td>
+													<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Menunggu Approval Cost Control'?> </a> 
+													</td>
+													<td class="text-center">
+														<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_cc - $prod_cost_data_rejected_cc?></h6>
+													</td>
+												</tr>
+												<?php 
+												if ($prod_cost_data_rejected_cc) {
+												?>
+												<tr>
+													<td>
+													<i class="icon-checkmark3 font-size-sm mr-1" style="color: red;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1" style="color: red;"><?='Cost Control Rejected'?> </a> 
+													</td>
+													<td class="text-center">
+														<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_rejected_cc?></h6>
+													</td>
+												</tr>
+												<?php
+												}
+												?>
+											</tbody>
+										</table>
 									</div>
+								</div>
 							<?php
-								}
 							}
 							?>
 							<!-- /Product Costing info -->
