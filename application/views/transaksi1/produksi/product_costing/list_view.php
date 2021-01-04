@@ -155,7 +155,7 @@
                         {"data":"id_prod_cost_header", "className":"dt-center", render:function(data, type, row, meta){
                             rr = `<div style="width:100px">
                                     <a href='<?php echo site_url('transaksi1/productcosting/edit/')?>${data}' ><i class='icon-file-plus2' title="Edit"></i></a>&nbsp
-                                    ${row['head_dept'] ? (row['prod_cost_no'].substr(0,2) == 'FG' && row['status_cat_approver'] == 2 && row['status_cost_control'] == 2 ? `<a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp` : (row['prod_cost_no'].substr(0,2) == 'WP' ? `<a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp` : '')) : ''}
+                                    ${row['head_dept'] ? (row['prod_cost_no'].substr(0,2) == 'FG' && row['status_cat_approver'] == 'Approved' && row['status_cost_control'] == 'Approved' ? `<a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp` : (row['prod_cost_no'].substr(0,2) == 'WP' ? `<a href='<?php echo site_url('transaksi1/productcosting/printXls/')?>${data}' target="_blank"><i class='icon-printer' title="Print Xls"></i></a>&nbsp` : '')) : ''}
                                 </div>`;
                             return rr;
                         }},

@@ -658,17 +658,17 @@
 					tableIng.find('tr').each(function(i, el){
 						let tdIng = $(this).find('td');
 						let costIng = parseFloat(tdIng.eq(5).text() ? tdIng.eq(5).text().replace(',','').replace(',','') : 0);
-						let qtyIng = parseFloat($("option:selected", this).attr("matqty"));
+						let qtyIng = parseFloat($("option:selected", this).attr("matqty") ? $("option:selected", this).attr("matqty") : tdIng.eq(6).find('input:text').attr('matqty'));
 						tdIng.eq(6).find('input:text').val(parseFloat(productQty) * qtyIng);
-						tdIng.eq(7).text(parseFloat(qtyIng * costIng).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+						tdIng.eq(7).text(parseFloat(tdIng.eq(6).find('input:text').val() * costIng).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 					});
 					tablePack.find('tr').each(function(i, el){
 						let tdPack = $(this).find('td');
 						if (tdPack.eq(2).find('select option:selected').val()) {
 							let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text().replace(',','').replace(',','') : 0);
-							let qtyPack = parseFloat($("option:selected", this).attr("matqty"));
+							let qtyPack = parseFloat($("option:selected", this).attr("matqty") ? $("option:selected", this).attr("matqty") : tdPack.eq(6).find('input:text').attr('matqty'));
 							tdPack.eq(6).find('input:text').val(parseFloat(productQty) * qtyPack);
-							tdPack.eq(7).text(parseFloat(qtyPack * costPack).toLocaleStrPack(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+							tdPack.eq(7).text(parseFloat(tdPack.eq(6).find('input:text').val() * costPack).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 						}
 					});
 					setTotalFoodCost();
@@ -696,7 +696,7 @@
 						"3":"",
 						"4":`<input type="text" class="form-control uom-ing" id="uomCostingIng_${count}" value="" style="width:90px" autocomplete="off">`,
 						"5":`<input type="text" class="form-control cost-ing" id="costCostingIng_${count}" value="" style="width:90px" autocomplete="off">`,
-						"6":`<input type="hidden" class="form-control ing" name="ing" id="ing_${count}" value="1"><input type="text" class="form-control qty-ing" id="qtyCostingIng_${count}" value="" style="width:90px" autocomplete="off">`,
+						"6":`<input type="hidden" class="form-control ing" name="ing" id="ing_${count}" value="1"><input type="text" class="form-control qty-ing" id="qtyCostingIng_${count}" matqty="" value="" style="width:90px" autocomplete="off">`,
 						"7":""
 						}).draw();
 					count++;
@@ -715,6 +715,7 @@
 				tbody.on('change','.qty-ing', function(){
 					tr = $(this).closest('tr');
 					no = tr[0].rowIndex;
+					$(this).attr('matqty', $(this).val());
 					setTotalCostIng($(this).val(),no);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
@@ -740,7 +741,7 @@
 						optData.forEach((val)=>{						
 							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR, tax:val.TAX}).appendTo(select);
 						})
-						$("<option />", {value:'-', text:'other', rel:'-'}).appendTo(select);
+						$("<option />", {value:'-', text:'other', rel:'-', tax:'N'}).appendTo(select);
 					}
 				});	
 			}
@@ -819,7 +820,7 @@
 						"3":"",
 						"4":`<input type="text" class="form-control uom-pack" id="uomCostingPack_${count}" value="" style="width:90px" autocomplete="off">`,
 						"5":`<input type="text" class="form-control cost-pack" id="costCostingPack_${count}" value="" style="width:90px" autocomplete="off">`,
-						"6":`<input type="hidden" class="form-control pack" name="pack" id="pack_${count}" value="2"><input type="text" class="form-control qty-pack" id="qtyCostingPack_${count}" value="" style="width:90px" autocomplete="off">`,
+						"6":`<input type="hidden" class="form-control pack" name="pack" id="pack_${count}" value="2"><input type="text" class="form-control qty-pack" id="qtyCostingPack_${count}" matqty="" value="" style="width:90px" autocomplete="off">`,
 						"7":""
 						}).draw();
 					count++;
@@ -838,6 +839,7 @@
 				tbody.on('change','.qty-pack', function(){
 					tr = $(this).closest('tr');
 					no = tr[0].rowIndex;
+					$(this).attr('matqty', $(this).val());
 					setTotalCostPack($(this).val(),no);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
@@ -863,7 +865,7 @@
 						optData.forEach((val)=>{						
 							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR, tax:val.TAX}).appendTo(select);
 						})
-						$("<option />", {value:'-', text:'other', rel:'-'}).appendTo(select);
+						$("<option />", {value:'-', text:'other', rel:'-', tax:'N'}).appendTo(select);
 					}
 				});			
 			}
@@ -929,7 +931,7 @@
 				let totFood = parseFloat($('#totAllIngCost').text().replace(',','').replace(',',''));
 				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorResult = parseFloat($('#qFactorResult').text().replace(',','').replace(',',''));
-				let result = $('#productType option:selected').val() == 2 ? totFood + totMaterial + qFactorResult : totFood + totMaterial
+				let result = $('#productType option:selected').val() == 2 ? totFood + totMaterial + qFactorResult : totFood + totMaterial;
 				$('#totProdCost').text(result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCostDivQtyProduct();
 			}

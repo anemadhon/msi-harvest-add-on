@@ -8,7 +8,7 @@ class Productcosting_model extends CI_Model {
 		$this->db->select("a.id_prod_cost_header, a.product_name, a.existing_bom_code, a.existing_bom_name, a.product_qty, a.product_uom, a.status, a.created_date, a.status_head, a.approved_user_date, a.approved_head_dept_date, a.rejected_head_dept_date, a.prod_cost_no, a.status_cat_approver, a.status_cost_control, a.approved_cat_approver_date, a.rejected_cat_approver_date, a.approved_cost_control_date, a.rejected_cost_control_date, a.product_type,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_input) as created_by,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_user_approved) as approved_by,
-		(SELECT dept FROM t_department WHERE dept_head_id = a.id_user_approved) as dept,
+		(SELECT dept FROM t_department WHERE dept_head_id = a.id_head_dept) as dept,
 		(SELECT admin_realname FROM d_admin WHERE admin_username = a.category_approver) as category_approver,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_cost_control) as cost_control,
 		(SELECT admin_realname FROM d_admin WHERE admin_id = a.id_head_dept) as head_dept");
@@ -328,6 +328,9 @@ class Productcosting_model extends CI_Model {
 			$update['status'] = $prod_cost_header['status'];
 			$update['approved_user_date'] = $prod_cost_header['approved_user_date'];
 			$update['id_user_approved'] = $prod_cost_header['id_user_approved'];
+			$update['status_head'] = $prod_cost_header['status_head'];
+			$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];
+			$update['status_cost_control'] = $prod_cost_header['status_cost_control'];
 		} elseif ($prod_cost_header['flag'] == 3) {
 			$update['status'] = $prod_cost_header['status'];
 			$update['status_head'] = $prod_cost_header['status_head'];
@@ -456,6 +459,10 @@ class Productcosting_model extends CI_Model {
 		if ($flag == 'cc') {
 			$this->db->where('a.product_type', 2);
 			$this->db->where('a.status_cat_approver', 2);
+		}
+		if ($flag == 'done') {
+			$this->db->where('a.product_type', 2);
+			$this->db->where('a.status_cost_control', 2);
 		}
 
 		$query = $this->db->get();

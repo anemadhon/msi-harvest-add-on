@@ -656,7 +656,7 @@
 						let costIng = parseFloat(tdIng.eq(5).text() ? tdIng.eq(5).text().replace(',','').replace(',','') : 0);
 						let qtyIng = parseFloat($('input:text', this).attr('matqty'));
 						tdIng.eq(6).find('input:text').val(parseFloat(productQty) * qtyIng);
-						tdIng.eq(7).text(qtyIng * costIng);
+						tdIng.eq(7).text(parseFloat(tdIng.eq(6).find('input:text').val() * costIng).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 					});
 					tablePack.find('tr').each(function(i, el){
 						let tdPack = $(this).find('td');
@@ -665,7 +665,7 @@
 								let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text().replace(',','').replace(',','') : 0);
 								let qtyPack = parseFloat($('input:text', this).attr("matqty"));
 								tdPack.eq(6).find('input:text').val(parseFloat(productQty) * qtyPack);
-								tdPack.eq(7).text(parseFloat(qtyPack * costPack).toLocaleStrPack(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+								tdPack.eq(7).text(parseFloat(tdPack.eq(6).find('input:text').val() * costPack).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 							}
 						}
 					});
@@ -713,6 +713,7 @@
 				tbody.on('change','.qty-ing', function(){
 					tr = $(this).closest('tr');
 					no = tr[0].rowIndex;
+					$(this).attr('matqty', $(this).val());
 					setTotalCostIng($(this).val(),no);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
@@ -836,6 +837,7 @@
 				tbody.on('change','.qty-pack', function(){
 					tr = $(this).closest('tr');
 					no = tr[0].rowIndex;
+					$(this).attr('matqty', $(this).val());
 					setTotalCostPack($(this).val(),no);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
@@ -942,7 +944,7 @@
 				let totFood = parseFloat($('#totAllIngCost').text().replace(',','').replace(',',''));
 				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorResult = parseFloat($('#qFactorResult').text().replace(',','').replace(',',''));
-				let result = $('#productType option:selected').val() == 'Finish Goods' ? totFood + totMaterial + qFactorResult : totFood + totMaterial
+				let result = $('#productType option:selected').val() == 'Finish Goods' ? totFood + totMaterial + qFactorResult : totFood + totMaterial;
 				$('#totProdCost').text(result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCostDivQtyProduct();
 			}

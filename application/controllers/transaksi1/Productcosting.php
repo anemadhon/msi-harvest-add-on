@@ -74,7 +74,7 @@ class Productcosting extends CI_Controller{
             $nestedData['status_cost_control'] 			= ($val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2) ? ($val['status_cost_control'] == 1 ? 'Not Approved' : ($val['status_cost_control'] === 0 ? 'Rejected' : ($val['status_cost_control'] == 2 ? 'Approved' : ''))) : '';
             $nestedData['approval_cost_control_date']	= $val['status_cost_control'] == 1 ? '' : ($val['status_cost_control'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cost_control_date'])) : (($val['approved_cost_control_date'] && $val['approved_cost_control_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_cost_control_date'])) : ''));
             $nestedData['cat_approver'] 				= ($val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['category_approver'] : '';
-            $nestedData['cost_control'] 				= $val['cost_control'];
+            $nestedData['cost_control'] 				= ($val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['cost_control'] : '';
             $data[] = $nestedData;					
         }
 		
@@ -379,6 +379,9 @@ class Productcosting extends CI_Controller{
 			$prod_cost_header['approved_user_date'] = date('Y-m-d H:i:s');
 			$prod_cost_header['id_user_approved'] = $this->session->userdata['ADMIN']['admin_id'];
 			$prod_cost_header['flag'] = 2;
+			$prod_cost_header['status_head'] = 1;
+			$prod_cost_header['status_cat_approver'] = 1;
+			$prod_cost_header['status_cost_control'] = 1;
 		}
 		if ($approve == 3) {
 			$prod_cost_header['status'] = 2;
