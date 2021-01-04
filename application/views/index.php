@@ -224,7 +224,7 @@
 													<i class="icon-checkmark3 font-size-sm mr-1" style="color: #2196f3;"></i><a href="<?php echo site_url('transaksi1/productcosting/')?>" class="font-size-sm mr-1"><?='Menunggu Approval Cost Control'?> </a> 
 													</td>
 													<td class="text-center">
-														<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_cc - $prod_cost_data_rejected_cc?></h6>
+														<h6 class="font-weight-semibold mb-0"><?=$prod_cost_data_cc - $prod_cost_data_done - $prod_cost_data_rejected_cc?></h6>
 													</td>
 												</tr>
 												<?php 
