@@ -53,7 +53,6 @@ class Msi extends CI_Controller {
 		$object['prod_cost_data_head'] = $this->pc->getAllProdCostData('hd');
 		$object['prod_cost_data_ca'] = $this->pc->getAllProdCostData('ca');
 		$object['prod_cost_data_cc'] = $this->pc->getAllProdCostData('cc');
-		$object['prod_cost_data_done'] = $this->pc->getAllProdCostData('done');
 		$object['prod_cost_data_rejected_head'] = $this->pc->getAllProdCostDataRejected('hd');
 		$object['prod_cost_data_rejected_ca'] = $this->pc->getAllProdCostDataRejected('ca');
 		$object['prod_cost_data_rejected_cc'] = $this->pc->getAllProdCostDataRejected('cc');

@@ -73,8 +73,8 @@ class Productcosting extends CI_Controller{
             $nestedData['approval_cat_approver_date']	= ($val['status_cat_approver'] == 1 || $val['status_cost_control'] === 0) ? '' : ($val['status_cat_approver'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cat_approver_date'])) : (($val['approved_cat_approver_date'] && $val['approved_cat_approver_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_cat_approver_date'])) : ''));
             $nestedData['status_cost_control'] 			= ($val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2) ? ($val['status_cost_control'] == 1 ? 'Not Approved' : ($val['status_cost_control'] === 0 ? 'Rejected' : ($val['status_cost_control'] == 2 ? 'Approved' : ''))) : '';
             $nestedData['approval_cost_control_date']	= $val['status_cost_control'] == 1 ? '' : ($val['status_cost_control'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cost_control_date'])) : (($val['approved_cost_control_date'] && $val['approved_cost_control_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_cost_control_date'])) : ''));
-            $nestedData['cat_approver'] 				= ($val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['category_approver'] : '';
-            $nestedData['cost_control'] 				= ($val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['cost_control'] : '';
+            $nestedData['cat_approver'] 				= ($val['product_type'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['category_approver'] : '';
+            $nestedData['cost_control'] 				= ($val['product_type'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['cost_control'] : '';
             $data[] = $nestedData;					
         }
 		
@@ -486,7 +486,7 @@ class Productcosting extends CI_Controller{
         $excel->getActiveSheet()->getStyle('B3')->getFont()->setBold(true);
 
         $excel->getActiveSheet()->mergeCells('B2:H2');
-        $excel->setActiveSheetIndex(0)->setCellValue('B2', 'Print Out Product Costing'); 
+        $excel->setActiveSheetIndex(0)->setCellValue('B2', 'Product Costing'); 
         $excel->getActiveSheet()->mergeCells('B3:H3');
 		$excel->setActiveSheetIndex(0)->setCellValue('B3', 'Outlet '.$kd_plant.' '.$plant_name); 
 		
@@ -515,7 +515,7 @@ class Productcosting extends CI_Controller{
         $excel->setActiveSheetIndex(0)->setCellValue('C8', $object['data']['category_name']); 
         $excel->setActiveSheetIndex(0)->setCellValue('C9', $object['data']['existing_bom_code'] ? $object['data']['existing_bom_code'].' - '.$object['data']['existing_bom_name'] : '-'); 
 		$excel->setActiveSheetIndex(0)->setCellValue('C10', $object['data']['product_name']); 
-		$excel->setActiveSheetIndex(0)->setCellValue('C11', $object['data']['product_qty']); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C11', number_format($object['data']['product_qty'],4)); 
         $excel->setActiveSheetIndex(0)->setCellValue('C12', $object['data']['product_uom']); 
         $excel->setActiveSheetIndex(0)->setCellValue('C13', date('d-m-Y', strtotime($object['data']['posting_date']))); 
 		$excel->setActiveSheetIndex(0)->setCellValue('C14', ($object['data']['status'] == 1 || $object['data']['status_head'] == 0) ? 'Not Approved' : 'Approved'); 
@@ -570,9 +570,9 @@ class Productcosting extends CI_Controller{
             $excel->setActiveSheetIndex(0)->setCellValue('C'.$numrowIng, $rIng['material_no']);
             $excel->setActiveSheetIndex(0)->setCellValue('D'.$numrowIng, $rIng['material_desc']);
 			$excel->setActiveSheetIndex(0)->setCellValue('E'.$numrowIng, $rIng['item_uom']);
-			$excel->setActiveSheetIndex(0)->setCellValue('F'.$numrowIng, $rIng['item_cost']);
-			$excel->setActiveSheetIndex(0)->setCellValue('G'.$numrowIng, $rIng['item_qty']);
-			$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowIng, (float)($rIng['item_qty'] * $rIng['item_cost']));
+			$excel->setActiveSheetIndex(0)->setCellValue('F'.$numrowIng, number_format($rIng['item_cost'],4));
+			$excel->setActiveSheetIndex(0)->setCellValue('G'.$numrowIng, number_format($rIng['item_qty'],4));
+			$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowIng, number_format((float)($rIng['item_qty'] * $rIng['item_cost']),4));
 
 			$totIngCost += (float)($rIng['item_qty'] * $rIng['item_cost']);
             $numrowIng++;
@@ -627,9 +627,9 @@ class Productcosting extends CI_Controller{
 				$excel->setActiveSheetIndex(0)->setCellValue('C'.$numrowPack, $rPack['material_no']);
 				$excel->setActiveSheetIndex(0)->setCellValue('D'.$numrowPack, $rPack['material_desc']);
 				$excel->setActiveSheetIndex(0)->setCellValue('E'.$numrowPack, $rPack['item_uom']);
-				$excel->setActiveSheetIndex(0)->setCellValue('F'.$numrowPack, $rPack['item_cost']);
-				$excel->setActiveSheetIndex(0)->setCellValue('G'.$numrowPack, $rPack['item_qty']);
-				$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowPack, (float)($rPack['item_qty'] * $rPack['item_cost']));
+				$excel->setActiveSheetIndex(0)->setCellValue('F'.$numrowPack, number_format($rPack['item_cost'],4));
+				$excel->setActiveSheetIndex(0)->setCellValue('G'.$numrowPack, number_format($rPack['item_qty'],4));
+				$excel->setActiveSheetIndex(0)->setCellValue('H'.$numrowPack, number_format((float)($rPack['item_qty'] * $rPack['item_cost']),4));
 				
 				$totPackCost += (float)($rPack['item_qty'] * $rPack['item_cost']);
 				$numrowPack++;

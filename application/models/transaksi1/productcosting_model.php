@@ -105,7 +105,7 @@ class Productcosting_model extends CI_Model {
         $SAP_MSI->where('validFor', 'Y');
 		$SAP_MSI->where('t0.InvntItem', 'Y');
 
-		if($itmGrp != ''){
+		if($itmGrp != '' && $itmGrp != 'all'){
 			$SAP_MSI->where('t1.ItmsGrpNam', $itmGrp);
 		}
 		
@@ -355,6 +355,7 @@ class Productcosting_model extends CI_Model {
 	function reject($reject){
 		if ($reject['whosRejectFlag'] == 1) {
 			$update = array(
+				'status' => 1,
 				'status_head' => $reject['status_head'],
 				'reject_reason' => $reject['reject_reason'],
 				'id_user_approved' => $reject['id_user_approved'],
@@ -362,12 +363,17 @@ class Productcosting_model extends CI_Model {
 			);
 		} elseif ($reject['whosRejectFlag'] == 2) {
 			$update = array(
+				'status' => 1,
+				'status_head' => 1,
 				'status_cat_approver' => $reject['status_cat_approver'],
 				'reject_reason' => $reject['reject_reason'],
 				'rejected_cat_approver_date' => $reject['rejected_cat_approver_date']
 			);
 		} elseif ($reject['whosRejectFlag'] == 3) {
 			$update = array(
+				'status' => 1,
+				'status_head' => 1,
+				'status_cat_approver' => 1,
 				'status_cost_control' => $reject['status_cost_control'],
 				'reject_reason' => $reject['reject_reason'],
 				'id_cost_control' => $reject['id_cost_control'],
@@ -451,18 +457,20 @@ class Productcosting_model extends CI_Model {
 		}
 		if ($flag == 'hd') {
 			$this->db->where('a.status', 2);
+			$this->db->where('a.status_head', 1);
 		}
 		if ($flag == 'ca') {
 			$this->db->where('a.product_type', 2);
+			$this->db->where('a.status', 2);
 			$this->db->where('a.status_head', 2);
+			$this->db->where('a.status_cat_approver', 1);
 		}
 		if ($flag == 'cc') {
 			$this->db->where('a.product_type', 2);
+			$this->db->where('a.status', 2);
+			$this->db->where('a.status_head', 2);
 			$this->db->where('a.status_cat_approver', 2);
-		}
-		if ($flag == 'done') {
-			$this->db->where('a.product_type', 2);
-			$this->db->where('a.status_cost_control', 2);
+			$this->db->where('a.status_cost_control', 1);
 		}
 
 		$query = $this->db->get();

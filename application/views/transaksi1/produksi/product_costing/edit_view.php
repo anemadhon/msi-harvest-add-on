@@ -198,7 +198,7 @@
 												</div>
 											</div>
 											
-											<?php if ($pc['status'] == 2) : ?>
+											<?php if ($pc['status'] == 2 || $pc['status_head'] === 0) : ?>
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Head of Department</label>
 												<div class="col-lg-9">
@@ -207,7 +207,7 @@
 											</div>
 											<?php endif; ?>
 											
-											<?php if ($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['product_type'] == 2) : ?>
+											<?php if (($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['product_type'] == 2) || $pc['status_cat_approver'] === 0) : ?>
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Category Approver</label>
 												<div class="col-lg-9">
@@ -216,7 +216,7 @@
 											</div>
 											<?php endif; ?>
 											
-											<?php if ($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] == 2 && $pc['product_type'] == 2) : ?>
+											<?php if (($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] == 2 && $pc['product_type'] == 2) || $pc['status_cost_control'] === 0) : ?>
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Cost Control</label>
 												<div class="col-lg-9">
@@ -261,7 +261,7 @@
 											?>
 
 											<div class="text-right" id="after-submit" style="display: none;">
-												<?php if ($pc['status'] == 1 && $this->auth->is_have_perm('auth_approve') || $pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) : ?>
+												<?php if ($pc['status'] == 1 && $this->auth->is_have_perm('auth_approve') && $pc['user_input'] == $pc['user_login']) : ?>
 													<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb(1)">Save <i class="icon-pencil5 ml-2"></i></button>
 													<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)" >Approve <i class="icon-paperplane ml-2" ></input></i>
 												<?php elseif($pc['status'] == 2 && $this->auth->is_have_perm('auth_approve') && $pc['status_head'] !== 0 && $this->auth->is_head_dept()['head_dept'] == $pc['user_login'] && $isUser !== 0) : ?>
@@ -933,9 +933,8 @@
 
 			function setQFactor(){
 				let totFood = parseFloat($('#totAllIngCost').text().replace(',','').replace(',',''));
-				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorSAP = parseFloat($("#qFactorSAP").val()) * (1/100);
-				let qFactor = qFactorSAP * (totFood + totMaterial);
+				let qFactor = qFactorSAP * totFood;
 				$('#qFactorResult').text(qFactor.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCost();
 			}

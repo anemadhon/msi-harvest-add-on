@@ -920,9 +920,8 @@
 
 			function setQFactor(){
 				let totFood = parseFloat($('#totAllIngCost').text().replace(',','').replace(',',''));
-				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorSAP = parseFloat($("#qFactorSAP").val()) * (1/100);
-				let qFactor = qFactorSAP * (totFood + totMaterial);
+				let qFactor = qFactorSAP * totFood;
 				$('#qFactorResult').text(qFactor.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCost();
 			}
