@@ -86,7 +86,7 @@
 			<?php  $this->load->view("_template/sidebar.php")?>
 			<div class="content-wrapper">
 				<div class="content">
-				<?php if ($this->session->flashdata('success')): ?>
+					<?php if ($this->session->flashdata('success')): ?>
 						<div class="alert alert-success" role="alert">
 							<?php echo $this->session->flashdata('success'); ?>
 						</div>
@@ -102,98 +102,86 @@
 								<div class="row">
 									<div class="col-md-12">
 										<fieldset>
-											<legend class="font-weight-semibold"><i class="icon-reading mr-2"></i>Product Costing</legend>
+											<legend class="font-weight-semibold"><i class="icon-reading mr-2"></i>Copy Product Costing</legend>
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">No. Product</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" name="prod_cost_no" id="prodCostNo" placeholder="(Auto Generate After Submiting Document)" readOnly>
+													<input type="text" class="form-control" placeholder="(Auto Generate After Submiting Document)" readOnly>
 												</div>
 											</div>
 
-											<div class="form-group row" id="divDocStatus">
+											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Product</label>
 												<div class="col-lg-9">
-													<select name="doc_status" class="form-control form-control-select2" data-live-search="true" id="docStatus">
-														<option value="">Select Product</option>
-														<option value="1">New</option>
-														<option value="2">Existing</option>
-													</select>
-												</div>
-											</div>
-											
-											<div class="form-group row" id="divDocStatusInput" style="display:none">
-												<label class="col-lg-3 col-form-label">Product</label>
-												<div class="col-lg-9">
-													<input type="text" class="form-control" id="docStatusInput" readOnly>
+													<input type="text" class="form-control" name="doc_status" id="docStatus" value="<?php echo $pc['existing_bom_code'] ? 'Existing' : 'New' ?>" readOnly>
+													<input type="hidden" id="idProdCost" value="<?php echo $pc['id_prod_cost_header'] ?>">
 												</div>
 											</div>
 
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Costing Type</label>
 												<div class="col-lg-9">
-													<select name="product_type" class="form-control form-control-select2" data-live-search="true" id="productType">
-														<option value="">Select Type</option>
-														<option value="1">WP</option>
-														<option value="2">Finish Goods</option>
-													</select>
+													<input type="text" class="form-control" id="productType" value="<?php echo $pc['product_type'] == 1 ? 'WP' : 'Finish Goods' ?>" readOnly>
 												</div>
 											</div>
 
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Category</label>
+												<?php if ($pc['status'] != 2) : ?>
 												<div class="col-lg-9">
 													<select name="category" id="category" class="form-control form-control-select2" data-live-search="true" onchange="getDataForQFactorFormula(this.value)">
 													<option value="">Select Category</option>
 														<?php foreach($categories as $key=>$value){?>
-															<option value="<?=$value['Code']?>" desc="<?=$value['Name']?>"><?=$value['Name']?></option>
-														<?php };?>
+															<option value="<?=$value['Code']?>" desc="<?=$value['Name']?>" <?php echo $value['Code'] == $pc['category_code'] ? 'selected' : '' ?>><?=$value['Name']?></option>
+														<?php }; ?>
 													</select>
-													<input type="hidden" id="qFactorSAP" value="0">
-													<input type="hidden" id="minCostSAP" value="0">
-													<input type="hidden" id="maxCostSAP" value="0">
-													<input type="hidden" id="catAppSAP" value="">
 												</div>
+												<?php else : ?>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" name="category" id="category" value="<?php echo $pc['category_name'] ?>" readOnly>
+												</div>
+												<?php endif; ?>
+												<input type="hidden" id="qFactorSAP" value="<?php echo $pc['q_factor_sap'] ?>">
+												<input type="hidden" id="minCostSAP" value="<?php echo $pc['min'] ?>">
+												<input type="hidden" id="maxCostSAP" value="<?php echo $pc['max'] ?>">
+												<input type="hidden" id="catAppSAP" value="<?php echo $pc['category_approver'] ?>">
+												<input type="hidden" id="categoryCode" value="<?php echo $pc['category_code'] ?>">
 											</div>
 
-											<div class="form-group row" id="existingCost" style="display: none;">
+											<?php if($pc['existing_bom_code']) :?>
+											<div class="form-group row" id="existingCost">
 												<label class="col-lg-3 col-form-label">Existing Bom</label>
 												<div class="col-lg-9">
-													<select class="form-control form-control-select2" data-live-search="true" id="existingBom" name="existing_bom" onchange="getExistingBomData(this.value)">
-														<option value="">Select Item</option>
-														<?php foreach($existing_bom as $key=>$value){?>
-															<option value="<?=$key?>" desc="<?=$value?>"><?=$value?></option>
-														<?php } ?>
-													</select>
-													<p id="txtProductQtyDefault"></p>
+													<input type="text" class="form-control" name="existing_bom" id="existingBom" value="<?php echo $pc['existing_bom_code'].' - '.$pc['existing_bom_name'] ?>" readOnly>
 												</div>
 											</div>
+											<?php endif; ?>
 
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Name</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" name="product_name" id="productName">
+													<input type="text" class="form-control" name="product_name" id="productName" value="<?php echo $pc['product_name'] ?>" <?php echo $pc['status'] == 2 ? 'readOnly' : '' ?>>
 												</div>
 											</div>
 
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Qty Produksi</label>
 												<div class="col-lg-9">
-													<input type="text" id="productQty" name="product_qty" class="form-control" onchange="multiplyingQtyItems_setTotalCost(this.value)">
-													<input type="hidden" id="productQtyDefault" value="0">
+													<input type="text" class="form-control" name="product_qty" id="productQty" value="<?php echo $pc['product_qty'] ?>" onchange="multiplyingQtyItems_setTotalCost(this.value)" <?php echo $pc['status'] == 2 ? 'readOnly' : '' ?>>
 												</div>
 											</div>	
 
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">UOM</label>
 												<div class="col-lg-9">
-													<input type="text" id="productUom" name="product_uom" class="form-control">
+													<input type="text" class="form-control" name="product_uom" id="productUom" value="<?php echo $pc['product_uom'] ?>" <?php echo $pc['existing_bom_code'] || $pc['status'] == 2 ? 'readOnly' : '' ?>>
 												</div>
 											</div>
 
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Posting Date</label>
 												<div class="col-lg-9 input-group date">
-													<input type="text" class="form-control" id="postDate" readonly autocomplate="off">
+													<input type="text" class="form-control" id="postDate" value="<?php echo date('d-m-Y', strtotime($pc['posting_date'])) ?>" readonly autocomplate="off">
 													<div class="input-group-prepend">
 														<span class="input-group-text" id="basic-addon1">
 															<i class="icon-calendar"></i>
@@ -205,14 +193,51 @@
 											<div class="form-group row">
 												<label class="col-lg-3 col-form-label">Status</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" value="Not Approved" readOnly>
+													<input type="text" class="form-control" id="status" value="<?php echo ($pc['status'] == 1 || $pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) ? 'Not Approved' : 'Approved' ?>" readOnly>
+													<input type="hidden" id="statusInt" value="<?php echo $pc['status'] ?>">
 												</div>
 											</div>
+											
+											<?php if ($pc['status'] == 2 || $pc['status_head'] === 0) : ?>
+											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">Head of Department</label>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" id="statusHead" value="<?php echo ($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] !== 0 && $pc['status_cost_control'] !== 0) ? 'Approved' : ($pc['status_head'] === 0 ? 'Rejected' : 'Not Approved') ?>" readOnly>
+												</div>
+											</div>
+											<?php endif; ?>
+											
+											<?php if (($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['product_type'] == 2) || $pc['status_cat_approver'] === 0) : ?>
+											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">Category Approver</label>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" id="statusCatApp" value="<?php echo ($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] == 2 && $pc['status_cost_control'] !== 0) ? 'Approved' : ($pc['status_cat_approver'] === 0 ? 'Rejected' : 'Not Approved') ?>" readOnly>
+												</div>
+											</div>
+											<?php endif; ?>
+											
+											<?php if (($pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] == 2 && $pc['product_type'] == 2) || $pc['status_cost_control'] === 0) : ?>
+											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">Cost Control</label>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" id="statusCostControl" value="<?php echo $pc['status'] == 2 && $pc['status_head'] == 2 && $pc['status_cat_approver'] == 2 && $pc['status_cost_control'] == 2 ? 'Approved' : ($pc['status_cost_control'] === 0 ? 'Rejected' : 'Not Approved') ?>" readOnly>
+												</div>
+											</div>
+											<?php endif; ?>
+											
+											<?php if (($pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) && $pc['reject_reason']) : ?>
+											<div class="form-group row">
+												<label class="col-lg-3 col-form-label">Reject Reason</label>
+												<div class="col-lg-9">
+													<input type="text" class="form-control" value="<?php echo $pc['reject_reason']?>" readOnly>
+												</div>
+											</div>
+											<?php endif; ?>
 											
 											<div class="form-group row wp">
 												<label class="col-lg-3 col-form-label">Selling Price (include Tax)</label>
 												<div class="col-lg-9">
-													<input type="text" class="form-control" name="product_sell_price" id="productSellPrice" onchange="setProdCostPercentage(this.value)">
+													<input type="text" class="form-control" name="product_sell_price" id="productSellPrice" value="<?php echo $pc['product_selling_price'] ?>" onchange="setProdCostPercentage(this.value)" <?php echo $pc['status'] == 2 ? 'readOnly' : '' ?>>
 												</div>
 											</div>
 											
@@ -223,11 +248,20 @@
 												</div>
 											</div>
 
+											<?php 
+											$isUser = 0;
+											if ($this->auth->is_head_dept()) {
+												foreach ($this->auth->is_head_dept()['users'] as $user) {
+													if ($user['admin_id'] == $pc['user_input']) {
+														$isUser = $user['admin_id'];
+														break;
+													};
+												}
+											}
+											?>
+
 											<div class="text-right" id="after-submit" style="display: none;">
-												<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb(1)">Save <i class="icon-pencil5 ml-2"></i></button>
-												<?php if ($this->auth->is_have_perm('auth_approve')) : ?>
-												<button type="button" class="btn btn-success" name="approve" id="approve" onclick="addDatadb(2)" >Approve <i class="icon-paperplane ml-2" ></input></i>
-												<?php endif; ?>
+												<button type="button" class="btn btn-primary" name="save" id="save" onclick="addDatadb(1)">Copy <i class="icon-copy4 ml-2"></i></button>
 											</div>
 											
 										</fieldset>
@@ -261,6 +295,7 @@
 										<div class="text-left">
 											<select name="item_group_ing" id="itemGroupIng" class="form-control form-control-select2" data-live-search="true">
 												<option value="">Select Item Group</option>
+												<option value="all">All</option>
 												<?php foreach($matrialGroupIng as $key=>$value){?>
 													<option value="<?=$value['ItmsGrpNam']?>" desc="<?=$value['ItmsGrpNam']?>"><?=$value['ItmsGrpNam']?></option>
 												<?php };?>
@@ -269,12 +304,14 @@
 											</select>
 										</div>
 									</div>
+									<?php if($pc['status'] != 2 || $pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) : ?>
 									<div class="col-md-4 mb-2 after-doc" style="display: none;">
 										<div class="text-right">
 											<input type="button" class="btn btn-primary" value="Add" id="addTableIng" onclick="onAddrowItemIngredients()"> 
 											<input type="button" value="Delete" class="btn btn-danger" id="deleteRecordIng"> 
 										</div>
 									</div>
+									<?php endif; ?>
 									<div class="col-md-12" style="overflow: auto" >
 										<table class="table table-striped" id="tblItemIngredients">
 											<thead>
@@ -289,22 +326,7 @@
 													<th>Total Cost</th>
 												</tr>
 											</thead>
-											<tbody>
-												<tr id="firstRowIng" style="display: none;">
-													<td><input type="checkbox" class="check_delete_ing" id="recordIng"/></td>
-													<td>1</td>
-													<td width="35%">
-														<select class="form-control form-control-select2 dt-ing-1" data-live-search="true" id="matrialGroupIngredients" onchange="setValueTableIngredients(this.value,1)">
-															<option value="">Select Item</option>
-														</select>
-													</td>
-													<td width="35%"></td>
-													<td><input type="text" class="form-control uom-ing" name="uom_costing" id="uomCostingIng_1" style="width:90px" autocomplete="off"></td>
-													<td><input type="text" class="form-control cost-ing" name="cost_costing" id="costCostingIng_1" style="width:90px" autocomplete="off"></td>
-													<td><input type="hidden" class="form-control ing" name="ing" id="ing_1" value="1"><input type="text" class="form-control" name="qty_costing" id="qtyCostingIng_1" style="width:90px" autocomplete="off" onchange="setTotalCostIng(this.value,1)"></td>
-													<td></td>
-												</tr>
-											</tbody>
+											<tbody></tbody>
 										</table>
 									</div>
 								</div>
@@ -319,18 +341,21 @@
 										<div class="text-left">
 											<select name="item_group_pack" id="itemGroupPack" class="form-control form-control-select2" data-live-search="true">
 												<option value="">Select Item Group</option>
+												<option value="all">All</option>
 												<?php foreach($matrialGroupPack as $key=>$value){?>
 													<option value="<?=$value['ItmsGrpNam']?>" desc="<?=$value['ItmsGrpNam']?>"><?=$value['ItmsGrpNam']?></option>
 												<?php };?>
 											</select>
 										</div>
 									</div>
+									<?php if($pc['status'] != 2 || $pc['status_head'] === 0 || $pc['status_cat_approver'] === 0 || $pc['status_cost_control'] === 0) : ?>
 									<div class="col-md-4 mb-2 after-doc" style="display: none;">
 										<div class="text-right">
 											<input type="button" class="btn btn-primary" value="Add" id="addTablePack" onclick="onAddrowItemPackaging()"> 
 											<input type="button" value="Delete" class="btn btn-danger" id="deleteRecordPack"> 
 										</div>
 									</div>
+									<?php endif; ?>
 									<div class="col-md-12" style="overflow: auto" >
 										<table class="table table-striped" id="tblItemPackaging">
 											<thead>
@@ -345,67 +370,59 @@
 													<th>Total Cost</th>
 												</tr>
 											</thead>
-											<tbody>
-												<tr id="firstRowPack" style="display: none;">
-													<td><input type="checkbox" class="check_delete_pack" id="recordPack"/></td>
-													<td>1</td>
-													<td width="35%">
-														<select class="form-control form-control-select2 dt-pack-1" data-live-search="true" id="matrialGroupPackaging" onchange="setValueTablePackaging(this.value,1)">
-															<option value="">Select Item</option>
-														</select>
-													</td>
-													<td width="35%"></td>
-													<td><input type="text" class="form-control uom-pack" name="uom_costing" id="uomCostingPack_1" style="width:90px" autocomplete="off"></td>
-													<td><input type="text" class="form-control cost-pack" name="cost_costing" id="costCostingPack_1" style="width:90px" autocomplete="off"></td>
-													<td><input type="hidden" class="form-control pack" name="pack" id="pack_1" value="2"><input type="text" class="form-control" name="qty_costing" id="qtyCostingPack_1" style="width:90px" autocomplete="off" onchange="setTotalCostPack(this.value,1)"></td>
-													<td></td>
-												</tr>
-											</tbody>
+											<tbody></tbody>
 										</table>
 									</div>
 								</div>
 							</div>
 						</div> 
-                    </form>
-                                           
+                    </form>          
 				</div>
-				<?php  $this->load->view("_template/footer.php")?>
+				<!-- Modal -->
+				<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Reject Reason</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<div class="form-group">
+									<label for="message-text" class="col-form-label">Reason</label>
+									<textarea class="form-control" id="reason"></textarea>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" onclick="reject()">Send</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<?php $this->load->view("_template/footer.php")?>
 			</div>
 		</div>
         <?php  $this->load->view("_template/js.php")?>
 		<script>
 			$(document).ready(function(){
 
-				$('.wp').hide();
+				const date = new Date();
+				const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+				var optSimple = {
+					format: 'dd-mm-yyyy',
+					todayHighlight: true,
+					orientation: 'bottom right',
+					autoclose: true
+				};
 
-				$('#productType').change(function(){
-					if ($(this).val() == 2) {
-						$('.wp').show();
-						$('#productSellPrice').val('');
-						$('#percentageCosting').val('');
-					} else {
-						$('.wp').hide();
-						$('#productSellPrice').val(0);
-						$('#percentageCosting').val(0);
-					}
-				});
+				if ($('#productType').val() == 'Finish Goods') {
+					$('.wp').show();
+				} else {
+					$('.wp').hide();
+				}
 
-				$('#docStatus').change(function(){
-					let docStatus = $(this).val();
-					if (docStatus == 2) {
-						$('#existingCost').show();
-						$('#firstRowIng').hide();
-						$('#firstRowPack').hide();
-					} else {
-						$('#existingCost').hide();
-						$('#firstRowIng').show();
-						$('#firstRowPack').show();
-					}
-					$('#divDocStatus').css('display', 'none');
-					$('#divDocStatusInput').css('display', 'flex');
-					$('#docStatusInput').val(docStatus == 1 ? 'New' : 'Existing');
-					$('.after-doc').show();
-				});
+				$('#productSellPrice').val(parseFloat($('#productSellPrice').val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}))
 
 				$('#productSellPrice').change(function () {
 					if ($(this).val() && $(this).val().includes(',')) {
@@ -418,12 +435,40 @@
 					}
 				});
 
-				$("#tblItemIngredients").DataTable({
-					"ordering":false,
-					"paging":false,
+				$('#tblItemIngredients').DataTable({
+					"ordering":false, "paging": false, "searching":true,
 					drawCallback: function() {
 						$('.form-control-select2').select2();
-					}
+					},
+					"initComplete": function(settings, json) {
+						$(".after-doc").show();
+						setFoodCostItem();
+						setProdCostPercentage($('#productSellPrice').val());
+					},
+					"ajax": {
+						"url":"<?php echo site_url('transaksi1/productcosting/showDetailEdit');?>",
+						"data":{ 
+							id: $('#idProdCost').val(),
+							type: 1
+						},
+						"type":"POST"
+					},
+					"columns": [
+						{"data":"0", "className":"dt-center", render:function(data, type, row, meta){
+							rr=`<input type="checkbox" value="${data}" class="check_delete_ing" id="dt_ing_${data}">`;
+							return rr;
+						}},
+						{"data":"1", "className":"dt-center"},
+						{"data":"2", "className":"dt-center"},
+						{"data":"3"},
+						{"data":"4"},
+						{"data":"5"},
+						{"data":"6", render:function(data, type, row, meta){
+							rr = `<input type="hidden" class="form-control ing" name="ing" id="ing_${row['1']}" value="1"><input type="text" class="form-control qty-ing" id="qtyCostingIng_${row['1']}" value="${data}" matqty="${data}" style="width:90px" autocomplete="off" ${$('#status').val() == 'Approved' ? 'readOnly' : ''}>`
+							return rr;
+						}},
+						{"data":"7"}
+					]
 				});
 				
 				$("#tblItemPackaging").DataTable({
@@ -431,19 +476,38 @@
 					"paging":false,
 					drawCallback: function() {
 						$('.form-control-select2').select2();
-					}
+					},
+					"initComplete": function(settings, json) {
+						$(".after-doc").show();
+						setMaterialCostItem();
+						setProdCostPercentage($('#productSellPrice').val());
+					},
+					"ajax": {
+						"url":"<?php echo site_url('transaksi1/productcosting/showDetailEdit');?>",
+						"data":{ 
+							id: $('#idProdCost').val(),
+							type: 2
+						},
+						"type":"POST"
+					},
+					"columns": [
+						{"data":"0", "className":"dt-center", render:function(data, type, row, meta){
+							rr=`<input type="checkbox" value="${data}" class="check_delete_pack" id="dt_pack_${data}">`;
+							return rr;
+						}},
+						{"data":"1", "className":"dt-center"},
+						{"data":"2", "className":"dt-center"},
+						{"data":"3"},
+						{"data":"4"},
+						{"data":"5"},
+						{"data":"6", render:function(data, type, row, meta){
+							rr = `<input type="hidden" class="form-control pack" name="pack" id="pack_${row['1']}" value="2"><input type="text" class="form-control qty-pack" id="qtyCostingPack_${row['1']}" value="${data}" matqty="${data}" style="width:90px" autocomplete="off" ${$('#status').val() == 'Approved' ? 'readOnly' : ''}>`
+							return rr;
+						}},
+						{"data":"7"}
+					]
 				});
 
-				const date = new Date();
-				const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-				var optSimple = {
-					format: 'dd-mm-yyyy',
-					todayHighlight: true,
-					orientation: 'bottom right',
-					autoclose: true
-				};
-				$('#postDate').datepicker(optSimple);
-				
 				// untuk check all
 				$("#checkallIng").click(function(){
 					if($(this).is(':checked')){
@@ -520,23 +584,6 @@
 					setTotalCostByPriceIng($(this).val(),noIng);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
-				tbodyIng.on('change','.descmatIng', function(){
-					trIng = $(this).closest('tr');
-					noIng = trIng[0].rowIndex;
-					let productQty = $('#productQty').val();
-					let qtyIng = $("option:selected", this).attr("matqty");
-					let matrialNoIng = $("option:selected", this).attr("matno");
-					let uomIng = $("option:selected", this).attr("uOm");
-					let lastPriceIng = $("option:selected", this).attr("lastprice");
-					let tableIng = document.getElementById("tblItemIngredients").rows[noIng].cells;
-					tableIng[2].innerHTML = matrialNoIng;
-					tableIng[4].innerHTML = uomIng;
-					tableIng[5].innerHTML = parseFloat(lastPriceIng).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
-					tableIng[6].innerHTML = `<input type="hidden" class="form-control" id="typeCostIng_${noIng}" name="ing" value="1"><input type="text" name="qty_costing" class="form-control" value="${parseFloat(qtyIng * productQty)}" style="width:90px" autocomplete="off" onchange="setTotalCostIng(this.value,${noIng})">`;
-					tableIng[7].innerHTML = parseFloat((qtyIng * productQty) * parseFloat(lastPriceIng.replace(',','').replace(',',''))).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
-					setTotalCostIng(parseFloat(qtyIng * productQty),noIng);
-					setProdCostPercentage($('#productSellPrice').val());
-				});
 				let tbodyPack = $("#tblItemPackaging tbody");
 				tbodyPack.on('change','.qty-pack', function(){
 					let trPack = $(this).closest('tr');
@@ -558,38 +605,7 @@
 					setTotalCostByPricePack($(this).val(),noPack);
 					setProdCostPercentage($('#productSellPrice').val());
 				});
-				tbodyPack.on('change','.descmatPack', function(){
-					trPack = $(this).closest('tr');
-					noPack = trPack[0].rowIndex;
-					let productQty = $('#productQty').val();
-					let qtyPack = $("option:selected", this).attr("matqty");
-					let matrialNoPack = $("option:selected", this).attr("matno");
-					let uomPack = $("option:selected", this).attr("uOm");
-					let lastPricePack = $("option:selected", this).attr("lastprice");
-					let tablePack = document.getElementById("tblItemIngredients").rows[noPack].cells;
-					tablePack[2].innerHTML = matrialNoPack;
-					tablePack[4].innerHTML = uomPack;
-					tablePack[5].innerHTML = parseFloat(lastPricePack).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
-					tablePack[6].innerHTML = `<input type="hidden" class="form-control" id="typeCostPack_${noPack}" name="pack" value="2"><input type="text" name="qty_costing" class="form-control" value="${parseFloat(qtyPack * productQty)}" style="width:90px" autocomplete="off" onchange="setTotalCostPack(this.value,${noPack})">`;
-					tablePack[7].innerHTML = parseFloat((qtyPack * productQtyPack) * parseFloat(lastPricePack.replace(',','').replace(',',''))).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
-					setTotalCostPack(parseFloat(qtyPack * productQty),noPack);
-					setProdCostPercentage($('#productSellPrice').val());
-				});
-
-				$('#itemGroupIng').change(function(){
-					let getTableIng = $("#tblItemIngredients").DataTable();
-					let countIng = getTableIng.rows().count();
-					let elementSelectIng = document.getElementsByClassName(`dt-ing-${countIng}`);
-					console.log(countIng)
-					showMatrialDetailDataIng(elementSelectIng);
-				});
 				
-				$('#itemGroupPack').change(function(){
-					let getTablePack = $("#tblItemPackaging").DataTable();
-					let countPack = getTablePack.rows().count();
-					let elementSelectPack = document.getElementsByClassName(`dt-pack-${countPack}`);
-					showMatrialDetailDataPack(elementSelectPack);
-				});
 			});
 
 			function getDataForQFactorFormula($code){
@@ -606,96 +622,27 @@
 				});
 			}
 
-			function getExistingBomData(){
-				$.post("<?php echo site_url('transaksi1/productcosting/getExistingBomData');?>",{material_no: $('#existingBom option:selected').val()},(data)=>{
-					const value = JSON.parse(data);
-					$("#productQtyDefault").val(value.data[0]['Qauntity'].slice(0,-2));
-					$("#productUom").val(value.data[0]['InvntryUom']);
-					$("#txtProductQtyDefault").text(`Suggest Qty : ${value.data[0]['Qauntity'].slice(0,-2)}`);
-
-					showOnExistingBomChoosenIng();
-					showOnExistingBomChoosenPack();
-				});
-			}
-
-			function showOnExistingBomChoosenIng(){
-				let existingBomCode = $('#existingBom option:selected').val();
-				let qtyDefaultexistingBom = $("#productQtyDefault").val();
-
-				$.ajax({
-					url:"<?php echo site_url('transaksi1/productcosting/showDetailInputIng');?>",
-					type:"POST",
-					data:{ 
-						kode_paket:existingBomCode,
-						Qty:1,
-						qtyDefault: qtyDefaultexistingBom
-					},
-					success:function(res) {
-						row = JSON.parse(res);
-						let getTableIng = $("#tblItemIngredients").DataTable();
-						
-						getTableIng.row(0).remove().draw();
-						getTableIng.rows.add(row.data).draw();
-					},
-				});
-			}
-			
-			function showOnExistingBomChoosenPack(){
-				let existingBomCode = $('#existingBom option:selected').val();
-				let qtyDefaultexistingBom = $("#productQtyDefault").val();
-
-				$.ajax({
-					url:"<?php echo site_url('transaksi1/productcosting/showDetailInputPack');?>",
-					type:"POST",
-					data:{ 
-						kode_paket:existingBomCode,
-						Qty:1,
-						qtyDefault: qtyDefaultexistingBom
-					},
-					success:function(res) {
-						row = JSON.parse(res);
-						let getTablePack = $("#tblItemPackaging").DataTable();
-						if (row.data.length > 0) {
-							getTablePack.row(0).remove().draw();
-							getTablePack.rows.add(row.data).draw();
-							setFoodCostItem();
-							setMaterialCostItem();
-							setTotalProdCostDivQtyProduct();
-							setProdCostPercentage($('#productSellPrice').val());
-							if ($('#productType option:selected').val() == 1) {
-								$('#after-submit').show();
-							}
-						} else {
-							$('#firstRowPack').show();
-							setFoodCostItem();
-							setTotalProdCostDivQtyProduct();
-							setProdCostPercentage($('#productSellPrice').val());
-							if ($('#productType option:selected').val() == 1) {
-								$('#after-submit').show();
-							}
-						}
-					},
-				});
-			}
-
 			function multiplyingQtyItems_setTotalCost(productQty){
-				if ($('#docStatus option:selected').val() == 2) {
+				if ($('#docStatus').val() == 'Existing') {
 					let tableIng = $("#tblItemIngredients tbody");
 					let tablePack = $("#tblItemPackaging tbody");
+					let tblItemPackagingCountRow = $('#tblItemPackaging > tbody tr');
 					tableIng.find('tr').each(function(i, el){
 						let tdIng = $(this).find('td');
 						let costIng = parseFloat(tdIng.eq(5).text() ? tdIng.eq(5).text().replace(',','').replace(',','') : 0);
-						let qtyIng = parseFloat($("option:selected", this).attr("matqty") ? $("option:selected", this).attr("matqty") : tdIng.eq(6).find('input:text').attr('matqty'));
+						let qtyIng = parseFloat($('input:text', this).attr('matqty'));
 						tdIng.eq(6).find('input:text').val(parseFloat(productQty) * qtyIng);
 						tdIng.eq(7).text(parseFloat(tdIng.eq(6).find('input:text').val() * costIng).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 					});
 					tablePack.find('tr').each(function(i, el){
 						let tdPack = $(this).find('td');
-						if (!tdPack.eq(2).text().includes('Select Item') || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
-							let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text().replace(',','').replace(',','') : 0);
-							let qtyPack = parseFloat($("option:selected", this).attr("matqty") ? $("option:selected", this).attr("matqty") : tdPack.eq(6).find('input:text').attr('matqty'));
-							tdPack.eq(6).find('input:text').val(parseFloat(productQty) * qtyPack);
-							tdPack.eq(7).text(parseFloat(tdPack.eq(6).find('input:text').val() * costPack).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+						if (tblItemPackagingCountRow.length > 0 && tblItemPackagingCountRow.text() != 'No data available in table') {
+							if (tdPack.eq(2).text() || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
+								let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text().replace(',','').replace(',','') : 0);
+								let qtyPack = parseFloat($('input:text', this).attr("matqty"));
+								tdPack.eq(6).find('input:text').val(parseFloat(productQty) * qtyPack);
+								tdPack.eq(7).text(parseFloat(tdPack.eq(6).find('input:text').val() * costPack).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+							}
 						}
 					});
 					setTotalFoodCost();
@@ -714,7 +661,7 @@
 				let itmGrp = $('#itemGroupIng option:selected').val();
 				if (itmGrp) {
 					getTable.row.add({
-						"0":`<input type="checkbox" class="check_delete_ing" id="chkIng_${count}" value="${count}">`,
+						"0":"",
 						"1":count,
 						"2":`<select class="form-control form-control-select2 dt-ing-${count} selectIng" data-live-search="true" id="selectDetailMatrialIng_${count}" data-count="${count}">
 										<option value="">Select Item</option>
@@ -723,7 +670,7 @@
 						"3":"",
 						"4":`<input type="text" class="form-control uom-ing" id="uomCostingIng_${count}" value="" style="width:90px" autocomplete="off">`,
 						"5":`<input type="text" class="form-control cost-ing" id="costCostingIng_${count}" value="" style="width:90px" autocomplete="off">`,
-						"6":`<input type="hidden" class="form-control ing" name="ing" id="ing_${count}" value="1"><input type="text" class="form-control qty-ing" id="qtyCostingIng_${count}" matqty="" value="" style="width:90px" autocomplete="off">`,
+						"6":"",
 						"7":""
 						}).draw();
 					count++;
@@ -731,7 +678,7 @@
 					alert('Silahkan Pilih Material Grup');
 					return false;
 				}
-				
+
 				tbody = $("#tblItemIngredients tbody");
 				tbody.on('change','.selectIng', function(){
 					tr = $(this).closest('tr');
@@ -755,13 +702,12 @@
 			}
 
 			function showMatrialDetailDataIng(selectTable){
-				const select = selectTable ? selectTable : $('#matrialGroupIngredients');
+				const select = selectTable;
 				let itmGrp = $('#itemGroupIng option:selected').val();
 				$.ajax({
 					url: "<?php echo site_url('transaksi1/productcosting/addItemRow');?>",
 					data: {
-						itmGrp:itmGrp,
-						type:'ing'
+						itmGrp:itmGrp
 					},
 					type: "POST",
 					success:function(res) {
@@ -769,7 +715,7 @@
 						optData.forEach((val)=>{						
 							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR, tax:val.TAX}).appendTo(select);
 						})
-						$("<option />", {value:'-', text:'other', rel:'-', tax:'N'}).appendTo(select);
+						$("<option />", {value:'-', text:'other', rel:'-'}).appendTo(select);
 					}
 				});	
 			}
@@ -794,9 +740,9 @@
 			}
 
 			function setTotalCostIng(qty,no){
-				let docStatus = $('#docStatus option:selected').val();
+				let docStatus = $('#docStatus').val();
 				let tbodyItemIngredientsRows = document.getElementById("tblItemIngredients").rows[no].cells;
-				let itemCodeSelected = ((docStatus == 2 && tbodyItemIngredientsRows[2].children[0]) || tbodyItemIngredientsRows[2].children[0]) ? tbodyItemIngredientsRows[2].children[0].value : tbodyItemIngredientsRows[2].innerHTML;
+				let itemCodeSelected = ((docStatus == 'Existing' && tbodyItemIngredientsRows[2].children[0]) || tbodyItemIngredientsRows[2].children[0]) ? tbodyItemIngredientsRows[2].children[0].value : tbodyItemIngredientsRows[2].innerHTML;
 				let lastPrice = itemCodeSelected == '-' ? tbodyItemIngredientsRows[5].children[0].value.replace(',','').replace(',','') : tbodyItemIngredientsRows[5].innerHTML.replace(',','').replace(',','');
 				tbodyItemIngredientsRows[7].innerHTML = (parseFloat(lastPrice) * parseFloat(qty ? qty : 0)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
 				setTotalFoodCost();
@@ -839,7 +785,7 @@
 				let itmGrp = $('#itemGroupPack option:selected').val();
 				if (itmGrp) {
 					getTable.row.add({
-						"0":`<input type="checkbox" class="check_delete_pack" id="chkPack_${count}" value="${count}">`,
+						"0":"",
 						"1":count,
 						"2":`<select class="form-control form-control-select2 dt-pack-${count} selectPack" data-live-search="true" id="selectDetailMatrialPack_${count}" data-count="${count}">
 										<option value="">Select Item</option>
@@ -848,7 +794,7 @@
 						"3":"",
 						"4":`<input type="text" class="form-control uom-pack" id="uomCostingPack_${count}" value="" style="width:90px" autocomplete="off">`,
 						"5":`<input type="text" class="form-control cost-pack" id="costCostingPack_${count}" value="" style="width:90px" autocomplete="off">`,
-						"6":`<input type="hidden" class="form-control pack" name="pack" id="pack_${count}" value="2"><input type="text" class="form-control qty-pack" id="qtyCostingPack_${count}" matqty="" value="" style="width:90px" autocomplete="off">`,
+						"6":"",
 						"7":""
 						}).draw();
 					count++;
@@ -856,7 +802,7 @@
 					alert('Silahkan Pilih Material Grup');
 					return false;
 				}
-				
+
 				tbody = $("#tblItemPackaging tbody");
 				tbody.on('change','.selectPack', function(){
 					tr = $(this).closest('tr');
@@ -880,13 +826,12 @@
 			}
 
 			function showMatrialDetailDataPack(selectTable){
-				const select = selectTable ? selectTable : $('#matrialGroupPackaging');
+				const select = selectTable;
 				let itmGrp = $('#itemGroupPack option:selected').val();
 				$.ajax({
 					url: "<?php echo site_url('transaksi1/productcosting/addItemRow');?>",
 					data: {
-						itmGrp:itmGrp,
-						type:'pack'
+						itmGrp:itmGrp
 					},
 					type: "POST",
 					success:function(res) {
@@ -894,7 +839,7 @@
 						optData.forEach((val)=>{						
 							$("<option />", {value:val.MATNR, text:val.MATNR+' - '+val.MAKTX, rel:val.MATNR, tax:val.TAX}).appendTo(select);
 						})
-						$("<option />", {value:'-', text:'other', rel:'-', tax:'N'}).appendTo(select);
+						$("<option />", {value:'-', text:'other', rel:'-'}).appendTo(select);
 					}
 				});			
 			}
@@ -919,9 +864,9 @@
 			}
 
 			function setTotalCostPack(qty,no){
-				let docStatus = $('#docStatus option:selected').val();
+				let docStatus = $('#docStatus').val();
 				let tbodyItemPackagingRows = document.getElementById("tblItemPackaging").rows[no].cells;
-				let itemCodeSelected = ((docStatus == 2 && tbodyItemPackagingRows[2].children[0]) || tbodyItemPackagingRows[2].children[0]) ? tbodyItemPackagingRows[2].children[0].value : tbodyItemPackagingRows[2].innerHTML;
+				let itemCodeSelected = ((docStatus == 'Existing' && tbodyItemPackagingRows[2].children[0]) || tbodyItemPackagingRows[2].children[0]) ? tbodyItemPackagingRows[2].children[0].value : tbodyItemPackagingRows[2].innerHTML;
 				let lastPrice = itemCodeSelected == '-' ? tbodyItemPackagingRows[5].children[0].value.replace(',','').replace(',','') : tbodyItemPackagingRows[5].innerHTML.replace(',','').replace(',','');
 				tbodyItemPackagingRows[7].innerHTML = (parseFloat(lastPrice) * parseFloat(qty ? qty : 0)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
 				setTotalMaterialCost();
@@ -932,6 +877,21 @@
 				let tbodyItemPackagingRows = document.getElementById("tblItemPackaging").rows[no].cells;
 				let qty = tbodyItemPackagingRows[6].children[1].value ? tbodyItemPackagingRows[6].children[1].value : 0;
 				tbodyItemPackagingRows[7].innerHTML = (parseFloat(price)*parseFloat(qty)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
+				setTotalMaterialCost();
+				setProdCostPercentage($('#productSellPrice').val());
+			}
+
+			function setMaterialCostItem(){
+				let tablePack = $("#tblItemPackaging tbody");
+				let tblItemPackagingCountRow = $('#tblItemPackaging > tbody tr');
+				tablePack.find('tr').each(function(i, el){
+					let tdPack = $(this).find('td');
+					if (tblItemPackagingCountRow.length > 0 && tblItemPackagingCountRow.text() != 'No data available in table') {
+						if (tdPack.eq(2).text() || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
+							tdPack.eq(7).text(parseFloat(tdPack.eq(5).text().replace(',','').replace(',','') * tdPack.eq(6).find('input:text').val()).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
+						}
+					}
+				});
 				setTotalMaterialCost();
 				setProdCostPercentage($('#productSellPrice').val());
 			}
@@ -949,7 +909,9 @@
 
 			function setQFactor(){
 				let totFood = parseFloat($('#totAllIngCost').text().replace(',','').replace(',',''));
+				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorSAP = parseFloat($("#qFactorSAP").val()) * (1/100);
+				//let qFactor = qFactorSAP * (totFood + totMaterial);
 				let qFactor = qFactorSAP * totFood;
 				$('#qFactorResult').text(qFactor.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCost();
@@ -959,7 +921,8 @@
 				let totFood = parseFloat($('#totAllIngCost').text().replace(',','').replace(',',''));
 				let totMaterial = parseFloat($('#totAllPackCost').text().replace(',','').replace(',',''));
 				let qFactorResult = parseFloat($('#qFactorResult').text().replace(',','').replace(',',''));
-				let result = $('#productType option:selected').val() == 2 ? totFood + totMaterial + qFactorResult : totFood + totMaterial;
+				let result = $('#productType option:selected').val() == 'Finish Goods' ? totFood + totMaterial + qFactorResult : totFood + totMaterial
+				//let result = (totFood + totMaterial + qFactorResult) + (0.1 * (totFood + totMaterial + qFactorResult))
 				$('#totProdCost').text(result.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4}));
 				setTotalProdCostDivQtyProduct();
 			}
@@ -976,31 +939,21 @@
 				let totProdCost = parseFloat($('#totProdCost').text().replace(',','').replace(',',''));
 				let percentage = (totProdCost / pricePB1) * 100;
 
-				$('#percentageCosting').text(`${$('#productType option:selected').val() == 2 ? (percentage ? percentage.toFixed(4) : 0) : 0} %`);
+				$('#percentageCosting').text(`${$('#productType').val() == 'Finish Goods' ? (percentage ? percentage.toFixed(4) : 0) : 0} %`);
 				setPercentageColor();
 			}
 
 			function setPercentageColor(){
-				let totFood = parseFloat($('#totAllIngCost').text());
-				let qFactorResult = parseFloat($('#qFactorResult').text());
 				let percentageCost = $('#percentageCosting').text().split(' ');
 				let min = parseFloat($("#minCostSAP").val()) * (1/100);
 				let max = parseFloat($("#maxCostSAP").val()) * (1/100);
 
-				let tblItemIngredients = $('#tblItemIngredients > tbody');
-
-				if ($('#productType option:selected').val() == 2) {
-					if ($('#percentageCosting').text() == '0 %' && totFood == 0 && qFactorResult == 0) {
-						$('#after-submit').hide();
-					} else {
-						$('#after-submit').show();
-					}
+				if ($('#percentageCosting').text() == '0 %' && $('#productType').val() == 'Finish Goods') {
+					$('#after-submit').hide();
 				} else {
-					if ($('#qtyCostingIng_1').val()) {
-						$('#after-submit').show();
-					}
+					$('#after-submit').show();
 				}
-
+				
 				if (parseFloat(percentageCost[0] / 100) > max) {
 					$('#indicatorCosting').text('Product Cost above Threshold');
 					$('#indicatorCosting').css('background-color','red');
@@ -1018,16 +971,15 @@
 			}
 
 			function addDatadb(id_approve){
-				let docStatus = $('#docStatus option:selected').val();
-				let productType = $('#productType option:selected').val();
-				let categoryCode = $('#category option:selected').val();
-				let categoryName = $('#category option:selected').text();
+				let docStatus = $('#docStatus').val() == 'New' ? 1 : 2;
+				let productType = $('#productType').val() == 'WP' ? 1 : 2;
+				let categoryCode = $('#statusInt').val() == 2 ? $('#categoryCode').val() : $('#category option:selected').val();
+				let categoryName = $('#statusInt').val() == 2 ? $('#category').val() : $('#category option:selected').text();
 				let categoryQF = $('#qFactorSAP').val();
 				let categoryMinCost = $('#minCostSAP').val();
 				let categoryMaxCost = $('#maxCostSAP').val();
 				let categoryApprover = $('#catAppSAP').val();
-				let existingBomCode	= $('#existingBom option:selected').val();
-				let existingBomName	= $('#existingBom option:selected').text().split(' - ');
+				let existingBom	= $('#existingBom').val().split(' - ');
 				let productName = $('#productName').val();
 				let productQty = $('#productQty').val();
 				let productUom = $('#productUom').val();
@@ -1041,6 +993,7 @@
 
 				let tblItemIngredients = $('#tblItemIngredients > tbody');
 				let tblItemPackaging = $('#tblItemPackaging > tbody');
+				let tblItemPackagingCountRow = $('#tblItemPackaging > tbody tr');
 				let matrialNo = [];
 				let matrialDesc = [];
 				let itemType = [];
@@ -1053,9 +1006,9 @@
 				tblItemIngredients.find('tr').each(function(i, el){
 					let tdIng = $(this).find('td');
 					matrialNo.push(tdIng.eq(2).has('select').length > 0 ? tdIng.eq(2).find('select option:selected').val() : tdIng.eq(2).text());
-					matrialDesc.push(tdIng.eq(3).children().length == 0 ? tdIng.eq(3).text() : tdIng.eq(3).children(0).val()); 
+					matrialDesc.push(tdIng.eq(3).children().length === 0 ? tdIng.eq(3).text() : tdIng.eq(3).children(0).val()); 
 					itemUom.push(tdIng.eq(4).has('input:text').length > 0 ? tdIng.eq(4).find('input').val() : tdIng.eq(4).text());	
-					itemCost.push(tdIng.eq(5).has('input:text').length > 0 ? tdIng.eq(5).find('input').val() : tdIng.eq(5).text().replace(',','').replace(',',''));
+					itemCost.push(tdIng.eq(5).has('input:text').length > 0 ? tdIng.eq(5).find('input').val() : tdIng.eq(5).text());
 					itemQty.push(tdIng.eq(6).find('input:text').val());
 					itemType.push(tdIng.eq(6).find('input:hidden').val());
 					if(tdIng.eq(6).find('input:text').val() == ''){
@@ -1065,25 +1018,21 @@
 				});
 				tblItemPackaging.find('tr').each(function(i, el){
 					let tdPack = $(this).find('td');
-					if (!tdPack.eq(2).text().includes('Select Item') || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
-						matrialNo.push(tdPack.eq(2).has('select').length > 0 ? tdPack.eq(2).find('select option:selected').val() : tdPack.eq(2).text());
-						matrialDesc.push(tdPack.eq(3).children().length == 0 ? tdPack.eq(3).text() : tdPack.eq(3).children(0).val()); 
-						itemUom.push(tdPack.eq(4).has('input:text').length > 0 ? tdPack.eq(4).find('input').val() : tdPack.eq(4).text());	
-						itemCost.push(tdPack.eq(5).has('input:text').length > 0 ? tdPack.eq(5).find('input').val() : tdPack.eq(5).text().replace(',','').replace(',',''));
-						itemQty.push(tdPack.eq(6).find('input:text').val());
-						itemType.push(tdPack.eq(6).find('input:hidden').val());
-						if(tdPack.eq(6).find('input:text').val() == ''){
-							dataValidasi.push(tdPack.eq(2).has('select').length > 0 ? tdPack.eq(2).find('select option:selected').val() : tdPack.eq(2).text());
-							validasi = false;
+					if (tblItemPackagingCountRow.length > 0 && tblItemPackagingCountRow.text() != 'No data available in table') {
+						if (tdPack.eq(2).text() || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
+							matrialNo.push(tdPack.eq(2).has('select').length > 0 ? tdPack.eq(2).find('select option:selected').val() : tdPack.eq(2).text());
+							matrialDesc.push(tdPack.eq(3).children().length === 0 ? tdPack.eq(3).text() : tdPack.eq(3).children(0).val()); 
+							itemUom.push(tdPack.eq(4).has('input:text').length > 0 ? tdPack.eq(4).find('input').val() : tdPack.eq(4).text());	
+							itemCost.push(tdPack.eq(5).has('input:text').length > 0 ? tdPack.eq(5).find('input').val() : tdPack.eq(5).text());
+							itemQty.push(tdPack.eq(6).find('input:text').val());
+							itemType.push(tdPack.eq(6).find('input:hidden').val());
+							if(tdPack.eq(6).find('input:text').val() == ''){
+								dataValidasi.push(tdIng.eq(2).has('select').length > 0 ? tdIng.eq(2).find('select option:selected').val() : tdIng.eq(2).text());
+								validasi = false;
+							}
 						}
 					}
 				});
-				if(docStatus == ''){
-					errorMesseges.push('Document harus di pilih. \n');
-				}
-				if(productType == ''){
-					errorMesseges.push('Costing Type harus di pilih. \n');
-				}
 				if(categoryCode == ''){
 					errorMesseges.push('Category harus di pilih. \n');
 				}
@@ -1095,9 +1044,6 @@
 				}
 				if(productUom.trim() == ''){
 					errorMesseges.push('Product UOM harus di isi. \n');
-				}
-				if(postDate.trim() == ''){
-					errorMesseges.push('Posting Date harus di isi. \n');
 				}
 				if(productSellPrice.trim() == ''){
 					errorMesseges.push('Selling Price Product harus di isi. \n');
@@ -1113,15 +1059,15 @@
 				$("#after-submit").addClass('after-submit');
 
 				setTimeout(() => {
-					$.post("<?php echo site_url('transaksi1/productcosting/addData')?>",{
+					$.post("<?php echo site_url('transaksi1/productcosting/duplicateData')?>",{
 						categoryCode:categoryCode,
 						categoryName:categoryName,
 						categoryQF:categoryQF,
 						categoryMin:categoryMinCost,
 						categoryMax:categoryMaxCost,
 						categoryApprover:categoryApprover,
-						existingBomCode:existingBomCode,
-						existingBomName:existingBomName[1],
+						existingBomCode:existingBom[0],
+						existingBomName:existingBom[1],
 						productName:productName,
 						productQty:productQty,
 						productUom:productUom,

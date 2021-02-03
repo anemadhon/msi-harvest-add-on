@@ -96,7 +96,7 @@ class Productcosting_model extends CI_Model {
         return $ret;
 	}
 
-	function getAllDataItems($itmGrp = ''){
+	function getAllDataItems($itmGrp = '', $type){
 		$kd_plant = $this->session->userdata['ADMIN']['plant'];
         $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
         $SAP_MSI->select('t0.ItemCode as MATNR,t0.ItemName as MAKTX,t0.ItmsGrpCod as DISPO,t0.InvntryUom as UNIT,t1.ItmsGrpNam as DSNAM, t1.U_PlusTaxCost as TAX');
@@ -104,7 +104,12 @@ class Productcosting_model extends CI_Model {
         $SAP_MSI->join('oitb t1','t1.ItmsGrpCod = t0.ItmsGrpCod','inner');
         $SAP_MSI->where('validFor', 'Y');
 		$SAP_MSI->where('t0.InvntItem', 'Y');
-
+		if ($type == 'pack') {
+			$SAP_MSI->where('t1.U_GroupType', 'PK');
+		} 
+		if ($type == 'ing') {
+			$SAP_MSI->where("ISNULL(t1.U_GroupType,'') <> 'PK' ", null, false);
+		}
 		if($itmGrp != '' && $itmGrp != 'all'){
 			$SAP_MSI->where('t1.ItmsGrpNam', $itmGrp);
 		}
@@ -127,7 +132,6 @@ class Productcosting_model extends CI_Model {
 		$SAP_MSI->join('OITW t2','t2.ItemCode = t0.ItemCode','inner');
 		$SAP_MSI->where('validFor', 'Y');
 		$SAP_MSI->where('t0.InvntItem', 'Y');
-		$SAP_MSI->where('WhsCode ', $kd_plant);
 	
 		if($itemSelect != ''){
 			$SAP_MSI->where('t0.ItemCode', $itemSelect);
@@ -176,12 +180,32 @@ class Productcosting_model extends CI_Model {
 		}
 	}
 
-	function getDataDetailForExistingBom($kode_paket){
+	function getDataDetailForExistingBomIng($kode_paket){
 		$SAP_MSI = $this->load->database('SAP_MSI', TRUE);
 		$SAP_MSI->select("a.Father id_mpaket_header,a.ChildNum id_mpaket_h_detail, a.Code material_no, b.ItemName material_desc, a.Quantity quantity, b.InvntryUom uom");
 		$SAP_MSI->from('ITT1 a');
 		$SAP_MSI->join('OITM b','a.Code = b.ItemCode');
+		$SAP_MSI->join('OITB c','c.itmsgrpcod = b.ItmsGrpCod');
 		$SAP_MSI->where('a.Father', $kode_paket);
+		$SAP_MSI->where("ISNULL(c.U_GroupType,'') <> 'PK' ", null, false);
+
+		$query = $SAP_MSI->get();
+
+		if(($query)&&($query->num_rows() > 0)){
+			return $query->result_array();
+		}else{
+			return FALSE;
+		}
+	}
+	
+	function getDataDetailForExistingBomPack($kode_paket){
+		$SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+		$SAP_MSI->select("a.Father id_mpaket_header,a.ChildNum id_mpaket_h_detail, a.Code material_no, b.ItemName material_desc, a.Quantity quantity, b.InvntryUom uom");
+		$SAP_MSI->from('ITT1 a');
+		$SAP_MSI->join('OITM b','a.Code = b.ItemCode');
+		$SAP_MSI->join('OITB c','c.itmsgrpcod = b.ItmsGrpCod');
+		$SAP_MSI->where('a.Father', $kode_paket);
+		$SAP_MSI->where('c.U_GroupType', 'PK');
 
 		$query = $SAP_MSI->get();
 
@@ -314,6 +338,7 @@ class Productcosting_model extends CI_Model {
 			'category_q_factor' => $prod_cost_header['category_q_factor'],
 			'category_min' => $prod_cost_header['category_min'],
 			'category_max' => $prod_cost_header['category_max'],
+			'category_approver' => $prod_cost_header['category_approver'],
 			'product_name' => $prod_cost_header['product_name'],
 			'product_qty' => $prod_cost_header['product_qty'],
 			'product_uom' => $prod_cost_header['product_uom'],
@@ -331,11 +356,18 @@ class Productcosting_model extends CI_Model {
 			$update['status_head'] = $prod_cost_header['status_head'];
 			$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];
 			$update['status_cost_control'] = $prod_cost_header['status_cost_control'];
+			if ($prod_cost_header['status_head'] == 2) {
+				$update['approved_head_dept_date'] = $prod_cost_header['approved_head_dept_date'];
+			}
 		} elseif ($prod_cost_header['flag'] == 3) {
 			$update['status'] = $prod_cost_header['status'];
 			$update['status_head'] = $prod_cost_header['status_head'];
 			$update['approved_head_dept_date'] = $prod_cost_header['approved_head_dept_date'];
 			$update['id_head_dept'] = $prod_cost_header['id_head_dept'];
+			if ($prod_cost_header['head_dept_username'] && $prod_cost_header['head_dept_username'] == $prod_cost_header['category_approver']) {
+				$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];
+				$update['approved_cat_approver_date'] = $prod_cost_header['approved_cat_approver_date'];
+			}
 		} elseif ($prod_cost_header['flag'] == 4) {
 			$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];
 			$update['approved_cat_approver_date'] = $prod_cost_header['approved_cat_approver_date'];
@@ -403,8 +435,16 @@ class Productcosting_model extends CI_Model {
 		$this->db->select("a.product_name as MAKTX, a.prod_cost_no as MATNR, 'N' as TAX");
 		$this->db->from('t_prod_cost_header a');
 		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
-		$this->db->where('a.product_type', $type);
 		$this->db->where('a.status_head', 2);
+		if ($type == 'all') {
+			$this->db->where('a.product_type', 1);
+			$this->db->or_where('a.product_type', 2);
+			$this->db->where('a.status_cat_approver', 2);
+			$this->db->where('a.status_cost_control', 2);
+		}
+		if ($type != 'all') {
+			$this->db->where('a.product_type', $type);
+		}
 		if ($type == 2) {
 			$this->db->where('a.status_cat_approver', 2);
 			$this->db->where('a.status_cost_control', 2);
@@ -450,7 +490,10 @@ class Productcosting_model extends CI_Model {
 	//for dashboard
 	function getAllProdCostData($flag = ''){
 		$kd_plant = $this->session->userdata['ADMIN']['plant'];
+		$this->db->distinct();
+		$this->db->select('a.id_prod_cost_header');
 		$this->db->from('t_prod_cost_header a');
+		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
 		$this->db->where('a.plant', $kd_plant);
 		if ($flag == '') {
 			$this->db->where('a.status', 1);
@@ -472,6 +515,13 @@ class Productcosting_model extends CI_Model {
 			$this->db->where('a.status_cat_approver', 2);
 			$this->db->where('a.status_cost_control', 1);
 		}
+		if ($flag == 'done') {
+			$this->db->where('a.product_type', 2);
+			$this->db->where('a.status', 2);
+			$this->db->where('a.status_head', 2);
+			$this->db->where('a.status_cat_approver', 2);
+			$this->db->where('a.status_cost_control', 2);
+		}
 
 		$query = $this->db->get();
 		return $query->num_rows();
@@ -479,7 +529,10 @@ class Productcosting_model extends CI_Model {
 	
 	function getAllProdCostDataRejected($flag){
 		$kd_plant = $this->session->userdata['ADMIN']['plant'];
+		$this->db->distinct();
+		$this->db->select('a.id_prod_cost_header');
 		$this->db->from('t_prod_cost_header a');
+		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
 		$this->db->where('a.plant', $kd_plant);
 		if ($flag == 'hd') {
 			$this->db->where('a.status_head', 0);

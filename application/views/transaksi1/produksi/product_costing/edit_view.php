@@ -319,7 +319,7 @@
 										<div class="text-left">
 											<select name="item_group_ing" id="itemGroupIng" class="form-control form-control-select2" data-live-search="true">
 												<option value="">Select Item Group</option>
-												<?php foreach($matrialGroup as $key=>$value){?>
+												<?php foreach($matrialGroupIng as $key=>$value){?>
 													<option value="<?=$value['ItmsGrpNam']?>" desc="<?=$value['ItmsGrpNam']?>"><?=$value['ItmsGrpNam']?></option>
 												<?php };?>
 												<option value="1" desc="Costing WP">Costing WP</option>
@@ -364,11 +364,9 @@
 										<div class="text-left">
 											<select name="item_group_pack" id="itemGroupPack" class="form-control form-control-select2" data-live-search="true">
 												<option value="">Select Item Group</option>
-												<?php foreach($matrialGroup as $key=>$value){?>
+												<?php foreach($matrialGroupPack as $key=>$value){?>
 													<option value="<?=$value['ItmsGrpNam']?>" desc="<?=$value['ItmsGrpNam']?>"><?=$value['ItmsGrpNam']?></option>
 												<?php };?>
-												<option value="1" desc="Costing WP">Costing WP</option>
-												<option value="2" desc="Costing Finish Goods">Costing Finish Goods</option>
 											</select>
 										</div>
 									</div>
@@ -661,7 +659,7 @@
 					tablePack.find('tr').each(function(i, el){
 						let tdPack = $(this).find('td');
 						if (tblItemPackagingCountRow.length > 0 && tblItemPackagingCountRow.text() != 'No data available in table') {
-							if (tdPack.eq(2).text() || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
+							if (!tdPack.eq(2).text().includes('Select Item') || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
 								let costPack = parseFloat(tdPack.eq(5).text() ? tdPack.eq(5).text().replace(',','').replace(',','') : 0);
 								let qtyPack = parseFloat($('input:text', this).attr("matqty"));
 								tdPack.eq(6).find('input:text').val(parseFloat(productQty) * qtyPack);
@@ -726,12 +724,13 @@
 			}
 
 			function showMatrialDetailDataIng(selectTable){
-				const select = selectTable ? selectTable : $('#matrialGroupIngredients');
+				const select = selectTable;
 				let itmGrp = $('#itemGroupIng option:selected').val();
 				$.ajax({
 					url: "<?php echo site_url('transaksi1/productcosting/addItemRow');?>",
 					data: {
-						itmGrp:itmGrp
+						itmGrp:itmGrp,
+						type:'ing'
 					},
 					type: "POST",
 					success:function(res) {
@@ -768,7 +767,7 @@
 				let tbodyItemIngredientsRows = document.getElementById("tblItemIngredients").rows[no].cells;
 				let itemCodeSelected = ((docStatus == 'Existing' && tbodyItemIngredientsRows[2].children[0]) || tbodyItemIngredientsRows[2].children[0]) ? tbodyItemIngredientsRows[2].children[0].value : tbodyItemIngredientsRows[2].innerHTML;
 				let lastPrice = itemCodeSelected == '-' ? tbodyItemIngredientsRows[5].children[0].value.replace(',','').replace(',','') : tbodyItemIngredientsRows[5].innerHTML.replace(',','').replace(',','');
-				tbodyItemIngredientsRows[7].innerHTML = (parseFloat(lastPrice) * parseFloat(qty)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
+				tbodyItemIngredientsRows[7].innerHTML = (parseFloat(lastPrice) * parseFloat(qty ? qty : 0)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
 				setTotalFoodCost();
 				setProdCostPercentage($('#productSellPrice').val());
 			}
@@ -850,12 +849,13 @@
 			}
 
 			function showMatrialDetailDataPack(selectTable){
-				const select = selectTable ? selectTable : $('#matrialGroupPackaging');
+				const select = selectTable;
 				let itmGrp = $('#itemGroupPack option:selected').val();
 				$.ajax({
 					url: "<?php echo site_url('transaksi1/productcosting/addItemRow');?>",
 					data: {
-						itmGrp:itmGrp
+						itmGrp:itmGrp,
+						type:'pack'
 					},
 					type: "POST",
 					success:function(res) {
@@ -892,7 +892,7 @@
 				let tbodyItemPackagingRows = document.getElementById("tblItemPackaging").rows[no].cells;
 				let itemCodeSelected = ((docStatus == 'Existing' && tbodyItemPackagingRows[2].children[0]) || tbodyItemPackagingRows[2].children[0]) ? tbodyItemPackagingRows[2].children[0].value : tbodyItemPackagingRows[2].innerHTML;
 				let lastPrice = itemCodeSelected == '-' ? tbodyItemPackagingRows[5].children[0].value.replace(',','').replace(',','') : tbodyItemPackagingRows[5].innerHTML.replace(',','').replace(',','');
-				tbodyItemPackagingRows[7].innerHTML = (parseFloat(lastPrice)*parseFloat(qty)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
+				tbodyItemPackagingRows[7].innerHTML = (parseFloat(lastPrice) * parseFloat(qty ? qty : 0)).toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4});
 				setTotalMaterialCost();
 				setProdCostPercentage($('#productSellPrice').val());
 			}
@@ -1037,7 +1037,7 @@
 				tblItemPackaging.find('tr').each(function(i, el){
 					let tdPack = $(this).find('td');
 					if (tblItemPackagingCountRow.length > 0 && tblItemPackagingCountRow.text() != 'No data available in table') {
-						if (tdPack.eq(2).text() || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
+						if (!tdPack.eq(2).text().includes('Select Item') || (tdPack.eq(2).has('select').length > 0 && tdPack.eq(2).find('select option:selected').val())) {
 							matrialNo.push(tdPack.eq(2).has('select').length > 0 ? tdPack.eq(2).find('select option:selected').val() : tdPack.eq(2).text());
 							matrialDesc.push(tdPack.eq(3).children().length === 0 ? tdPack.eq(3).text() : tdPack.eq(3).children(0).val()); 
 							itemUom.push(tdPack.eq(4).has('input:text').length > 0 ? tdPack.eq(4).find('input').val() : tdPack.eq(4).text());	

@@ -98,4 +98,14 @@ class Department_Model extends CI_Model {
         $ret = $query->result_array();
         return $ret;
     }
+
+    function getHeadDeptUsername($id){
+        $this->db->select('admin_username');
+        $this->db->from('d_admin');
+        $this->db->where('admin_id', $id);
+
+        $query = $this->db->get();
+        $ret = $query->row_array();
+        return $ret;
+    }
 }
