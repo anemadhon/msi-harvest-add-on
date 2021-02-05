@@ -364,9 +364,11 @@ class Productcosting_model extends CI_Model {
 			$update['status_head'] = $prod_cost_header['status_head'];
 			$update['approved_head_dept_date'] = $prod_cost_header['approved_head_dept_date'];
 			$update['id_head_dept'] = $prod_cost_header['id_head_dept'];
-			if ($prod_cost_header['head_dept_username'] && $prod_cost_header['head_dept_username'] == $prod_cost_header['category_approver']) {
-				$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];
-				$update['approved_cat_approver_date'] = $prod_cost_header['approved_cat_approver_date'];
+			if (isset($prod_cost_header['head_dept_username'])) {
+				if ($prod_cost_header['head_dept_username'] == $prod_cost_header['category_approver']) {
+					$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];
+					$update['approved_cat_approver_date'] = $prod_cost_header['approved_cat_approver_date'];
+				}
 			}
 		} elseif ($prod_cost_header['flag'] == 4) {
 			$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];

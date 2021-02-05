@@ -54,27 +54,27 @@ class Productcosting extends CI_Controller{
         foreach($rs as $key=>$val){
 
             $nestedData = array();
-			$nestedData['id_prod_cost_header'] 		= $val['id_prod_cost_header'];
-			$nestedData['prod_cost_no'] 			= $val['prod_cost_no'];
-			$nestedData['product_name'] 			= $val['product_name'];
-            $nestedData['existing_bom'] 			= $val['existing_bom_code'].' - '.$val['existing_bom_name'];
-			$nestedData['product_qty'] 				= number_format($val['product_qty'],4);
-			$nestedData['product_uom'] 				= $val['product_uom'];
-			$nestedData['status'] 					= ($val['status'] == 1 || $val['status_head'] === 0 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? 'Not Approved' : 'Approved';
-			$nestedData['status_head'] 				= ($val['status_head'] == 1 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? 'Not Approved' : ($val['status_head'] === 0 ? 'Rejected' : 'Approved');
-			$nestedData['created_date'] 			= date("d-m-Y",strtotime($val['created_date']));
-            $nestedData['created_by'] 				= $val['created_by'];
-            $nestedData['approved_by'] 				= ($val['status_head'] === 0 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? '' : $val['approved_by'];
-            $nestedData['head_dept'] 				= ($val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['head_dept'] : '';
-            $nestedData['approval_admin_date'] 		= ($val['approved_user_date'] == '1900-01-01 00:00:00.000' || !$val['approved_user_date'] || $val['status_head'] === 0 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? '' : date("d-m-Y H:i:s",strtotime($val['approved_user_date']));
-            $nestedData['approval_head_date'] 		= ($val['status_head'] == 1 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? '' : ($val['status_head'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : ''));
-            $nestedData['dept'] 					= ($val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['dept'] : '';
-            $nestedData['status_cat_approver'] 			= ($val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2) ? (($val['status_cat_approver'] == 1 || $val['status_cost_control'] === 0) ? 'Not Approved' : ($val['status_cat_approver'] === 0 ? 'Rejected' : ($val['status_cat_approver'] == 2 ? 'Approved' : ''))) : '';
-            $nestedData['approval_cat_approver_date']	= ($val['status_cat_approver'] == 1 || $val['status_cost_control'] === 0) ? '' : ($val['status_cat_approver'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cat_approver_date'])) : (($val['approved_cat_approver_date'] && $val['approved_cat_approver_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_cat_approver_date'])) : ''));
-            $nestedData['status_cost_control'] 			= ($val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2) ? ($val['status_cost_control'] == 1 ? 'Not Approved' : ($val['status_cost_control'] === 0 ? 'Rejected' : ($val['status_cost_control'] == 2 ? 'Approved' : ''))) : '';
-            $nestedData['approval_cost_control_date']	= $val['status_cost_control'] == 1 ? '' : ($val['status_cost_control'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cost_control_date'])) : (($val['approved_cost_control_date'] && $val['approved_cost_control_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_cost_control_date'])) : ''));
-            $nestedData['cat_approver'] 				= ($val['product_type'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2) ? $val['category_approver'] : '';
-            $nestedData['cost_control'] 				= ($val['product_type'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2 && $val['status_cost_control'] == 2) ? $val['cost_control'] : '';
+			$nestedData['id_prod_cost_header'] 			= $val['id_prod_cost_header'];
+			$nestedData['prod_cost_no'] 				= $val['prod_cost_no'];
+			$nestedData['product_name'] 				= $val['product_name'];
+            $nestedData['existing_bom'] 				= $val['existing_bom_code'].' - '.$val['existing_bom_name'];
+			$nestedData['product_qty'] 					= number_format($val['product_qty'],4);
+			$nestedData['product_uom'] 					= $val['product_uom'];
+			$nestedData['status'] 						= ($val['status'] == 1 || $val['status_head'] === 0 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? 'Not Approved' : 'Approved';
+			$nestedData['created_date'] 				= date("d-m-Y",strtotime($val['created_date']));
+            $nestedData['created_by'] 					= $val['created_by'];
+            $nestedData['approved_by'] 					= $val['status'] == 2 ? $val['approved_by'] : ''; //($val['status_head'] === 0 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? '' : $val['approved_by'];
+            $nestedData['approval_admin_date'] 			= $val['status'] == 2 && $val['approved_user_date'] != '1900-01-01 00:00:00.000' ? date("d-m-Y H:i:s",strtotime($val['approved_user_date'])) : ''; //($val['approved_user_date'] == '1900-01-01 00:00:00.000' || !$val['approved_user_date'] || $val['status_head'] === 0 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? '' : date("d-m-Y H:i:s",strtotime($val['approved_user_date']));
+			$nestedData['status_head'] 					= $val['status'] == 2 && $val['status_head'] == 1 ? 'Not Approved' : ($val['status_head'] === 0 ? 'Rejected' : ($val['status_head'] == 2 ? 'Approved' : '')); //($val['status_head'] == 1 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? 'Not Approved' : ($val['status_head'] === 0 ? 'Rejected' : 'Approved');
+            $nestedData['head_dept'] 					= $val['status_head'] == 1 ? '' : (($val['status_head'] === 0 || $val['status_head'] == 2) ? $val['head_dept'] : ''); //($val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['head_dept'] : '';
+            $nestedData['dept'] 						= $val['status_head'] == 1 ? '' : (($val['status_head'] === 0 || $val['status_head'] == 2) ? $val['dept'] : ''); //($val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['dept'] : '';
+            $nestedData['approval_head_date'] 			= $val['status_head'] == 1 ? '' : ($val['status_head'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000' && $val['status_head'] == 2) ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : '')); //($val['status_head'] == 1 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? '' : ($val['status_head'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : ''));
+            $nestedData['status_cat_approver'] 			= $val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 1 ? 'Not Approved' : ($val['product_type'] == 2 && $val['status_cat_approver'] === 0 ? 'Rejected' : ($val['product_type'] == 2 && $val['status_cat_approver'] == 2 ? 'Approved' : '')); //($val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2) ? (($val['status_cat_approver'] == 1 || $val['status_cost_control'] === 0) ? 'Not Approved' : ($val['status_cat_approver'] === 0 ? 'Rejected' : ($val['status_cat_approver'] == 2 ? 'Approved' : ''))) : '';
+            $nestedData['cat_approver'] 				= $val['status_cat_approver'] == 1 ? '' : (($val['status_cat_approver'] === 0 || $val['status_cat_approver'] == 2) ? $val['category_approver'] : ''); //($val['product_type'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2) ? $val['category_approver'] : '';
+            $nestedData['approval_cat_approver_date']	= $val['status_cat_approver'] == 1 ? '' : ($val['status_cat_approver'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cat_approver_date'])) : ($val['approved_cat_approver_date'] && $val['approved_cat_approver_date'] != '1900-01-01 00:00:00.000' && $val['status_cat_approver'] == 2 ? date("d-m-Y H:i:s",strtotime($val['approved_cat_approver_date'])) : '')); //($val['status_cat_approver'] == 1 || $val['status_cost_control'] === 0) ? '' : ($val['status_cat_approver'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cat_approver_date'])) : (($val['approved_cat_approver_date'] && $val['approved_cat_approver_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_cat_approver_date'])) : ''));
+            $nestedData['status_cost_control'] 			= $val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2 && $val['status_cost_control'] == 1 ? 'Not Approved' : ($val['product_type'] == 2 && $val['status_cost_control'] === 0 ? 'Rejected' : ($val['product_type'] == 2 && $val['status_cost_control'] == 2 ? 'Approved' : '')); //($val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2) ? ($val['status_cost_control'] == 1 ? 'Not Approved' : ($val['status_cost_control'] === 0 ? 'Rejected' : ($val['status_cost_control'] == 2 ? 'Approved' : ''))) : '';
+            $nestedData['cost_control'] 				= $val['status_cost_control'] == 1 ? '' : (($val['status_cost_control'] === 0 || $val['status_cost_control'] == 2) ? $val['cost_control'] : ''); //($val['product_type'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2 && $val['status_cost_control'] == 2) ? $val['cost_control'] : '';
+            $nestedData['approval_cost_control_date']	= $val['status_cost_control'] == 1 ? '' : ($val['status_cost_control'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cost_control_date'])) : ($val['approved_cost_control_date'] && $val['approved_cost_control_date'] != '1900-01-01 00:00:00.000' && $val['status_cost_control'] == 2 ? date("d-m-Y H:i:s",strtotime($val['approved_cost_control_date'])) : '')); //$val['status_cost_control'] == 1 ? '' : ($val['status_cost_control'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cost_control_date'])) : (($val['approved_cost_control_date'] && $val['approved_cost_control_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_cost_control_date'])) : ''));
             $data[] = $nestedData;					
         }
 		
@@ -391,7 +391,7 @@ class Productcosting extends CI_Controller{
         $object['pc']['category_code'] = $object['data']['category_code'];
         $object['pc']['category_name'] = $object['data']['category_name'];
         $object['pc']['category_q_factor'] = $object['data']['category_q_factor'];
-        $object['pc']['category_approver'] = $object['data']['category_approver'];
+        $object['pc']['category_approver'] = $object['qf']['approver'];
         $object['pc']['q_factor_sap'] = $object['qf']['q_factor'];
         $object['pc']['min'] = $object['qf']['min_cost'];
         $object['pc']['max'] = $object['qf']['max_cost'];
@@ -569,7 +569,7 @@ class Productcosting extends CI_Controller{
         $object['pc']['category_code'] = $object['data']['category_code'];
         $object['pc']['category_name'] = $object['data']['category_name'];
         $object['pc']['category_q_factor'] = $object['data']['category_q_factor'];
-        $object['pc']['category_approver'] = $object['data']['category_approver'];
+        $object['pc']['category_approver'] = $object['qf']['approver'];
         $object['pc']['q_factor_sap'] = $object['qf']['q_factor'];
         $object['pc']['min'] = $object['qf']['min_cost'];
         $object['pc']['max'] = $object['qf']['max_cost'];
