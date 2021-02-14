@@ -63,18 +63,18 @@ class Productcosting extends CI_Controller{
 			$nestedData['status'] 						= ($val['status'] == 1 || $val['status_head'] === 0 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? 'Not Approved' : 'Approved';
 			$nestedData['created_date'] 				= date("d-m-Y",strtotime($val['created_date']));
             $nestedData['created_by'] 					= $val['created_by'];
-            $nestedData['approved_by'] 					= $val['status'] == 2 ? $val['approved_by'] : ''; //($val['status_head'] === 0 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? '' : $val['approved_by'];
-            $nestedData['approval_admin_date'] 			= $val['status'] == 2 && $val['approved_user_date'] != '1900-01-01 00:00:00.000' ? date("d-m-Y H:i:s",strtotime($val['approved_user_date'])) : ''; //($val['approved_user_date'] == '1900-01-01 00:00:00.000' || !$val['approved_user_date'] || $val['status_head'] === 0 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? '' : date("d-m-Y H:i:s",strtotime($val['approved_user_date']));
-			$nestedData['status_head'] 					= $val['status'] == 2 && $val['status_head'] == 1 ? 'Not Approved' : ($val['status_head'] === 0 ? 'Rejected' : ($val['status_head'] == 2 ? 'Approved' : '')); //($val['status_head'] == 1 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? 'Not Approved' : ($val['status_head'] === 0 ? 'Rejected' : 'Approved');
-            $nestedData['head_dept'] 					= $val['status_head'] == 1 ? '' : (($val['status_head'] === 0 || $val['status_head'] == 2) ? $val['head_dept'] : ''); //($val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['head_dept'] : '';
-            $nestedData['dept'] 						= $val['status_head'] == 1 ? '' : (($val['status_head'] === 0 || $val['status_head'] == 2) ? $val['dept'] : ''); //($val['status_head'] == 2 && $val['status_cat_approver'] !== 0 && $val['status_cost_control'] !== 0) ? $val['dept'] : '';
-            $nestedData['approval_head_date'] 			= $val['status_head'] == 1 ? '' : ($val['status_head'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000' && $val['status_head'] == 2) ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : '')); //($val['status_head'] == 1 || $val['status_cat_approver'] === 0 || $val['status_cost_control'] === 0) ? '' : ($val['status_head'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : ''));
-            $nestedData['status_cat_approver'] 			= $val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 1 ? 'Not Approved' : ($val['product_type'] == 2 && $val['status_cat_approver'] === 0 ? 'Rejected' : ($val['product_type'] == 2 && $val['status_cat_approver'] == 2 ? 'Approved' : '')); //($val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2) ? (($val['status_cat_approver'] == 1 || $val['status_cost_control'] === 0) ? 'Not Approved' : ($val['status_cat_approver'] === 0 ? 'Rejected' : ($val['status_cat_approver'] == 2 ? 'Approved' : ''))) : '';
-            $nestedData['cat_approver'] 				= $val['status_cat_approver'] == 1 ? '' : (($val['status_cat_approver'] === 0 || $val['status_cat_approver'] == 2) ? $val['category_approver'] : ''); //($val['product_type'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2) ? $val['category_approver'] : '';
-            $nestedData['approval_cat_approver_date']	= $val['status_cat_approver'] == 1 ? '' : ($val['status_cat_approver'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cat_approver_date'])) : ($val['approved_cat_approver_date'] && $val['approved_cat_approver_date'] != '1900-01-01 00:00:00.000' && $val['status_cat_approver'] == 2 ? date("d-m-Y H:i:s",strtotime($val['approved_cat_approver_date'])) : '')); //($val['status_cat_approver'] == 1 || $val['status_cost_control'] === 0) ? '' : ($val['status_cat_approver'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cat_approver_date'])) : (($val['approved_cat_approver_date'] && $val['approved_cat_approver_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_cat_approver_date'])) : ''));
-            $nestedData['status_cost_control'] 			= $val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2 && $val['status_cost_control'] == 1 ? 'Not Approved' : ($val['product_type'] == 2 && $val['status_cost_control'] === 0 ? 'Rejected' : ($val['product_type'] == 2 && $val['status_cost_control'] == 2 ? 'Approved' : '')); //($val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2) ? ($val['status_cost_control'] == 1 ? 'Not Approved' : ($val['status_cost_control'] === 0 ? 'Rejected' : ($val['status_cost_control'] == 2 ? 'Approved' : ''))) : '';
-            $nestedData['cost_control'] 				= $val['status_cost_control'] == 1 ? '' : (($val['status_cost_control'] === 0 || $val['status_cost_control'] == 2) ? $val['cost_control'] : ''); //($val['product_type'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2 && $val['status_cost_control'] == 2) ? $val['cost_control'] : '';
-            $nestedData['approval_cost_control_date']	= $val['status_cost_control'] == 1 ? '' : ($val['status_cost_control'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cost_control_date'])) : ($val['approved_cost_control_date'] && $val['approved_cost_control_date'] != '1900-01-01 00:00:00.000' && $val['status_cost_control'] == 2 ? date("d-m-Y H:i:s",strtotime($val['approved_cost_control_date'])) : '')); //$val['status_cost_control'] == 1 ? '' : ($val['status_cost_control'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cost_control_date'])) : (($val['approved_cost_control_date'] && $val['approved_cost_control_date'] != '1900-01-01 00:00:00.000') ? date("d-m-Y H:i:s",strtotime($val['approved_cost_control_date'])) : ''));
+            $nestedData['approved_by'] 					= $val['status'] == 2 ? $val['approved_by'] : ''; 
+            $nestedData['approval_admin_date'] 			= $val['status'] == 2 && $val['approved_user_date'] != '1900-01-01 00:00:00.000' ? date("d-m-Y H:i:s",strtotime($val['approved_user_date'])) : ''; 
+			$nestedData['status_head'] 					= $val['status'] == 2 && $val['status_head'] == 1 ? 'Not Approved' : ($val['status_head'] === 0 ? 'Rejected' : ($val['status_head'] == 2 ? 'Approved' : '')); 
+            $nestedData['head_dept'] 					= $val['status_head'] == 1 ? '' : (($val['status_head'] === 0 || $val['status_head'] == 2) ? $val['head_dept'] : ''); 
+            $nestedData['dept'] 						= $val['status_head'] == 1 ? '' : (($val['status_head'] === 0 || $val['status_head'] == 2) ? $val['dept'] : ''); 
+            $nestedData['approval_head_date'] 			= $val['status_head'] == 1 ? '' : ($val['status_head'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_head_dept_date'])) : (($val['approved_head_dept_date'] && $val['approved_head_dept_date'] != '1900-01-01 00:00:00.000' && $val['status_head'] == 2) ? date("d-m-Y H:i:s",strtotime($val['approved_head_dept_date'])) : '')); 
+            $nestedData['status_cat_approver'] 			= $val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 1 ? 'Not Approved' : ($val['product_type'] == 2 && $val['status_cat_approver'] === 0 ? 'Rejected' : ($val['product_type'] == 2 && $val['status_cat_approver'] == 2 ? 'Approved' : '')); 
+            $nestedData['cat_approver'] 				= $val['status_cat_approver'] == 1 ? '' : ($val['product_type'] == 2 && ($val['status_cat_approver'] === 0 || $val['status_cat_approver'] == 2) ? $val['category_approver'] : ''); 
+            $nestedData['approval_cat_approver_date']	= $val['status_cat_approver'] == 1 ? '' : ($val['status_cat_approver'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cat_approver_date'])) : ($val['product_type'] == 2 && $val['approved_cat_approver_date'] && $val['approved_cat_approver_date'] != '1900-01-01 00:00:00.000' && $val['status_cat_approver'] == 2 ? date("d-m-Y H:i:s",strtotime($val['approved_cat_approver_date'])) : '')); 
+            $nestedData['status_cost_control'] 			= $val['product_type'] == 2 && $val['status'] == 2 && $val['status_head'] == 2 && $val['status_cat_approver'] == 2 && $val['status_cost_control'] == 1 ? 'Not Approved' : ($val['product_type'] == 2 && $val['status_cost_control'] === 0 ? 'Rejected' : ($val['product_type'] == 2 && $val['status_cost_control'] == 2 ? 'Approved' : '')); 
+            $nestedData['cost_control'] 				= $val['status_cost_control'] == 1 ? '' : ($val['product_type'] == 2 && ($val['status_cost_control'] === 0 || $val['status_cost_control'] == 2) ? $val['cost_control'] : ''); 
+            $nestedData['approval_cost_control_date']	= $val['status_cost_control'] == 1 ? '' : ($val['status_cost_control'] === 0 ? date("d-m-Y H:i:s",strtotime($val['rejected_cost_control_date'])) : ($val['product_type'] == 2 && $val['approved_cost_control_date'] && $val['approved_cost_control_date'] != '1900-01-01 00:00:00.000' && $val['status_cost_control'] == 2 ? date("d-m-Y H:i:s",strtotime($val['approved_cost_control_date'])) : '')); 
             $data[] = $nestedData;					
         }
 		
@@ -89,8 +89,6 @@ class Productcosting extends CI_Controller{
 		$object['plant'] = $this->session->userdata['ADMIN']['plant']; 
         $object['plant_name'] = $this->session->userdata['ADMIN']['plant_name'];
 		$object['categories'] = $this->pc->getCategory();
-		$object['matrialGroupIng'] = $this->pc->showMatrialGroup('NONEPK');
-		$object['matrialGroupPack'] = $this->pc->showMatrialGroup('PK');
 		$existing_bom['bom'] = $this->pc->sap_costing_existing_bom_references();
 		
         $object['existing_bom']['-'] = '';
@@ -101,6 +99,18 @@ class Productcosting extends CI_Controller{
 		}
        	
         $this->load->view('transaksi1/produksi/product_costing/add_view',$object);
+	}
+
+	public function showMatrialGroupIng(){
+		$object['matrialGroupIng'] = $this->pc->showMatrialGroup('NONEPK');
+
+        echo json_encode($object);
+	}
+	
+	public function showMatrialGroupPack(){
+		$object['matrialGroupPack'] = $this->pc->showMatrialGroup('PK');
+
+        echo json_encode($object);
 	}
 
 	public function getDataForQFactorFormula(){
@@ -165,7 +175,7 @@ class Productcosting extends CI_Controller{
         if($rs){
             foreach($rs as $data){
 
-				$getucaneditqty = '<input type="hidden" class="form-control ing" id="typeCostIng_'.$i.'" value="1"><input type="text" id="qtyCostIng_'.$i.'" class="form-control qty-ing" value="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" style="width:90px" autocomplete="off">';
+				$getucaneditqty = '<input type="hidden" class="form-control" id="typeCostIng_'.$i.'"><input type="text" id="qtyCostIng_'.$i.'" class="form-control" value="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4).'" style="width:90px" autocomplete="off">';
 
 				$queryUOM = $this->pc->getDataDetailUOMForExistingBom($data['material_no']);
 				if(count($queryUOM)>0){
@@ -175,17 +185,17 @@ class Productcosting extends CI_Controller{
 				}
 				
 				$queryGetLastPurchase = $this->pc->getDataLastPurchaseItemSelected($data['material_no']);
-				$lastPurchase = $queryGetLastPurchase['LastPrice'] == ".000000" ? "0.0000" : number_format($queryGetLastPurchase['LastPrice'],4,'.','');
+				$lastPurchase = $queryGetLastPurchase['LastPrice'] == ".000000" ? "0.0000" : number_format($queryGetLastPurchase['LastPrice'],4);
 				$querySAP2 = $this->pc->getDataDetailItemBOMForExistingBom($kode_paket,$data['material_no']);
 				
 				$select = '<select class="form-control form-control-select2 descmatIng" data-live-search="true" name="descmat" id="descmatIng_'.$i.'">
-								<option value="'.$data['material_desc'].'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$data['material_no'].'" lastprice="'.$lastPurchase.'">'.$data['material_desc'].'</option>'; 
+								<option value="'.$data['material_desc'].'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4).'" matno="'.$data['material_no'].'" lastprice="'.$lastPurchase.'">'.$data['material_desc'].'</option>'; 
 								if($querySAP2){
 									foreach($querySAP2 as $_querySAP2){
 										$queryGetSubLastPurchase = $this->pc->getDataLastPurchaseItemSelected($_querySAP2['U_SubsCode']);
-										$subLastPurchase = $queryGetSubLastPurchase['LastPrice'] == ".000000" ? "0.0000" : number_format($queryGetSubLastPurchase['LastPrice'],4,'.','');
+										$subLastPurchase = $queryGetSubLastPurchase['LastPrice'] == ".000000" ? "0.0000" : number_format($queryGetSubLastPurchase['LastPrice'],4);
 										if($_querySAP2['U_ItemCodeBOM'] == $data['material_no']){
-											$select .= '<option value="'.$_querySAP2['NAME'].'" uOm="'.$_querySAP2['U_SubsUOM'].'" matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$_querySAP2['U_SubsCode'].'" lastprice="'.$subLastPurchase.'">'.$_querySAP2['NAME'].'</option>'; 
+											$select .= '<option value="'.$_querySAP2['NAME'].'" uOm="'.$_querySAP2['U_SubsUOM'].'" matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4).'" matno="'.$_querySAP2['U_SubsCode'].'" lastprice="'.$subLastPurchase.'">'.$_querySAP2['NAME'].'</option>'; 
 										}
 									}
 								}
@@ -205,7 +215,7 @@ class Productcosting extends CI_Controller{
 				}
 
 				$nestedData=array();
-				$nestedData['0'] = '<input type="checkbox" id="chkIng_'.$i.'" class="check_delete_ing" value="'.$i.'">';
+				$nestedData['0'] = '<input type="checkbox" id="chkIng_'.$i.'" value="'.$i.'">';
 				$nestedData['1'] = $i;
 				$nestedData['2'] = $data['material_no'];
 				$nestedData['3'] = $descolumn;
@@ -235,7 +245,7 @@ class Productcosting extends CI_Controller{
         if($rs){
             foreach($rs as $data){
 
-				$getucaneditqty = '<input type="hidden" class="form-control pack" id="typeCostPack_'.$i.'" value="2"><input type="text" id="qtyCostPack_'.$i.'" class="form-control qty-pack" value="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" style="width:90px" autocomplete="off">';
+				$getucaneditqty = '<input type="hidden" class="form-control" id="typeCostPack_'.$i.'"><input type="text" id="qtyCostPack_'.$i.'" class="form-control" value="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4).'" style="width:90px" autocomplete="off">';
 
 				$queryUOM = $this->pc->getDataDetailUOMForExistingBom($data['material_no']);
 				if(count($queryUOM)>0){
@@ -245,17 +255,17 @@ class Productcosting extends CI_Controller{
 				}
 				
 				$queryGetLastPurchase = $this->pc->getDataLastPurchaseItemSelected($data['material_no']);
-				$lastPurchase = $queryGetLastPurchase['LastPrice'] == ".000000" ? "0.0000" : number_format($queryGetLastPurchase['LastPrice'],4,'.','');
+				$lastPurchase = $queryGetLastPurchase['LastPrice'] == ".000000" ? "0.0000" : number_format($queryGetLastPurchase['LastPrice'],4);
 				$querySAP2 = $this->pc->getDataDetailItemBOMForExistingBom($kode_paket,$data['material_no']);
 				
 				$select = '<select class="form-control form-control-select2 descmatPack" data-live-search="true" name="descmat" id="descmatPack_'.$i.'">
-								<option value="'.$data['material_desc'].'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$data['material_no'].'" lastprice="'.$lastPurchase.'">'.$data['material_desc'].'</option>'; 
+								<option value="'.$data['material_desc'].'" uOm="'.$uom.'" matqty="'.number_format(($data['quantity'] / (float)$qtyDefault * (float)$qty_header),4).'" matno="'.$data['material_no'].'" lastprice="'.$lastPurchase.'">'.$data['material_desc'].'</option>'; 
 								if($querySAP2){
 									foreach($querySAP2 as $_querySAP2){
 										$queryGetSubLastPurchase = $this->pc->getDataLastPurchaseItemSelected($_querySAP2['U_SubsCode']);
-										$subLastPurchase = $queryGetSubLastPurchase['LastPrice'] == ".000000" ? "0.0000" : number_format($queryGetSubLastPurchase['LastPrice'],4,'.','');
+										$subLastPurchase = $queryGetSubLastPurchase['LastPrice'] == ".000000" ? "0.0000" : number_format($queryGetSubLastPurchase['LastPrice'],4);
 										if($_querySAP2['U_ItemCodeBOM'] == $data['material_no']){
-											$select .= '<option value="'.$_querySAP2['NAME'].'" uOm="'.$_querySAP2['U_SubsUOM'].'" matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4,'.','').'" matno="'.$_querySAP2['U_SubsCode'].'" lastprice="'.$subLastPurchase.'">'.$_querySAP2['NAME'].'</option>'; 
+											$select .= '<option value="'.$_querySAP2['NAME'].'" uOm="'.$_querySAP2['U_SubsUOM'].'" matqty="'.number_format(((float)$_querySAP2['U_SubsQty'] / (float)$qtyDefault * (float)$qty_header),4).'" matno="'.$_querySAP2['U_SubsCode'].'" lastprice="'.$subLastPurchase.'">'.$_querySAP2['NAME'].'</option>'; 
 										}
 									}
 								}
@@ -275,7 +285,7 @@ class Productcosting extends CI_Controller{
 				}
 
 				$nestedData=array();
-				$nestedData['0'] = '<input type="checkbox" id="chkPack_'.$i.'" class="check_delete_pack" value="'.$i.'">';
+				$nestedData['0'] = '<input type="checkbox" id="chkPack_'.$i.'" value="'.$i.'">';
 				$nestedData['1'] = $i;
 				$nestedData['2'] = $data['material_no'];
 				$nestedData['3'] = $descolumn;
@@ -324,14 +334,17 @@ class Productcosting extends CI_Controller{
 		$product_cost_header['id_user_input'] = $this->session->userdata['ADMIN']['admin_id'];
 		$product_cost_header['id_user_approved'] = $this->input->post('approve') == 2 ? $this->session->userdata['ADMIN']['admin_id'] : 0;
 		$product_cost_header['id_cost_control'] = 0;
-		$product_cost_header['id_head_dept'] = 0;
-		if ($this->input->post('approve') == 2) {
-			$product_cost_header['approved_user_date'] = date('Y-m-d H:i:s');
-		}
 		if ($this->input->post('approve') == 2 && $this->auth->is_head_dept()['head_dept'] == $this->session->userdata['ADMIN']['admin_id']) {
 			$product_cost_header['status_head'] = 2;
+			$product_cost_header['id_head_dept'] = $this->session->userdata['ADMIN']['admin_id'];
+			$product_cost_header['approved_user_date'] = date('Y-m-d H:i:s');
+			$product_cost_header['approved_head_dept_date'] = date('Y-m-d H:i:s');
 		} else {
 			$product_cost_header['status_head'] = 1;
+			$product_cost_header['id_head_dept'] = 0;
+		}
+		if ($this->input->post('approve') == 2) {
+			$product_cost_header['approved_user_date'] = date('Y-m-d H:i:s');
 		}
 		
 		$count = count($this->input->post('matrialNo'));
@@ -381,8 +394,6 @@ class Productcosting extends CI_Controller{
 		$object['categories'] = $this->pc->getCategory();
 		$object['data'] = $this->pc->selectProdCostHeader($id);
 		$object['qf'] = $this->pc->getDataForQFactorFormula($object['data']['category_code']);
-		$object['matrialGroupIng'] = $this->pc->showMatrialGroup('NONEPK');
-		$object['matrialGroupPack'] = $this->pc->showMatrialGroup('PK');
 		$object['dept'] = $this->pc->getDeptUserLogin($this->session->userdata['ADMIN']['admin_id']);
 		
         $object['pc']['id_prod_cost_header'] = $object['data']['id_prod_cost_header'];
@@ -398,7 +409,7 @@ class Productcosting extends CI_Controller{
         $object['pc']['existing_bom_code'] = $object['data']['existing_bom_code'];
         $object['pc']['existing_bom_name'] = $object['data']['existing_bom_name'];
         $object['pc']['product_name'] = $object['data']['product_name'];
-        $object['pc']['product_qty'] = number_format($object['data']['product_qty'],4);
+        $object['pc']['product_qty'] = $object['data']['product_qty'];
         $object['pc']['product_uom'] = $object['data']['product_uom'];
         $object['pc']['product_selling_price'] = $object['data']['product_selling_price'];
 		$object['pc']['status'] = $object['data']['status'];
@@ -431,7 +442,7 @@ class Productcosting extends CI_Controller{
 				$nestedData['3'] = $data['material_desc'];
 				$nestedData['4'] = $data['item_uom'];
 				$nestedData['5'] = number_format($data['item_cost'],4);
-				$nestedData['6'] = $data['item_qty'];
+				$nestedData['6'] = number_format($data['item_qty'],4);
 				$nestedData['7'] = '';
 				$dt[] = $nestedData;
 				$i++;
@@ -471,6 +482,7 @@ class Productcosting extends CI_Controller{
 			if ($this->auth->is_head_dept()['head_dept'] == $this->session->userdata['ADMIN']['admin_id']) {
 				$prod_cost_header['status_head'] = 2;
 				$prod_cost_header['approved_head_dept_date'] = date('Y-m-d H:i:s');
+				$prod_cost_header['id_head_dept'] = $this->session->userdata['ADMIN']['admin_id'];
 			} else {
 				$prod_cost_header['status_head'] = 1;
 			}
@@ -504,23 +516,31 @@ class Productcosting extends CI_Controller{
 
 		$prod_cost_header_update = $this->pc->updateDataProdCostHeader($prod_cost_header);
 		$succes_update = false;
-		if($prod_cost_header_update){
-			$this->pc->selectProdCostDetailForDelete($id);
-			for($i = 0; $i < $max; $i++){
-				$prod_cost_detail['id_prod_cost_header'] = $id;
-				$prod_cost_detail['id_prod_cost_h_detail'] = $i+1;
-				$prod_cost_detail['material_no'] = $this->input->post('matrialNo')[$i];
-				$prod_cost_detail['material_desc'] = $this->input->post('matrialDesc')[$i];
-				$prod_cost_detail['item_type'] = $this->input->post('itemType')[$i];
-				$prod_cost_detail['item_qty'] = $this->input->post('itemQty')[$i];
-				$prod_cost_detail['item_uom'] = $this->input->post('itemUom')[$i];
-				$prod_cost_detail['item_cost'] = $this->input->post('itemCost')[$i];
-							
-				if($this->pc->insertDetailProdCost($prod_cost_detail)){
-					$succes_update = TRUE;
+
+		if ($approve > 2) {
+            if($prod_cost_header_update){
+                $succes_update = true;
+            }
+        } else {
+			if($prod_cost_header_update){
+				$this->pc->selectProdCostDetailForDelete($id);
+				for($i = 0; $i < $max; $i++){
+					$prod_cost_detail['id_prod_cost_header'] = $id;
+					$prod_cost_detail['id_prod_cost_h_detail'] = $i+1;
+					$prod_cost_detail['material_no'] = $this->input->post('matrialNo')[$i];
+					$prod_cost_detail['material_desc'] = $this->input->post('matrialDesc')[$i];
+					$prod_cost_detail['item_type'] = $this->input->post('itemType')[$i];
+					$prod_cost_detail['item_qty'] = $this->input->post('itemQty')[$i];
+					$prod_cost_detail['item_uom'] = $this->input->post('itemUom')[$i];
+					$prod_cost_detail['item_cost'] = $this->input->post('itemCost')[$i];
+								
+					if($this->pc->insertDetailProdCost($prod_cost_detail)){
+						$succes_update = TRUE;
+					}
 				}
 			}
 		}
+		
 		if($succes_update){
             return $this->session->set_flashdata('success', "Product Costing Telah Berhasil Terupdate");
         }else{
@@ -559,8 +579,6 @@ class Productcosting extends CI_Controller{
 		$object['categories'] = $this->pc->getCategory();
 		$object['data'] = $this->pc->selectProdCostHeader($id);
 		$object['qf'] = $this->pc->getDataForQFactorFormula($object['data']['category_code']);
-		$object['matrialGroupIng'] = $this->pc->showMatrialGroup('NONEPK');
-		$object['matrialGroupPack'] = $this->pc->showMatrialGroup('PK');
 		$object['dept'] = $this->pc->getDeptUserLogin($this->session->userdata['ADMIN']['admin_id']);
 		
         $object['pc']['id_prod_cost_header'] = $object['data']['id_prod_cost_header'];
@@ -576,7 +594,7 @@ class Productcosting extends CI_Controller{
         $object['pc']['existing_bom_code'] = $object['data']['existing_bom_code'];
         $object['pc']['existing_bom_name'] = $object['data']['existing_bom_name'];
         $object['pc']['product_name'] = $object['data']['product_name'];
-        $object['pc']['product_qty'] = number_format($object['data']['product_qty'],4);
+        $object['pc']['product_qty'] = $object['data']['product_qty'];
         $object['pc']['product_uom'] = $object['data']['product_uom'];
         $object['pc']['product_selling_price'] = $object['data']['product_selling_price'];
 		$object['pc']['status'] = $object['data']['status'];
@@ -703,9 +721,8 @@ class Productcosting extends CI_Controller{
         $excel->setActiveSheetIndex(0)->setCellValue('B12', "UOM"); 
         $excel->setActiveSheetIndex(0)->setCellValue('B13', "Posting Date"); 
 		$excel->setActiveSheetIndex(0)->setCellValue('B14', "Status"); 
-		$excel->setActiveSheetIndex(0)->setCellValue('B15', "Head of Department"); 
 		if ($object['data']['product_type'] == 2) {
-			$excel->setActiveSheetIndex(0)->setCellValue('B16', "Selling Price"); 
+			$excel->setActiveSheetIndex(0)->setCellValue('B15', "Selling Price"); 
 		}
 		
 		// set config for value header
@@ -718,10 +735,9 @@ class Productcosting extends CI_Controller{
 		$excel->setActiveSheetIndex(0)->setCellValue('C11', number_format($object['data']['product_qty'],4)); 
         $excel->setActiveSheetIndex(0)->setCellValue('C12', $object['data']['product_uom']); 
         $excel->setActiveSheetIndex(0)->setCellValue('C13', date('d-m-Y', strtotime($object['data']['posting_date']))); 
-		$excel->setActiveSheetIndex(0)->setCellValue('C14', ($object['data']['status'] == 1 || $object['data']['status_head'] == 0) ? 'Not Approved' : 'Approved'); 
-		$excel->setActiveSheetIndex(0)->setCellValue('C15', $object['data']['status'] == 2 && $object['data']['status_head'] == 2 ? 'Approved' : ($object['data']['status_head'] == 0 ? 'Rejected' : 'Not Approved')); 
+		$excel->setActiveSheetIndex(0)->setCellValue('C14', 'Approved'); 
 		if ($object['data']['product_type'] == 2) { 
-			$excel->setActiveSheetIndex(0)->setCellValue('C16', number_format($object['data']['product_selling_price'],4)); 
+			$excel->setActiveSheetIndex(0)->setCellValue('C15', number_format($object['data']['product_selling_price'],4)); 
 		}
 
 		//style of border
@@ -870,10 +886,10 @@ class Productcosting extends CI_Controller{
 				$color = '008000';
 			}
 
-			$excel->getActiveSheet()->getStyle('D'.($numrowPack+5))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+			$excel->getActiveSheet()->getStyle('D'.($numrowPack+6))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
 				->getStartColor()->setARGB($color);
 
-			$excel->setActiveSheetIndex(0)->setCellValue('D'.($numrowPack+5), $ket); 																			
+			$excel->setActiveSheetIndex(0)->setCellValue('D'.($numrowPack+6), $ket); 																			
 		}
     
         // Set height semua kolom menjadi auto (mengikuti height isi dari kolommnya, jadi otomatis)

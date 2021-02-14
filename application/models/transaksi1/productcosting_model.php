@@ -83,12 +83,18 @@ class Productcosting_model extends CI_Model {
 		}
 	}
 
-	function showMatrialGroup(){
+	function showMatrialGroup($flag){
         $SAP_MSI = $this->load->database('SAP_MSI', TRUE);
         $SAP_MSI->distinct();
         $SAP_MSI->select('ItmsGrpNam');
         $SAP_MSI->from('OITB t0');
-        $SAP_MSI->join('OITM t1','t0.ItmsGrpCod = t1.ItmsGrpCod','inner');
+		$SAP_MSI->join('OITM t1','t0.ItmsGrpCod = t1.ItmsGrpCod','inner');
+		if ($flag == 'PK') {
+			$SAP_MSI->where('t0.U_GroupType', 'PK');
+		} 
+		if ($flag == 'NONEPK') {
+			$SAP_MSI->where("ISNULL(U_GroupType,'') <> 'PK' ", null, false);
+		}
         $SAP_MSI->where('t1.validFor', 'Y');
 
         $query = $SAP_MSI->get();
@@ -269,10 +275,11 @@ class Productcosting_model extends CI_Model {
 	}
 
 	function insertHeaderProdCost($data) {
-		if($this->db->insert('t_prod_cost_header', $data))
+		if($this->db->insert('t_prod_cost_header', $data)) {
 			return $this->db->insert_id();
-		else
+		}else{
 			return FALSE;
+		}
 	}
 
 	function insertDetailProdCost($data) {
@@ -358,6 +365,7 @@ class Productcosting_model extends CI_Model {
 			$update['status_cost_control'] = $prod_cost_header['status_cost_control'];
 			if ($prod_cost_header['status_head'] == 2) {
 				$update['approved_head_dept_date'] = $prod_cost_header['approved_head_dept_date'];
+				$update['id_head_dept'] = $prod_cost_header['id_head_dept'];
 			}
 		} elseif ($prod_cost_header['flag'] == 3) {
 			$update['status'] = $prod_cost_header['status'];
@@ -437,6 +445,33 @@ class Productcosting_model extends CI_Model {
 		$this->db->select("a.product_name as MAKTX, a.prod_cost_no as MATNR, 'N' as TAX");
 		$this->db->from('t_prod_cost_header a');
 		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
+		if ($type == 'all') {
+			$this->db->where('a.product_type', 1);
+			$this->db->or_where('a.product_type', 2);
+			$this->db->where('a.status_head', 2);
+			$this->db->where('a.status_cat_approver', 2);
+			$this->db->where('a.status_cost_control', 2);
+		}
+		if ($type == 1) {
+			$this->db->where('a.product_type', $type);
+		}
+		if ($type == 2) {
+			$this->db->where('a.product_type', $type);
+			$this->db->where('a.status_head', 2);
+			$this->db->where('a.status_cat_approver', 2);
+			$this->db->where('a.status_cost_control', 2);
+		}
+
+		$query = $this->db->get();
+		$data = $query->result_array();
+		return $data;
+	}
+
+	/* function getAllDataItemsWPSelling($type){
+		$this->db->distinct();
+		$this->db->select("a.product_name as MAKTX, a.prod_cost_no as MATNR, 'N' as TAX");
+		$this->db->from('t_prod_cost_header a');
+		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
 		$this->db->where('a.status_head', 2);
 		if ($type == 'all') {
 			$this->db->where('a.product_type', 1);
@@ -455,7 +490,7 @@ class Productcosting_model extends CI_Model {
 		$query = $this->db->get();
 		$data = $query->result_array();
 		return $data;
-	}
+	} */
 	
 	function getDataItemSelectedWPSelling($code){
 		$this->db->distinct();
