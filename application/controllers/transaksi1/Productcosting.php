@@ -21,6 +21,33 @@ class Productcosting extends CI_Controller{
         $this->load->view('transaksi1/produksi/product_costing/list_view');
     }
 	
+	public function whoIsLogin(){
+		$dept = $this->pc->getDeptUserLogin($this->session->userdata['ADMIN']['admin_id']);
+		$catAppr = $this->pc->getCatApprover($this->session->userdata['ADMIN']['admin_username']);
+
+		$userLogin['flag'] = '01';
+		$userLogin['username'] = '';
+
+		if ($this->auth->is_head_dept()['head_dept'] == $this->session->userdata['ADMIN']['admin_id'] && $catAppr['approver']) { //checking HOD & Cat Approver
+			$userLogin['flag'] = '0203';
+			$userLogin['username'] = $catAppr['approver'];
+		} elseif ($this->auth->is_head_dept()['head_dept'] == $this->session->userdata['ADMIN']['admin_id']) { //checking HOD
+			$userLogin['flag'] = '02';
+		} elseif ($catAppr['approver'] && strtolower($dept['dept']) == 'cost control') { //checking Cat Approver && Cost Control
+			$userLogin['flag'] = '0304';
+			$userLogin['username'] = $catAppr['approver'];
+		} elseif ($catAppr['approver']) { //checking Cat Approver
+			$userLogin['flag'] = '03';
+			$userLogin['username'] = $catAppr['approver'];
+		} elseif (strtolower($dept['dept']) == 'cost control') { //checking Cost Control
+			$userLogin['flag'] = '04';
+		}
+
+		$userLogin['id'] = $this->session->userdata['ADMIN']['admin_id'];
+
+		return $userLogin;
+	}
+	
 	public function showListData(){
         $fromDate = $this->input->post('fDate');
         $toDate = $this->input->post('tDate');
@@ -47,7 +74,7 @@ class Productcosting extends CI_Controller{
             $date_to2='';
         }
         
-		$rs = $this->pc->getProdCostData($date_from2, $date_to2, $status);
+		$rs = $this->pc->getProdCostData($date_from2, $date_to2, $status, $this->whoIsLogin());
 		
 		$data = array();
 
@@ -495,7 +522,7 @@ class Productcosting extends CI_Controller{
 			$prod_cost_header['approved_head_dept_date'] = date('Y-m-d H:i:s');
 			$prod_cost_header['id_head_dept'] = $this->session->userdata['ADMIN']['admin_id'];
 			$prod_cost_header['flag'] = 3;
-			if ($this->auth->is_head_dept()['head_dept_username'] == $prod_cost_header['category_approver']) {
+			if (strcasaecmp($this->auth->is_head_dept()['head_dept_username'], $prod_cost_header['category_approver']) == 0) {
 				$prod_cost_header['head_dept_username'] = $this->auth->is_head_dept()['head_dept_username'];
 				$prod_cost_header['status_cat_approver'] = 2;
 				$prod_cost_header['approved_cat_approver_date'] = date('Y-m-d H:i:s');

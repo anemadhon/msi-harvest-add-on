@@ -273,7 +273,7 @@ class Auth {
 				$object['username'] = $this->CI->divisi->getHeadDeptUsername($object['head']['dept_head_id']);	
 				if ($object['user']) {
 					$object['costing']['head_dept'] = $object['user'][0]['dept_manager'];
-					$object['costing']['head_dept_username'] = strtolower($object['username']['admin_username']);
+					$object['costing']['head_dept_username'] = $object['username']['admin_username'];
 					$object['costing']['users'] = $object['user'];
 					
 					return $object['costing'];

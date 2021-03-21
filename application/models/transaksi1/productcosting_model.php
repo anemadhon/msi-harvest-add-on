@@ -2,7 +2,7 @@
 
 class Productcosting_model extends CI_Model {
 
-	function getProdCostData($fromDate='', $toDate='', $status=''){
+	function getProdCostData($fromDate='', $toDate='', $status='', $whoIsLogin){
 		$kd_plant = $this->session->userdata['ADMIN']['plant'];
 		$this->db->distinct();
 		$this->db->select("a.id_prod_cost_header, a.product_name, a.existing_bom_code, a.existing_bom_name, a.product_qty, a.product_uom, a.status, a.created_date, a.status_head, a.approved_user_date, a.approved_head_dept_date, a.rejected_head_dept_date, a.prod_cost_no, a.status_cat_approver, a.status_cost_control, a.approved_cat_approver_date, a.rejected_cat_approver_date, a.approved_cost_control_date, a.rejected_cost_control_date, a.product_type,
@@ -16,6 +16,22 @@ class Productcosting_model extends CI_Model {
 		$this->db->join('t_prod_cost_detail b', 'a.id_prod_cost_header = b.id_prod_cost_header');
 		$this->db->where('a.plant', $kd_plant);
 		
+		if ($whoIsLogin['flag'] == '01') {
+			$this->db->where('a.id_user_input', $whoIsLogin['id']);
+		} elseif ($whoIsLogin['flag'] == '02') {
+			$this->db->where('a.id_user_approved', $whoIsLogin['id']);
+		} elseif ($whoIsLogin['flag'] == '0203') {
+			$this->db->where('a.id_user_approved', $whoIsLogin['id']);
+			$this->db->where('a.category_approver', $whoIsLogin['username']);
+		} elseif ($whoIsLogin['flag'] == '03') {
+			$this->db->where('a.category_approver', $whoIsLogin['username']);
+		} elseif ($whoIsLogin['flag'] == '0304') {
+			$this->db->where('a.category_approver', $whoIsLogin['username']);
+			$this->db->where('a.id_cost_control', $whoIsLogin['id']);
+		} elseif ($whoIsLogin['flag'] == '04') {
+			$this->db->where('a.id_cost_control', $whoIsLogin['id']);
+		}
+		
 		if((!empty($fromDate)) || (!empty($toDate))){
 			if( (!empty($fromDate)) || (!empty($toDate)) ) {
 				$this->db->where("posting_date BETWEEN '$fromDate' AND '$toDate'");
@@ -26,15 +42,29 @@ class Productcosting_model extends CI_Model {
 			}
 		}
 
-		$this->db->order_by('a.id_prod_cost_header','desc');
-
 		if((!empty($status))){
 			$this->db->where('status', $status);
 		}
 
+		$this->db->order_by('a.id_prod_cost_header','desc');
+
 		$query = $this->db->get();
 		$data = $query->result_array();
 		return $data;
+	}
+
+	function getCatApprover($user){
+		$SAP_MSI = $this->load->database('SAP_MSI', TRUE);
+		$SAP_MSI->select('U_CatApprov as approver');
+		$SAP_MSI->from('@YBC_COST as yc');
+		$SAP_MSI->where('U_CatApprov', $user);
+		$query = $SAP_MSI->get();
+
+		if(($query)&&($query->num_rows() > 0)){
+			return $query->row_array();
+		}else{
+			return FALSE;
+		}
 	}
 	
 	function getCategory(){
@@ -68,7 +98,7 @@ class Productcosting_model extends CI_Model {
 			return FALSE;
 		}
 	}
-
+	
 	function getDataForQFactorFormula($code){
 		$SAP_MSI = $this->load->database('SAP_MSI', TRUE);
 		$SAP_MSI->select('yc.U_QFactor as q_factor, yc.U_MinCost as min_cost, yc.U_MaxCost as max_cost, U_CatApprov as approver');
@@ -373,10 +403,8 @@ class Productcosting_model extends CI_Model {
 			$update['approved_head_dept_date'] = $prod_cost_header['approved_head_dept_date'];
 			$update['id_head_dept'] = $prod_cost_header['id_head_dept'];
 			if (isset($prod_cost_header['head_dept_username'])) {
-				if ($prod_cost_header['head_dept_username'] == $prod_cost_header['category_approver']) {
-					$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];
-					$update['approved_cat_approver_date'] = $prod_cost_header['approved_cat_approver_date'];
-				}
+				$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];
+				$update['approved_cat_approver_date'] = $prod_cost_header['approved_cat_approver_date'];
 			}
 		} elseif ($prod_cost_header['flag'] == 4) {
 			$update['status_cat_approver'] = $prod_cost_header['status_cat_approver'];

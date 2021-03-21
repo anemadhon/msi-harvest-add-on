@@ -386,7 +386,7 @@
 					})
 				});
 
-				$('.Finish Good').hide();
+				$('.wp').hide();
 
 				$('#productType').change(function(){
 					if ($(this).val() == 2) {
